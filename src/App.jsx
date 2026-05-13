@@ -908,7 +908,7 @@ export default function RosaryApp() {
         position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
         background: "linear-gradient(180deg, #1a0d2e 0%, #2d1b3d 60%, #3d1f55 100%)",
         display: "flex", flexDirection: "column", alignItems: "center",
-        justifyContent: "center", fontFamily: "Georgia, serif",
+        justifyContent: "flex-start", fontFamily: "Georgia, serif",
         padding: "40px 32px", textAlign: "center",
         overflowY: "auto", zIndex: 9999,
       }}>
