@@ -907,10 +907,14 @@ export default function RosaryApp() {
       <div style={{
         position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
         background: "linear-gradient(180deg, #1a0d2e 0%, #2d1b3d 60%, #3d1f55 100%)",
-        display: "flex", flexDirection: "column", alignItems: "center",
-        justifyContent: "flex-start", fontFamily: "Georgia, serif",
-        padding: "40px 32px", textAlign: "center",
         overflowY: "auto", zIndex: 9999,
+        WebkitOverflowScrolling: "touch",
+      }}>
+      <div style={{
+        display: "flex", flexDirection: "column", alignItems: "center",
+        fontFamily: "Georgia, serif",
+        padding: "40px 32px", textAlign: "center",
+        minHeight: "100%",
       }}>
         <style>{CSS}</style>
 
@@ -1025,6 +1029,7 @@ export default function RosaryApp() {
         >
           Begin →
         </button>
+      </div>
       </div>
     );
   }
