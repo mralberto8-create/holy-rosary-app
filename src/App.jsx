@@ -961,7 +961,7 @@ export default function RosaryApp() {
           <div style={{ width: 24, height: 2, background: "rgba(200,160,232,0.5)", borderRadius: 1, marginTop: -22, marginLeft: "auto", marginRight: "auto" }} />
         </div>
 
-        <p style={{ fontSize: 11, color: "rgba(200,160,232,0.5)", letterSpacing: 3, textTransform: "uppercase", margin: "0 0 16px" }}>
+        <p style={{ fontSize: 11, color: "#c9a0e8", letterSpacing: 3, textTransform: "uppercase", margin: "0 0 16px", fontWeight: 700 }}>
           Dedicated With Love
         </p>
         <p style={{ fontSize: 28, fontWeight: 700, color: "white", margin: "0 0 6px" }}>To My Wife</p>
@@ -1012,7 +1012,7 @@ export default function RosaryApp() {
           Jesus, we trust in You.
         </p>
 
-        <p style={{ fontSize: 12, color: "rgba(200,160,232,0.4)", fontStyle: "italic", letterSpacing: 0.5, margin: "0 0 20px" }}>
+        <p style={{ fontSize: 11, color: "rgba(160,195,255,0.65)", fontStyle: "italic", letterSpacing: 1.5, margin: "0 0 20px", fontWeight: 700 }}>
           Rosary App · Built through the night, with love — May 2026
         </p>
 
