@@ -835,6 +835,47 @@ export default function RosaryApp() {
   const [showDedication, setShowDedication] = useState(true);
   const [showSplash, setShowSplash] = useState(true);
 
+  // Feedback state
+  const [showFeedback, setShowFeedback] = useState(false);
+  const [showFeedbackViewer, setShowFeedbackViewer] = useState(false);
+  const [feedbackRating, setFeedbackRating] = useState(0);
+  const [feedbackThumb, setFeedbackThumb] = useState(null);
+  const [feedbackComment, setFeedbackComment] = useState("");
+  const [feedbackList, setFeedbackList] = useState([]);
+  const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+
+  // Load feedback from storage on mount
+  useEffect(() => {
+    async function loadFeedback() {
+      try {
+        const result = await window.storage.get("rosary_feedback", true);
+        if (result) setFeedbackList(JSON.parse(result.value));
+      } catch (e) { setFeedbackList([]); }
+    }
+    loadFeedback();
+  }, []);
+
+  // Save feedback to storage
+  async function submitFeedback() {
+    const entry = {
+      id: Date.now(),
+      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" }),
+      rating: feedbackRating,
+      thumb: feedbackThumb,
+      comment: feedbackComment.trim(),
+    };
+    const updated = [entry, ...feedbackList];
+    try {
+      await window.storage.set("rosary_feedback", JSON.stringify(updated), true);
+      setFeedbackList(updated);
+      setFeedbackSubmitted(true);
+      setFeedbackRating(0);
+      setFeedbackThumb(null);
+      setFeedbackComment("");
+      setTimeout(() => { setFeedbackSubmitted(false); setShowFeedback(false); }, 1800);
+    } catch (e) { console.error("Storage error:", e); }
+  }
+
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 2000);
     return () => clearTimeout(timer);
@@ -901,20 +942,176 @@ export default function RosaryApp() {
     body { -webkit-user-select: none; user-select: none; }
   `;
 
+  // ── FEEDBACK PANEL ──
+  const FeedbackPanel = showFeedback ? (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 99998,
+      background: "rgba(10,5,20,0.75)",
+      display: "flex", alignItems: "flex-end",
+    }} onClick={() => setShowFeedback(false)}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: "100%", maxWidth: 390, margin: "0 auto",
+        background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
+        borderRadius: "24px 24px 0 0", padding: "24px 22px 40px",
+        animation: "fadeIn 0.2s ease",
+      }}>
+        <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99, margin: "0 auto 20px" }} />
+
+        {feedbackSubmitted ? (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>🙏</div>
+            <div style={{ fontSize: 18, color: "white", fontFamily: "'Lora',serif", fontWeight: 700 }}>Thank you!</div>
+            <div style={{ fontSize: 14, color: "#c9a0e8", fontFamily: "'Lora',serif", marginTop: 6 }}>Your feedback has been saved.</div>
+          </div>
+        ) : (
+          <>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif", marginBottom: 6 }}>Share Your Feedback</div>
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 20 }}>Help us improve the Holy Rosary app</div>
+
+            {/* Star rating */}
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>Rate your experience</div>
+            <div style={{ display: "flex", gap: 8, marginBottom: 20 }}>
+              {[1,2,3,4,5].map(n => (
+                <button key={n} onClick={() => setFeedbackRating(n)} style={{
+                  fontSize: 28, background: "none", border: "none", cursor: "pointer",
+                  opacity: n <= feedbackRating ? 1 : 0.3,
+                  transition: "opacity 0.15s",
+                }}>⭐</button>
+              ))}
+            </div>
+
+            {/* Thumbs */}
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>Quick reaction</div>
+            <div style={{ display: "flex", gap: 12, marginBottom: 20 }}>
+              {[["👍", "up"], ["👎", "down"]].map(([emoji, val]) => (
+                <button key={val} onClick={() => setFeedbackThumb(feedbackThumb === val ? null : val)} style={{
+                  fontSize: 28, background: feedbackThumb === val ? "rgba(107,63,160,0.4)" : "rgba(255,255,255,0.05)",
+                  border: `1px solid ${feedbackThumb === val ? "#6b3fa0" : "rgba(200,160,232,0.2)"}`,
+                  borderRadius: 12, padding: "8px 20px", cursor: "pointer",
+                  transition: "all 0.15s",
+                }}>{emoji}</button>
+              ))}
+            </div>
+
+            {/* Comment */}
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>Comments (optional)</div>
+            <textarea
+              value={feedbackComment}
+              onChange={e => setFeedbackComment(e.target.value)}
+              placeholder="What do you love? What could be better?"
+              style={{
+                width: "100%", height: 80, background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(200,160,232,0.2)", borderRadius: 12,
+                color: "white", fontFamily: "'Lora',serif", fontSize: 14,
+                padding: 12, resize: "none", marginBottom: 16,
+              }}
+            />
+
+            {/* Submit */}
+            <button onClick={submitFeedback} disabled={!feedbackRating && !feedbackThumb && !feedbackComment}
+              style={{
+                width: "100%", padding: "13px", borderRadius: 14, border: "none",
+                background: (feedbackRating || feedbackThumb || feedbackComment)
+                  ? "linear-gradient(135deg,#6b3fa0,#9b6dcc)" : "rgba(255,255,255,0.1)",
+                color: "white", fontFamily: "'Lora',serif", fontSize: 15,
+                fontWeight: 700, cursor: "pointer",
+              }}>
+              Submit Feedback
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  ) : null;
+
+  // ── FEEDBACK VIEWER ──
+  const FeedbackViewer = showFeedbackViewer ? (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 99998,
+      background: "rgba(10,5,20,0.75)",
+      display: "flex", alignItems: "flex-end",
+    }} onClick={() => setShowFeedbackViewer(false)}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: "100%", maxWidth: 390, margin: "0 auto",
+        background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
+        borderRadius: "24px 24px 0 0", padding: "24px 22px 40px",
+        maxHeight: "80vh", overflowY: "auto",
+        animation: "fadeIn 0.2s ease",
+      }}>
+        <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99, margin: "0 auto 20px" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>
+            All Feedback ({feedbackList.length})
+          </div>
+          {feedbackList.length > 0 && (
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif" }}>
+              Avg: {"⭐".repeat(Math.round(feedbackList.filter(f=>f.rating).reduce((a,b)=>a+b.rating,0) / (feedbackList.filter(f=>f.rating).length||1)))}
+            </div>
+          )}
+        </div>
+        {feedbackList.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "30px 0", color: "#9b7aba", fontFamily: "'Lora',serif", fontStyle: "italic" }}>
+            No feedback yet. Be the first! 🙏
+          </div>
+        ) : feedbackList.map((f, i) => (
+          <div key={f.id} style={{
+            background: "rgba(255,255,255,0.05)", borderRadius: 12,
+            padding: "12px 14px", marginBottom: 10,
+            border: "1px solid rgba(200,160,232,0.1)",
+          }}>
+            <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
+              <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif" }}>{f.date}</div>
+              <div style={{ display: "flex", gap: 6 }}>
+                {f.rating > 0 && <span style={{ fontSize: 12 }}>{"⭐".repeat(f.rating)}</span>}
+                {f.thumb && <span style={{ fontSize: 14 }}>{f.thumb === "up" ? "👍" : "👎"}</span>}
+              </div>
+            </div>
+            {f.comment && (
+              <div style={{ fontSize: 13, color: "#d4b8f0", fontFamily: "'Lora',serif", lineHeight: 1.5 }}>
+                "{f.comment}"
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  ) : null;
+
+  // ── PERSISTENT FEEDBACK BUTTON ──
+  const FeedbackButton = !showDedication ? (
+    <div style={{
+      position: "fixed", bottom: 20, right: 16, zIndex: 9997,
+      display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8,
+    }}>
+      <button onClick={() => { setShowFeedbackViewer(true); setShowFeedback(false); }} style={{
+        width: 44, height: 44, borderRadius: "50%",
+        background: "rgba(26,13,46,0.9)",
+        border: "1px solid rgba(200,160,232,0.3)",
+        fontSize: 18, cursor: "pointer",
+        backdropFilter: "blur(8px)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>📋</button>
+      <button onClick={() => { setShowFeedback(true); setShowFeedbackViewer(false); }} style={{
+        width: 44, height: 44, borderRadius: "50%",
+        background: "linear-gradient(135deg,#6b3fa0,#9b6dcc)",
+        border: "none", fontSize: 20, cursor: "pointer",
+        boxShadow: "0 4px 16px rgba(107,63,160,0.5)",
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>💬</button>
+    </div>
+  ) : null;
+
   // Completely self-contained dedication overlay — no dependencies on anything else
   if (showDedication) {
     return (
       <div style={{
         position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
         background: "linear-gradient(180deg, #1a0d2e 0%, #2d1b3d 60%, #3d1f55 100%)",
-        overflowY: "auto", zIndex: 9999,
-        WebkitOverflowScrolling: "touch",
-      }}>
-      <div style={{
         display: "flex", flexDirection: "column", alignItems: "center",
+        justifyContent: "flex-start",
         fontFamily: "Georgia, serif",
-        padding: "40px 32px", textAlign: "center",
-        minHeight: "100%",
+        padding: "48px 32px 40px", textAlign: "center",
+        overflowY: "auto", zIndex: 9999,
       }}>
         <style>{CSS}</style>
 
@@ -961,7 +1158,7 @@ export default function RosaryApp() {
           <div style={{ width: 24, height: 2, background: "rgba(200,160,232,0.5)", borderRadius: 1, marginTop: -22, marginLeft: "auto", marginRight: "auto" }} />
         </div>
 
-        <p style={{ fontSize: 11, color: "#c9a0e8", letterSpacing: 3, textTransform: "uppercase", margin: "0 0 16px", fontWeight: 700 }}>
+        <p style={{ fontSize: 13, color: "rgba(200,160,232,0.65)", letterSpacing: 3, textTransform: "uppercase", margin: "0 0 16px", fontWeight: 600, fontStyle: "italic" }}>
           Dedicated With Love
         </p>
         <p style={{ fontSize: 28, fontWeight: 700, color: "white", margin: "0 0 6px" }}>To My Wife</p>
@@ -1012,7 +1209,7 @@ export default function RosaryApp() {
           Jesus, we trust in You.
         </p>
 
-        <p style={{ fontSize: 11, color: "rgba(160,195,255,0.65)", fontStyle: "italic", letterSpacing: 1.5, margin: "0 0 20px", fontWeight: 700 }}>
+        <p style={{ fontSize: 13, color: "rgba(200,160,232,0.65)", fontStyle: "italic", letterSpacing: 0.5, margin: "0 0 20px", fontWeight: 600 }}>
           Rosary App · Built through the night, with love — May 2026
         </p>
 
@@ -1030,7 +1227,6 @@ export default function RosaryApp() {
           Begin →
         </button>
       </div>
-      </div>
     );
   }
 
@@ -1039,6 +1235,9 @@ export default function RosaryApp() {
     return (
       <div style={{ maxWidth: 390, margin: "0 auto", minHeight: "100vh", background: "#faf7fc", display: "flex", flexDirection: "column", fontFamily: "'Lora',serif" }}>
         <style>{CSS}</style>
+        {FeedbackPanel}
+        {FeedbackViewer}
+        {FeedbackButton}
         <div style={{ background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)", padding: "20px 20px 16px", color: "white" }}>
           <div style={{ fontSize: 12, color: "#c9a0e8", letterSpacing: 2, textTransform: "uppercase" }}>The Holy</div>
           <div style={{ fontSize: 28, fontWeight: 700 }}>Rosary</div>
@@ -1176,6 +1375,9 @@ export default function RosaryApp() {
       display: "flex", flexDirection: "column", fontFamily: "'Lora',serif", overflowX: "hidden",
     }}>
       <style>{CSS}</style>
+      {FeedbackPanel}
+      {FeedbackViewer}
+      {FeedbackButton}
 
       {/* Stars background */}
       <div style={{
