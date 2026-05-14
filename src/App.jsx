@@ -852,6 +852,9 @@ export default function RosaryApp() {
   // Prayer Warrior state
   const [showPrayerWarrior, setShowPrayerWarrior] = useState(false);
   const [showPrayerWall, setShowPrayerWall] = useState(false);
+
+  // MJK Novena
+  const [showMJK, setShowMJK] = useState(false);
   const [prayerIntention, setPrayerIntention] = useState("");
   const [prayerName, setPrayerName] = useState("");
   const [prayerLocation, setPrayerLocation] = useState("");
@@ -1483,9 +1486,34 @@ export default function RosaryApp() {
         {PrayerWarriorPanel}
         {PrayerWall}
         {FeedbackButton}
-        <div style={{ background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)", padding: "20px 20px 16px", color: "white" }}>
-          <div style={{ fontSize: 12, color: "#c9a0e8", letterSpacing: 2, textTransform: "uppercase" }}>The Holy</div>
-          <div style={{ fontSize: 28, fontWeight: 700 }}>Rosary</div>
+        {showMJK && (
+          <div style={{
+            position: "fixed", inset: 0, zIndex: 99999,
+            background: "rgba(0,0,0,0.9)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }} onClick={() => setShowMJK(false)}>
+            <img
+              src="/mjk-novena.jpg"
+              alt="MJK Novena"
+              style={{ maxWidth: "95vw", maxHeight: "92vh", borderRadius: 12, objectFit: "contain" }}
+            />
+          </div>
+        )}
+        <div style={{ background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)", padding: "20px 20px 16px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <div>
+            <div style={{ fontSize: 12, color: "#c9a0e8", letterSpacing: 2, textTransform: "uppercase" }}>The Holy</div>
+            <div style={{ fontSize: 28, fontWeight: 700 }}>Rosary</div>
+          </div>
+          <button onClick={() => setShowMJK(true)} style={{
+            background: "rgba(255,255,255,0.12)",
+            border: "1px solid rgba(200,160,232,0.4)",
+            borderRadius: 10, padding: "8px 14px",
+            color: "white", fontFamily: "'Lora',serif",
+            fontSize: 12, fontWeight: 700, cursor: "pointer",
+            letterSpacing: 0.5, lineHeight: 1.4, textAlign: "center",
+          }}>
+            MJK<br/>Novena
+          </button>
         </div>
         <div style={{ padding: "18px", overflowY: "auto" }}>
           <div style={{ fontSize: 12, color: "#7a6680", marginBottom: 8 }}>Choose mysteries</div>
