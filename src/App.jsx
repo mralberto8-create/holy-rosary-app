@@ -1312,61 +1312,35 @@ export default function RosaryApp() {
     </div>
   ) : null;
 
-  // ── PERSISTENT BUTTONS ──
-  const labelStyle = {
-    fontSize: 10, color: "rgba(200,160,232,0.85)", fontFamily: "'Lora',serif",
-    background: "rgba(10,5,20,0.75)", borderRadius: 6, padding: "2px 6px",
-    backdropFilter: "blur(6px)", whiteSpace: "nowrap", letterSpacing: 0.3,
-    pointerEvents: "none",
-  };
-  const rowStyle = { display: "flex", alignItems: "center", gap: 8 };
+  // ── BOTTOM NAV BAR ──
+  const navItems = [
+    { icon: "🙏", label: "Prayer Wall",      action: () => { setShowPrayerWall(true); setShowPrayerWarrior(false); setShowFeedback(false); setShowFeedbackViewer(false); } },
+    { icon: "⚔️", label: "Prayer Requests",  action: () => { setShowPrayerWarrior(true); setShowPrayerWall(false); setShowFeedback(false); setShowFeedbackViewer(false); } },
+    { icon: "💬", label: "Feedback",         action: () => { setShowFeedback(true); setShowPrayerWall(false); setShowPrayerWarrior(false); setShowFeedbackViewer(false); } },
+    { icon: "📋", label: "View Feedback",    action: () => { setShowFeedbackViewer(true); setShowPrayerWall(false); setShowPrayerWarrior(false); setShowFeedback(false); } },
+  ];
 
   const FeedbackButton = !showDedication ? (
     <div style={{
-      position: "fixed", bottom: 20, right: 16, zIndex: 9997,
-      display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8,
+      position: "fixed", bottom: 0, left: "50%", transform: "translateX(-50%)",
+      width: "100%", maxWidth: 390, zIndex: 9997,
+      background: "rgba(18,8,32,0.96)",
+      borderTop: "1px solid rgba(200,160,232,0.15)",
+      backdropFilter: "blur(12px)",
+      display: "flex", justifyContent: "space-around", alignItems: "center",
+      padding: "8px 0 max(8px, env(safe-area-inset-bottom))",
     }}>
-      <div style={rowStyle}>
-        <span style={labelStyle}>View Feedback</span>
-        <button onClick={() => { setShowFeedbackViewer(true); setShowFeedback(false); setShowPrayerWarrior(false); }} style={{
-          width: 44, height: 44, borderRadius: "50%",
-          background: "rgba(26,13,46,0.9)",
-          border: "1px solid rgba(200,160,232,0.3)",
-          fontSize: 18, cursor: "pointer",
-          backdropFilter: "blur(8px)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>📋</button>
-      </div>
-      <div style={rowStyle}>
-        <span style={labelStyle}>Leave Feedback</span>
-        <button onClick={() => { setShowFeedback(true); setShowFeedbackViewer(false); setShowPrayerWarrior(false); }} style={{
-          width: 44, height: 44, borderRadius: "50%",
-          background: "linear-gradient(135deg,#6b3fa0,#9b6dcc)",
-          border: "none", fontSize: 20, cursor: "pointer",
-          boxShadow: "0 4px 16px rgba(107,63,160,0.5)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>💬</button>
-      </div>
-      <div style={rowStyle}>
-        <span style={labelStyle}>Prayer Requests</span>
-        <button onClick={() => { setShowPrayerWarrior(true); setShowFeedback(false); setShowFeedbackViewer(false); setShowPrayerWall(false); }} style={{
-          width: 44, height: 44, borderRadius: "50%",
-          background: "linear-gradient(135deg,#1a4a8a,#2e6abf)",
-          border: "none", fontSize: 20, cursor: "pointer",
-          boxShadow: "0 4px 16px rgba(30,80,160,0.5)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>⚔️</button>
-      </div>
-      <div style={rowStyle}>
-        <span style={labelStyle}>Prayer Wall</span>
-        <button onClick={() => { setShowPrayerWall(true); setShowPrayerWarrior(false); setShowFeedback(false); setShowFeedbackViewer(false); }} style={{
-          width: 44, height: 44, borderRadius: "50%",
-          background: "linear-gradient(135deg,#0d5c3a,#1a8a5a)",
-          border: "none", fontSize: 20, cursor: "pointer",
-          boxShadow: "0 4px 16px rgba(13,92,58,0.5)",
-          display: "flex", alignItems: "center", justifyContent: "center",
-        }}>🙏</button>
-      </div>
+      {navItems.map(({ icon, label, action }) => (
+        <button key={label} onClick={action} style={{
+          background: "none", border: "none", cursor: "pointer",
+          display: "flex", flexDirection: "column", alignItems: "center", gap: 4,
+          padding: "4px 8px", borderRadius: 10,
+          minWidth: 72,
+        }}>
+          <span style={{ fontSize: 22 }}>{icon}</span>
+          <span style={{ fontSize: 9, color: "rgba(200,160,232,0.75)", fontFamily: "'Lora',serif", letterSpacing: 0.3, whiteSpace: "nowrap" }}>{label}</span>
+        </button>
+      ))}
     </div>
   ) : null;
 
@@ -1502,7 +1476,7 @@ export default function RosaryApp() {
   // ── HOME SCREEN ──
   if (screen === "home") {
     return (
-      <div style={{ maxWidth: 390, margin: "0 auto", minHeight: "100vh", background: "#faf7fc", display: "flex", flexDirection: "column", fontFamily: "'Lora',serif" }}>
+      <div style={{ maxWidth: 390, margin: "0 auto", minHeight: "100vh", background: "#faf7fc", display: "flex", flexDirection: "column", fontFamily: "'Lora',serif", paddingBottom: 72 }}>
         <style>{CSS}</style>
         {FeedbackPanel}
         {FeedbackViewer}
@@ -1631,7 +1605,7 @@ export default function RosaryApp() {
   // ── COMPLETE SCREEN ──
   if (screen === "complete") {
     return (
-      <div style={{ maxWidth: 390, margin: "0 auto", minHeight: "100vh", background: "#1a0d2e", display: "flex", flexDirection: "column", fontFamily: "'Lora',serif" }}>
+      <div style={{ maxWidth: 390, margin: "0 auto", minHeight: "100vh", background: "#1a0d2e", display: "flex", flexDirection: "column", fontFamily: "'Lora',serif", paddingBottom: 72 }}>
         <style>{CSS}</style>
         {FeedbackPanel}
         {FeedbackViewer}
@@ -1648,7 +1622,7 @@ export default function RosaryApp() {
     <div style={{
       maxWidth: 390, margin: "0 auto", minHeight: "100vh",
       background: "linear-gradient(180deg, #1a0d2e 0%, #2d1b3d 100%)",
-      display: "flex", flexDirection: "column", fontFamily: "'Lora',serif", overflowX: "hidden",
+      display: "flex", flexDirection: "column", fontFamily: "'Lora',serif", overflowX: "hidden", paddingBottom: 72,
     }}>
       <style>{CSS}</style>
       {FeedbackPanel}
