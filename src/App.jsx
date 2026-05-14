@@ -1488,15 +1488,41 @@ export default function RosaryApp() {
         {FeedbackButton}
         {showMJK && (
           <div style={{
-            position: "fixed", inset: 0, zIndex: 99999,
-            background: "rgba(0,0,0,0.9)",
-            display: "flex", alignItems: "center", justifyContent: "center",
-          }} onClick={() => setShowMJK(false)}>
-            <img
-              src="/mjk-novena.jpg"
-              alt="MJK Novena"
-              style={{ maxWidth: "95vw", maxHeight: "92vh", borderRadius: 12, objectFit: "contain" }}
-            />
+            position: "fixed", inset: 0, zIndex: 9990,
+            background: "rgba(0,0,0,0.6)",
+            display: "flex", justifyContent: "center",
+          }}>
+            <div style={{
+              width: "100%", maxWidth: 390,
+              background: "#000",
+              display: "flex", flexDirection: "column",
+              height: "100%",
+            }}>
+              {/* Top bar with back button */}
+              <div style={{
+                display: "flex", alignItems: "center",
+                padding: "14px 16px", flexShrink: 0,
+                background: "rgba(0,0,0,0.8)",
+                borderBottom: "1px solid rgba(255,255,255,0.1)",
+              }}>
+                <button onClick={() => setShowMJK(false)} style={{
+                  background: "none", border: "none", color: "white",
+                  fontFamily: "'Lora',serif", fontSize: 15, cursor: "pointer",
+                  display: "flex", alignItems: "center", gap: 6,
+                }}>← Back</button>
+                <div style={{ flex: 1, textAlign: "center", color: "white", fontFamily: "'Lora',serif", fontSize: 14, fontWeight: 700, marginRight: 48 }}>
+                  MJK Novena
+                </div>
+              </div>
+              {/* Image — scrollable if needed */}
+              <div style={{ flex: 1, overflowY: "auto", padding: "16px", paddingBottom: 80 }}>
+                <img
+                  src="/mjk-novena.jpg"
+                  alt="MJK Novena"
+                  style={{ width: "100%", borderRadius: 12 }}
+                />
+              </div>
+            </div>
           </div>
         )}
         <div style={{ background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)", padding: "20px 20px 16px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
