@@ -841,18 +841,36 @@ export default function RosaryApp() {
   const [feedbackRating, setFeedbackRating] = useState(0);
   const [feedbackThumb, setFeedbackThumb] = useState(null);
   const [feedbackComment, setFeedbackComment] = useState("");
+  const [feedbackName, setFeedbackName] = useState("");
+  const [feedbackLocation, setFeedbackLocation] = useState("");
   const [feedbackList, setFeedbackList] = useState([]);
   const [feedbackSubmitted, setFeedbackSubmitted] = useState(false);
+  const [feedbackPinInput, setFeedbackPinInput] = useState("");
+  const [feedbackPinError, setFeedbackPinError] = useState(false);
+  const [feedbackPinUnlocked, setFeedbackPinUnlocked] = useState(false);
 
-  // Load feedback from storage on mount
+  // Prayer Warrior state
+  const [showPrayerWarrior, setShowPrayerWarrior] = useState(false);
+  const [showPrayerWall, setShowPrayerWall] = useState(false);
+  const [prayerIntention, setPrayerIntention] = useState("");
+  const [prayerName, setPrayerName] = useState("");
+  const [prayerLocation, setPrayerLocation] = useState("");
+  const [prayerList, setPrayerList] = useState([]);
+  const [prayerSubmitted, setPrayerSubmitted] = useState(false);
+
+  // Load feedback and prayers from storage on mount
   useEffect(() => {
-    async function loadFeedback() {
+    async function loadData() {
       try {
         const result = await window.storage.get("rosary_feedback", true);
         if (result) setFeedbackList(JSON.parse(result.value));
       } catch (e) { setFeedbackList([]); }
+      try {
+        const result = await window.storage.get("rosary_prayers", true);
+        if (result) setPrayerList(JSON.parse(result.value));
+      } catch (e) { setPrayerList([]); }
     }
-    loadFeedback();
+    loadData();
   }, []);
 
   // Save feedback to storage
@@ -863,6 +881,8 @@ export default function RosaryApp() {
       rating: feedbackRating,
       thumb: feedbackThumb,
       comment: feedbackComment.trim(),
+      name: feedbackName.trim(),
+      location: feedbackLocation.trim(),
     };
     const updated = [entry, ...feedbackList];
     try {
@@ -872,7 +892,30 @@ export default function RosaryApp() {
       setFeedbackRating(0);
       setFeedbackThumb(null);
       setFeedbackComment("");
+      setFeedbackName("");
+      setFeedbackLocation("");
       setTimeout(() => { setFeedbackSubmitted(false); setShowFeedback(false); }, 1800);
+    } catch (e) { console.error("Storage error:", e); }
+  }
+
+  // Save prayer intention to storage
+  async function submitPrayer() {
+    const entry = {
+      id: Date.now(),
+      date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" }),
+      intention: prayerIntention.trim(),
+      name: prayerName.trim(),
+      location: prayerLocation.trim(),
+    };
+    const updated = [entry, ...prayerList];
+    try {
+      await window.storage.set("rosary_prayers", JSON.stringify(updated), true);
+      setPrayerList(updated);
+      setPrayerSubmitted(true);
+      setPrayerIntention("");
+      setPrayerName("");
+      setPrayerLocation("");
+      setTimeout(() => { setPrayerSubmitted(false); setShowPrayerWarrior(false); }, 1800);
     } catch (e) { console.error("Storage error:", e); }
   }
 
@@ -993,6 +1036,34 @@ export default function RosaryApp() {
               ))}
             </div>
 
+            {/* Name */}
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>Your first name</div>
+            <input
+              value={feedbackName}
+              onChange={e => setFeedbackName(e.target.value)}
+              placeholder="First name"
+              style={{
+                width: "100%", background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(200,160,232,0.2)", borderRadius: 12,
+                color: "white", fontFamily: "'Lora',serif", fontSize: 14,
+                padding: 12, marginBottom: 16, boxSizing: "border-box",
+              }}
+            />
+
+            {/* Location */}
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>Your location</div>
+            <input
+              value={feedbackLocation}
+              onChange={e => setFeedbackLocation(e.target.value)}
+              placeholder="City, State or Country"
+              style={{
+                width: "100%", background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(200,160,232,0.2)", borderRadius: 12,
+                color: "white", fontFamily: "'Lora',serif", fontSize: 14,
+                padding: 12, marginBottom: 16, boxSizing: "border-box",
+              }}
+            />
+
             {/* Comment */}
             <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>Comments (optional)</div>
             <textarea
@@ -1030,7 +1101,7 @@ export default function RosaryApp() {
       position: "fixed", inset: 0, zIndex: 99998,
       background: "rgba(10,5,20,0.75)",
       display: "flex", alignItems: "flex-end",
-    }} onClick={() => setShowFeedbackViewer(false)}>
+    }} onClick={() => { setShowFeedbackViewer(false); setFeedbackPinInput(""); setFeedbackPinError(false); setFeedbackPinUnlocked(false); }}>
       <div onClick={e => e.stopPropagation()} style={{
         width: "100%", maxWidth: 390, margin: "0 auto",
         background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
@@ -1039,65 +1110,263 @@ export default function RosaryApp() {
         animation: "fadeIn 0.2s ease",
       }}>
         <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99, margin: "0 auto 20px" }} />
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>
-            All Feedback ({feedbackList.length})
+
+        {!feedbackPinUnlocked ? (
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif", marginBottom: 8 }}>Enter PIN</div>
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 20 }}>Feedback viewer is protected</div>
+            <input
+              type="password"
+              value={feedbackPinInput}
+              onChange={e => { setFeedbackPinInput(e.target.value); setFeedbackPinError(false); }}
+              placeholder="PIN"
+              style={{
+                width: "100%", background: "rgba(255,255,255,0.06)",
+                border: `1px solid ${feedbackPinError ? "#ff6b6b" : "rgba(200,160,232,0.2)"}`, borderRadius: 12,
+                color: "white", fontFamily: "'Lora',serif", fontSize: 18,
+                padding: 12, marginBottom: 8, boxSizing: "border-box", textAlign: "center", letterSpacing: 6,
+              }}
+            />
+            {feedbackPinError && <div style={{ fontSize: 12, color: "#ff6b6b", marginBottom: 12 }}>Incorrect PIN</div>}
+            <button onClick={() => {
+              if (feedbackPinInput === "2680") { setFeedbackPinUnlocked(true); setFeedbackPinError(false); }
+              else { setFeedbackPinError(true); setFeedbackPinInput(""); }
+            }} style={{
+              width: "100%", padding: "13px", borderRadius: 14, border: "none",
+              background: "linear-gradient(135deg,#6b3fa0,#9b6dcc)",
+              color: "white", fontFamily: "'Lora',serif", fontSize: 15,
+              fontWeight: 700, cursor: "pointer", marginTop: 4,
+            }}>Unlock</button>
           </div>
-          {feedbackList.length > 0 && (
-            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif" }}>
-              Avg: {"⭐".repeat(Math.round(feedbackList.filter(f=>f.rating).reduce((a,b)=>a+b.rating,0) / (feedbackList.filter(f=>f.rating).length||1)))}
+        ) : (
+          <>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>
+                All Feedback ({feedbackList.length})
+              </div>
+              {feedbackList.length > 0 && (
+                <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif" }}>
+                  Avg: {"⭐".repeat(Math.round(feedbackList.filter(f=>f.rating).reduce((a,b)=>a+b.rating,0) / (feedbackList.filter(f=>f.rating).length||1)))}
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        {feedbackList.length === 0 ? (
-          <div style={{ textAlign: "center", padding: "30px 0", color: "#9b7aba", fontFamily: "'Lora',serif", fontStyle: "italic" }}>
-            No feedback yet. Be the first! 🙏
+            {feedbackList.length === 0 ? (
+              <div style={{ textAlign: "center", padding: "30px 0", color: "#9b7aba", fontFamily: "'Lora',serif", fontStyle: "italic" }}>
+                No feedback yet. Be the first! 🙏
+              </div>
+            ) : feedbackList.map((f) => (
+              <div key={f.id} style={{
+                background: "rgba(255,255,255,0.05)", borderRadius: 12,
+                padding: "12px 14px", marginBottom: 10,
+                border: "1px solid rgba(200,160,232,0.1)",
+              }}>
+                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                  <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif" }}>{f.date}</div>
+                  <div style={{ display: "flex", gap: 6 }}>
+                    {f.rating > 0 && <span style={{ fontSize: 12 }}>{"⭐".repeat(f.rating)}</span>}
+                    {f.thumb && <span style={{ fontSize: 14 }}>{f.thumb === "up" ? "👍" : "👎"}</span>}
+                  </div>
+                </div>
+                {(f.name || f.location) && (
+                  <div style={{ fontSize: 12, color: "#c9a0e8", fontFamily: "'Lora',serif", marginBottom: 4 }}>
+                    {[f.name, f.location].filter(Boolean).join(" · ")}
+                  </div>
+                )}
+                {f.comment && (
+                  <div style={{ fontSize: 13, color: "#d4b8f0", fontFamily: "'Lora',serif", lineHeight: 1.5 }}>
+                    "{f.comment}"
+                  </div>
+                )}
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+    </div>
+  ) : null;
+
+  // ── PRAYER WARRIOR PANEL ──
+  const PrayerWarriorPanel = showPrayerWarrior ? (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 99998,
+      background: "rgba(10,5,20,0.75)",
+      display: "flex", alignItems: "flex-end",
+    }} onClick={() => setShowPrayerWarrior(false)}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: "100%", maxWidth: 390, margin: "0 auto",
+        background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
+        borderRadius: "24px 24px 0 0", padding: "24px 22px 40px",
+        animation: "fadeIn 0.2s ease",
+      }}>
+        <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99, margin: "0 auto 20px" }} />
+
+        {prayerSubmitted ? (
+          <div style={{ textAlign: "center", padding: "20px 0" }}>
+            <div style={{ fontSize: 40, marginBottom: 12 }}>🙏</div>
+            <div style={{ fontSize: 18, color: "white", fontFamily: "'Lora',serif", fontWeight: 700 }}>Prayer Received</div>
+            <div style={{ fontSize: 14, color: "#c9a0e8", fontFamily: "'Lora',serif", marginTop: 6 }}>Your intention has been saved.</div>
           </div>
-        ) : feedbackList.map((f, i) => (
-          <div key={f.id} style={{
+        ) : (
+          <>
+            <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif", marginBottom: 6 }}>⚔️ Prayer Requests</div>
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 20 }}>Submit a prayer intention</div>
+
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>Prayer intention</div>
+            <textarea
+              value={prayerIntention}
+              onChange={e => setPrayerIntention(e.target.value)}
+              placeholder="Share your prayer intention..."
+              style={{
+                width: "100%", height: 90, background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(200,160,232,0.2)", borderRadius: 12,
+                color: "white", fontFamily: "'Lora',serif", fontSize: 14,
+                padding: 12, resize: "none", marginBottom: 16, boxSizing: "border-box",
+              }}
+            />
+
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>First name of person this is for</div>
+            <input
+              value={prayerName}
+              onChange={e => setPrayerName(e.target.value)}
+              placeholder="First name"
+              style={{
+                width: "100%", background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(200,160,232,0.2)", borderRadius: 12,
+                color: "white", fontFamily: "'Lora',serif", fontSize: 14,
+                padding: 12, marginBottom: 16, boxSizing: "border-box",
+              }}
+            />
+
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>Location</div>
+            <input
+              value={prayerLocation}
+              onChange={e => setPrayerLocation(e.target.value)}
+              placeholder="City, State or Country"
+              style={{
+                width: "100%", background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(200,160,232,0.2)", borderRadius: 12,
+                color: "white", fontFamily: "'Lora',serif", fontSize: 14,
+                padding: 12, marginBottom: 20, boxSizing: "border-box",
+              }}
+            />
+
+            <button onClick={submitPrayer} disabled={!prayerIntention.trim()}
+              style={{
+                width: "100%", padding: "13px", borderRadius: 14, border: "none",
+                background: prayerIntention.trim() ? "linear-gradient(135deg,#6b3fa0,#9b6dcc)" : "rgba(255,255,255,0.1)",
+                color: "white", fontFamily: "'Lora',serif", fontSize: 15,
+                fontWeight: 700, cursor: prayerIntention.trim() ? "pointer" : "default",
+              }}>
+              Submit Intention
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  ) : null;
+
+  // ── PRAYER WALL ──
+  const PrayerWall = showPrayerWall ? (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 99998,
+      background: "rgba(10,5,20,0.75)",
+      display: "flex", alignItems: "flex-end",
+    }} onClick={() => setShowPrayerWall(false)}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: "100%", maxWidth: 390, margin: "0 auto",
+        background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
+        borderRadius: "24px 24px 0 0", padding: "24px 22px 40px",
+        maxHeight: "80vh", overflowY: "auto",
+        animation: "fadeIn 0.2s ease",
+      }}>
+        <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99, margin: "0 auto 20px" }} />
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+          <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>🙏 Prayer Wall</div>
+          <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif" }}>{prayerList.length} intention{prayerList.length !== 1 ? "s" : ""}</div>
+        </div>
+        <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 20, fontStyle: "italic" }}>
+          Pray for each of these intentions as you read them.
+        </div>
+        {prayerList.length === 0 ? (
+          <div style={{ textAlign: "center", padding: "30px 0", color: "#9b7aba", fontFamily: "'Lora',serif", fontStyle: "italic" }}>
+            No intentions yet. Be the first to share one. 🙏
+          </div>
+        ) : prayerList.map((p) => (
+          <div key={p.id} style={{
             background: "rgba(255,255,255,0.05)", borderRadius: 12,
-            padding: "12px 14px", marginBottom: 10,
-            border: "1px solid rgba(200,160,232,0.1)",
+            padding: "14px 16px", marginBottom: 10,
+            border: "1px solid rgba(200,160,232,0.15)",
           }}>
             <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 6 }}>
-              <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif" }}>{f.date}</div>
-              <div style={{ display: "flex", gap: 6 }}>
-                {f.rating > 0 && <span style={{ fontSize: 12 }}>{"⭐".repeat(f.rating)}</span>}
-                {f.thumb && <span style={{ fontSize: 14 }}>{f.thumb === "up" ? "👍" : "👎"}</span>}
+              <div style={{ fontSize: 12, color: "#c9a0e8", fontFamily: "'Lora',serif", fontWeight: 700 }}>
+                {[p.name, p.location].filter(Boolean).join(" · ") || "Anonymous"}
               </div>
+              <div style={{ fontSize: 11, color: "#6b5080", fontFamily: "'Lora',serif" }}>{p.date}</div>
             </div>
-            {f.comment && (
-              <div style={{ fontSize: 13, color: "#d4b8f0", fontFamily: "'Lora',serif", lineHeight: 1.5 }}>
-                "{f.comment}"
-              </div>
-            )}
+            <div style={{ fontSize: 14, color: "#e8d8ff", fontFamily: "'Lora',serif", lineHeight: 1.6, fontStyle: "italic" }}>
+              "{p.intention}"
+            </div>
           </div>
         ))}
       </div>
     </div>
   ) : null;
 
-  // ── PERSISTENT FEEDBACK BUTTON ──
+  // ── PERSISTENT BUTTONS ──
+  const labelStyle = {
+    fontSize: 10, color: "rgba(200,160,232,0.85)", fontFamily: "'Lora',serif",
+    background: "rgba(10,5,20,0.75)", borderRadius: 6, padding: "2px 6px",
+    backdropFilter: "blur(6px)", whiteSpace: "nowrap", letterSpacing: 0.3,
+    pointerEvents: "none",
+  };
+  const rowStyle = { display: "flex", alignItems: "center", gap: 8 };
+
   const FeedbackButton = !showDedication ? (
     <div style={{
       position: "fixed", bottom: 20, right: 16, zIndex: 9997,
       display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 8,
     }}>
-      <button onClick={() => { setShowFeedbackViewer(true); setShowFeedback(false); }} style={{
-        width: 44, height: 44, borderRadius: "50%",
-        background: "rgba(26,13,46,0.9)",
-        border: "1px solid rgba(200,160,232,0.3)",
-        fontSize: 18, cursor: "pointer",
-        backdropFilter: "blur(8px)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-      }}>📋</button>
-      <button onClick={() => { setShowFeedback(true); setShowFeedbackViewer(false); }} style={{
-        width: 44, height: 44, borderRadius: "50%",
-        background: "linear-gradient(135deg,#6b3fa0,#9b6dcc)",
-        border: "none", fontSize: 20, cursor: "pointer",
-        boxShadow: "0 4px 16px rgba(107,63,160,0.5)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-      }}>💬</button>
+      <div style={rowStyle}>
+        <span style={labelStyle}>View Feedback</span>
+        <button onClick={() => { setShowFeedbackViewer(true); setShowFeedback(false); setShowPrayerWarrior(false); }} style={{
+          width: 44, height: 44, borderRadius: "50%",
+          background: "rgba(26,13,46,0.9)",
+          border: "1px solid rgba(200,160,232,0.3)",
+          fontSize: 18, cursor: "pointer",
+          backdropFilter: "blur(8px)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>📋</button>
+      </div>
+      <div style={rowStyle}>
+        <span style={labelStyle}>Leave Feedback</span>
+        <button onClick={() => { setShowFeedback(true); setShowFeedbackViewer(false); setShowPrayerWarrior(false); }} style={{
+          width: 44, height: 44, borderRadius: "50%",
+          background: "linear-gradient(135deg,#6b3fa0,#9b6dcc)",
+          border: "none", fontSize: 20, cursor: "pointer",
+          boxShadow: "0 4px 16px rgba(107,63,160,0.5)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>💬</button>
+      </div>
+      <div style={rowStyle}>
+        <span style={labelStyle}>Prayer Requests</span>
+        <button onClick={() => { setShowPrayerWarrior(true); setShowFeedback(false); setShowFeedbackViewer(false); setShowPrayerWall(false); }} style={{
+          width: 44, height: 44, borderRadius: "50%",
+          background: "linear-gradient(135deg,#1a4a8a,#2e6abf)",
+          border: "none", fontSize: 20, cursor: "pointer",
+          boxShadow: "0 4px 16px rgba(30,80,160,0.5)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>⚔️</button>
+      </div>
+      <div style={rowStyle}>
+        <span style={labelStyle}>Prayer Wall</span>
+        <button onClick={() => { setShowPrayerWall(true); setShowPrayerWarrior(false); setShowFeedback(false); setShowFeedbackViewer(false); }} style={{
+          width: 44, height: 44, borderRadius: "50%",
+          background: "linear-gradient(135deg,#0d5c3a,#1a8a5a)",
+          border: "none", fontSize: 20, cursor: "pointer",
+          boxShadow: "0 4px 16px rgba(13,92,58,0.5)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+        }}>🙏</button>
+      </div>
     </div>
   ) : null;
 
@@ -1237,6 +1506,8 @@ export default function RosaryApp() {
         <style>{CSS}</style>
         {FeedbackPanel}
         {FeedbackViewer}
+        {PrayerWarriorPanel}
+        {PrayerWall}
         {FeedbackButton}
         <div style={{ background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)", padding: "20px 20px 16px", color: "white" }}>
           <div style={{ fontSize: 12, color: "#c9a0e8", letterSpacing: 2, textTransform: "uppercase" }}>The Holy</div>
@@ -1362,6 +1633,11 @@ export default function RosaryApp() {
     return (
       <div style={{ maxWidth: 390, margin: "0 auto", minHeight: "100vh", background: "#1a0d2e", display: "flex", flexDirection: "column", fontFamily: "'Lora',serif" }}>
         <style>{CSS}</style>
+        {FeedbackPanel}
+        {FeedbackViewer}
+        {PrayerWarriorPanel}
+        {PrayerWall}
+        {FeedbackButton}
         <CompletionScreen onRestart={() => restart(mysterySet)} />
       </div>
     );
@@ -1377,6 +1653,8 @@ export default function RosaryApp() {
       <style>{CSS}</style>
       {FeedbackPanel}
       {FeedbackViewer}
+      {PrayerWarriorPanel}
+      {PrayerWall}
       {FeedbackButton}
 
       {/* Stars background */}
