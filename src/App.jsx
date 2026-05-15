@@ -834,6 +834,8 @@ export default function RosaryApp() {
   const [screen, setScreen] = useState("home");
   const [showDedication, setShowDedication] = useState(true);
   const [showSplash, setShowSplash] = useState(true);
+  const [savedProgress, setSavedProgress] = useState(null);
+  const [showResumePrompt, setShowResumePrompt] = useState(false);
 
   // Feedback state
   const [showFeedback, setShowFeedback] = useState(false);
@@ -861,7 +863,7 @@ export default function RosaryApp() {
   const [prayerList, setPrayerList] = useState([]);
   const [prayerSubmitted, setPrayerSubmitted] = useState(false);
 
-  // Load feedback and prayers from storage on mount
+  // Load feedback, prayers, and saved progress on mount
   useEffect(() => {
     async function loadData() {
       try {
@@ -872,9 +874,27 @@ export default function RosaryApp() {
         const result = await window.storage.get("rosary_prayers", true);
         if (result) setPrayerList(JSON.parse(result.value));
       } catch (e) { setPrayerList([]); }
+      try {
+        const raw = localStorage.getItem("rosary_progress");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.currentStep > 0) {
+            setSavedProgress(parsed);
+            setShowResumePrompt(true);
+          }
+        }
+      } catch (e) { /* ignore */ }
     }
     loadData();
   }, []);
+
+  // Save progress to localStorage while praying
+  useEffect(() => {
+    if (screen === "praying" && currentStep > 0) {
+      const progress = { mysterySet, currentStep, totalSteps: sequence.length };
+      try { localStorage.setItem("rosary_progress", JSON.stringify(progress)); } catch (e) { /* ignore */ }
+    }
+  }, [screen, currentStep, mysterySet, sequence.length]);
 
   // Save feedback to storage
   async function submitFeedback() {
@@ -960,6 +980,8 @@ export default function RosaryApp() {
     setExpandedPrayer(null);
     setStickyExpanded(new Set());
     setScreen("home");
+    try { localStorage.removeItem("rosary_progress"); } catch (e) { /* ignore */ }
+    setSavedProgress(null);
   }, [mysterySet]);
 
   const advance = () => {
@@ -973,7 +995,11 @@ export default function RosaryApp() {
   };
 
   useEffect(() => {
-    if (step?.type === "complete") setScreen("complete");
+    if (step?.type === "complete") {
+      setScreen("complete");
+      try { localStorage.removeItem("rosary_progress"); } catch (e) { /* ignore */ }
+      setSavedProgress(null);
+    }
   }, [step]);
 
   const progress = Math.round((currentStep / (sequence.length - 2)) * 100);
@@ -1569,13 +1595,54 @@ export default function RosaryApp() {
               );
             })}
           </div>
-          <button onClick={() => { setSequence(buildSequence(mysterySet)); setCurrentStep(0); setScreen("praying"); }} style={{
-            width: "100%", background: "#2d1b3d", color: "white", border: "none",
-            borderRadius: 14, padding: "15px", fontSize: 16, fontFamily: "'Lora',serif",
-            fontWeight: 700, cursor: "pointer", marginBottom: 20,
-          }}>
-            Begin the Rosary
-          </button>
+          {showResumePrompt && savedProgress ? (
+            <div style={{ marginBottom: 20, background: "#f5eeff", borderRadius: 14, border: "2px solid #6b3fa0", padding: "16px", marginTop: 0 }}>
+              <div style={{ fontSize: 13, color: "#6b3fa0", fontWeight: 700, fontFamily: "'Lora',serif", marginBottom: 4 }}>
+                You left off in the middle of a Rosary
+              </div>
+              <div style={{ fontSize: 12, color: "#7a4fa6", fontFamily: "'Lora',serif", marginBottom: 14 }}>
+                {savedProgress.mysterySet} Mysteries · {Math.round((savedProgress.currentStep / (savedProgress.totalSteps - 2)) * 100)}% complete
+              </div>
+              <div style={{ display: "flex", gap: 10 }}>
+                <button onClick={() => {
+                  const seq = buildSequence(savedProgress.mysterySet);
+                  setMysterySet(savedProgress.mysterySet);
+                  setSequence(seq);
+                  setCurrentStep(savedProgress.currentStep);
+                  setExpandedPrayer(null);
+                  setStickyExpanded(new Set());
+                  setShowResumePrompt(false);
+                  setScreen("praying");
+                }} style={{
+                  flex: 1, background: "#6b3fa0", color: "white", border: "none",
+                  borderRadius: 10, padding: "12px 8px", fontSize: 14, fontFamily: "'Lora',serif",
+                  fontWeight: 700, cursor: "pointer",
+                }}>
+                  Resume
+                </button>
+                <button onClick={() => {
+                  setShowResumePrompt(false);
+                  setSavedProgress(null);
+                  try { localStorage.removeItem("rosary_progress"); } catch (e) { /* ignore */ }
+                }} style={{
+                  flex: 1, background: "white", color: "#6b3fa0", border: "2px solid #6b3fa0",
+                  borderRadius: 10, padding: "12px 8px", fontSize: 14, fontFamily: "'Lora',serif",
+                  fontWeight: 700, cursor: "pointer",
+                }}>
+                  Start Fresh
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button onClick={() => { setSequence(buildSequence(mysterySet)); setCurrentStep(0); setScreen("praying"); }} style={{
+              width: "100%", background: "#2d1b3d", color: "white", border: "none",
+              borderRadius: 14, padding: "15px", fontSize: 16, fontFamily: "'Lora',serif",
+              fontWeight: 700, cursor: "pointer",
+            }}>
+              Begin the Rosary
+            </button>
+          )}
+          <div style={{ height: 20 }} />
           <div style={{ background: "white", borderRadius: 14, padding: "12px 14px" }}>
             <div style={{ fontSize: 12, color: "#7a6680", marginBottom: 8 }}>{mysterySet} Mysteries</div>
             {MYSTERIES[mysterySet].map((m, i) => (
