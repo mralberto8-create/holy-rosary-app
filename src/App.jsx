@@ -862,6 +862,9 @@ export default function RosaryApp() {
   const [showPrayerWarrior, setShowPrayerWarrior] = useState(false);
   const [showPrayerWall, setShowPrayerWall] = useState(false);
 
+  // User Guide
+  const [showUserGuide, setShowUserGuide] = useState(false);
+
   // MJK Novena
   const [showMJK, setShowMJK] = useState(false);
   const [prayerIntention, setPrayerIntention] = useState("");
@@ -1480,6 +1483,137 @@ export default function RosaryApp() {
     </div>
   ) : null;
 
+  // ── USER GUIDE OVERLAY ──
+  const UserGuide = showUserGuide ? (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 9999,
+      background: "rgba(10,5,20,0.85)",
+      display: "flex", alignItems: "flex-end",
+    }} onClick={() => setShowUserGuide(false)}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: "100%", maxWidth: 390, margin: "0 auto",
+        background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
+        borderRadius: "24px 24px 0 0",
+        maxHeight: "90vh", overflowY: "auto",
+        paddingBottom: 40,
+        animation: "fadeIn 0.25s ease",
+      }}>
+        {/* Handle */}
+        <div onClick={() => setShowUserGuide(false)} style={{ padding: "12px 0 4px", cursor: "pointer", display: "flex", justifyContent: "center" }}>
+          <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.4)", borderRadius: 99 }} />
+        </div>
+        <div style={{ padding: "16px 22px 0" }}>
+          <div style={{ fontSize: 22, fontWeight: 700, color: "#f0e6ff", fontFamily: "'Lora',serif", marginBottom: 4 }}>How to Use the App</div>
+          <div style={{ fontSize: 13, color: "#9b7aba", fontFamily: "'Lora',serif", fontStyle: "italic", marginBottom: 24 }}>A simple guide to every feature</div>
+
+          {/* Section helper */}
+          {[
+            {
+              heading: "Choosing Your Mysteries",
+              icon: "✦",
+              lines: [
+                "At the top of the home screen, tap one of the four mystery buttons — Joyful, Sorrowful, Glorious, or Luminous.",
+                "The app will suggest the traditional mysteries for today's day of the week. You'll see a small '✦ Suggested' label on the recommended choice.",
+                "Each mystery set includes a list of the five mysteries shown below the buttons so you know what you'll be praying.",
+              ],
+            },
+            {
+              heading: "Beginning the Rosary",
+              icon: "🌿",
+              lines: [
+                "Once you've chosen your mysteries, tap Begin the Rosary. The app will walk you through every prayer step by step.",
+                "If you left a Rosary unfinished, you'll see a Resume card. Tap Resume to pick up exactly where you left off, or Start Fresh to begin from the Sign of the Cross.",
+              ],
+            },
+            {
+              heading: "Navigating the Prayers",
+              icon: "←  →",
+              lines: [
+                "On the prayer screen, use the Back and Next buttons to move one step at a time.",
+                "You can also tap any bead on the rosary image to jump directly to that step.",
+                "Tap the prayer card itself to expand or collapse the full prayer text.",
+                "Tap Expand All Prayers (lower left) to see the full text of every prayer at once.",
+              ],
+            },
+            {
+              heading: "Sleep Mode  —  the Moon Button",
+              icon: null,
+              moonIcon: true,
+              lines: [
+                "Tap the moon icon in the top right corner of the prayer screen to turn on Sleep Mode.",
+                "When active, the app reads each prayer aloud in a warm, natural voice and automatically advances to the next step when it finishes.",
+                "This is perfect for praying at bedtime — simply lay your phone down and listen.",
+                "Tap the moon again to stop at any time. It turns golden while active.",
+              ],
+            },
+            {
+              heading: "Learn More",
+              icon: "↓",
+              lines: [
+                "When you reach a mystery step, a Learn More button appears below the mystery card.",
+                "Tap it to open a deeper meditation — including the Scripture passage, the Fruit of the Mystery, and a full reflection.",
+                "To close it, tap the gray pill bar at the top of the card, tap the Return to Prayer button, or tap anywhere outside the card.",
+              ],
+            },
+            {
+              heading: "Community Features",
+              icon: null,
+              navIcons: true,
+              lines: [
+                "🙏  Prayer Wall — Read prayer intentions shared by others in the community.",
+                "⚔️  Prayer Requests — Submit your own prayer intention to be prayed for.",
+                "💬  Feedback — Rate the app and share a comment.",
+                "📋  View Feedback — Read feedback left by other users.",
+                "These four buttons are always visible at the bottom of the screen.",
+              ],
+            },
+            {
+              heading: "MJK Novena",
+              icon: null,
+              lines: [
+                "Tap the MJK Novena button in the top right of the home screen to open a special novena prayer.",
+              ],
+            },
+          ].map(({ heading, icon, moonIcon, navIcons, lines }) => (
+            <div key={heading} style={{ marginBottom: 28 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 10 }}>
+                {moonIcon ? (
+                  <svg width="26" height="28" viewBox="0 0 36 38" fill="none">
+                    <defs><mask id="guideMoon"><rect width="36" height="38" fill="white"/><circle cx="21" cy="15" r="11.5" fill="black"/></mask></defs>
+                    <circle cx="15" cy="17" r="13.5" fill="rgba(200,160,232,0.85)" mask="url(#guideMoon)"/>
+                    <circle cx="23" cy="26.5" r="2.2" fill="rgba(200,160,232,0.85)"/>
+                    <rect x="21.3" y="28.5" width="3.4" height="3.5" rx="0.8" fill="rgba(200,160,232,0.85)"/>
+                    <line x1="22" y1="32" x2="20.5" y2="35.5" stroke="rgba(200,160,232,0.85)" strokeWidth="1.6" strokeLinecap="round"/>
+                    <line x1="24" y1="32" x2="23.5" y2="35.5" stroke="rgba(200,160,232,0.85)" strokeWidth="1.6" strokeLinecap="round"/>
+                    <line x1="24.5" y1="29.5" x2="31" y2="22.5" stroke="rgba(200,160,232,0.85)" strokeWidth="1.3" strokeLinecap="round"/>
+                    <line x1="31" y1="22.5" x2="33" y2="30" stroke="rgba(200,160,232,0.6)" strokeWidth="0.8" strokeLinecap="round"/>
+                    <circle cx="33" cy="30.5" r="1.2" fill="rgba(200,160,232,0.85)"/>
+                  </svg>
+                ) : icon ? (
+                  <div style={{ width: 28, height: 28, borderRadius: "50%", background: "rgba(107,63,160,0.35)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, color: "#c9a0e8", fontWeight: 700, flexShrink: 0 }}>{icon}</div>
+                ) : null}
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>{heading}</div>
+              </div>
+              {lines.map((line, i) => (
+                <div key={i} style={{ fontSize: 14, color: "#d4b8f0", fontFamily: "'Lora',serif", lineHeight: 1.75, marginBottom: 6, paddingLeft: 38 }}>{line}</div>
+              ))}
+            </div>
+          ))}
+
+          {/* Close */}
+          <button onClick={() => setShowUserGuide(false)} style={{
+            width: "100%", marginTop: 8, background: "rgba(107,63,160,0.4)",
+            border: "1px solid rgba(200,160,232,0.2)", borderRadius: 14,
+            padding: "13px", color: "#c9a0e8", fontFamily: "'Lora',serif",
+            fontSize: 15, cursor: "pointer", fontWeight: 600,
+          }}>
+            Close Guide
+          </button>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   // ── BOTTOM NAV BAR ──
   const navItems = [
     { icon: "🙏", label: "Prayer Wall",      action: () => { setShowPrayerWall(true); setShowPrayerWarrior(false); setShowFeedback(false); setShowFeedbackViewer(false); } },
@@ -1650,6 +1784,7 @@ export default function RosaryApp() {
         {FeedbackViewer}
         {PrayerWarriorPanel}
         {PrayerWall}
+        {UserGuide}
         {FeedbackButton}
         {showMJK && (
           <div style={{
@@ -1695,16 +1830,26 @@ export default function RosaryApp() {
             <div style={{ fontSize: 12, color: "#c9a0e8", letterSpacing: 2, textTransform: "uppercase" }}>The Holy</div>
             <div style={{ fontSize: 28, fontWeight: 700 }}>Rosary</div>
           </div>
-          <button onClick={() => setShowMJK(true)} style={{
-            background: "rgba(255,255,255,0.12)",
-            border: "1px solid rgba(200,160,232,0.4)",
-            borderRadius: 10, padding: "8px 14px",
-            color: "white", fontFamily: "'Lora',serif",
-            fontSize: 12, fontWeight: 700, cursor: "pointer",
-            letterSpacing: 0.5, lineHeight: 1.4, textAlign: "center",
-          }}>
-            MJK<br/>Novena
-          </button>
+          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+            <button onClick={() => setShowUserGuide(true)} style={{
+              background: "rgba(255,255,255,0.12)",
+              border: "1px solid rgba(200,160,232,0.4)",
+              borderRadius: 10, padding: "8px 12px",
+              color: "white", fontFamily: "'Lora',serif",
+              fontSize: 12, fontWeight: 700, cursor: "pointer",
+              letterSpacing: 0.5,
+            }}>Guide</button>
+            <button onClick={() => setShowMJK(true)} style={{
+              background: "rgba(255,255,255,0.12)",
+              border: "1px solid rgba(200,160,232,0.4)",
+              borderRadius: 10, padding: "8px 14px",
+              color: "white", fontFamily: "'Lora',serif",
+              fontSize: 12, fontWeight: 700, cursor: "pointer",
+              letterSpacing: 0.5, lineHeight: 1.4, textAlign: "center",
+            }}>
+              MJK<br/>Novena
+            </button>
+          </div>
         </div>
         <div style={{ padding: "18px", overflowY: "auto" }}>
           <div style={{ fontSize: 12, color: "#7a6680", marginBottom: 8 }}>Choose mysteries</div>
