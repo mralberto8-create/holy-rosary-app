@@ -1579,7 +1579,7 @@ export default function RosaryApp() {
 
         <p style={{ fontSize: 14, color: "rgba(200,160,232,0.8)", lineHeight: 2, fontStyle: "italic", margin: "0 0 24px", textAlign: "center" }}>
           Daughter of the Most High<br/>
-          Wife · Bride · Lover · My Person<br/>
+          Wife · Bride · Lover · My World<br/>
           Mother · Sister · Daughter<br/>
           Aunt · Cousin<br/>
           Caring Friend · Loving Neighbor
