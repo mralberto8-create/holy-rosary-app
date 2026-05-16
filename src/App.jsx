@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 // ── DATA ────────────────────────────────────────────────────────────────────
 
@@ -837,6 +837,12 @@ export default function RosaryApp() {
   const [savedProgress, setSavedProgress] = useState(null);
   const [showResumePrompt, setShowResumePrompt] = useState(false);
 
+  // Sleep / auto-play mode
+  const [autoPlay, setAutoPlay] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const autoPlayRef = useRef(false);
+  const seqLenRef = useRef(sequence.length);
+
   // Feedback state
   const [showFeedback, setShowFeedback] = useState(false);
   const [showFeedbackViewer, setShowFeedbackViewer] = useState(false);
@@ -947,6 +953,127 @@ export default function RosaryApp() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Keep sequence length ref current for use inside speech callbacks
+  useEffect(() => { seqLenRef.current = sequence.length; }, [sequence]);
+
+  // Cancel speech and reset autoplay when leaving the praying screen
+  useEffect(() => {
+    if (screen !== "praying") {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
+      setAutoPlay(false);
+      autoPlayRef.current = false;
+    }
+  }, [screen]);
+
+  // Map a sequence step to its MP3 filename (if one exists)
+  const audioFileForStep = (s) => {
+    if (!s) return null;
+    if (s.type === "prayer") {
+      const map = {
+        signOfCross: "prayer_sign_of_cross.mp3",
+        apostlesCreed: "prayer_apostles_creed.mp3",
+        ourFather: "prayer_our_father.mp3",
+        hailMary: "prayer_hail_mary.mp3",
+        gloryBe: "prayer_glory_be.mp3",
+        fatimaPrayer: "prayer_fatima.mp3",
+        hailHolyQueen: "prayer_hail_holy_queen.mp3",
+        finalPrayer: "prayer_final.mp3",
+      };
+      return map[s.prayer] ? `/audio/${map[s.prayer]}` : null;
+    }
+    if (s.type === "mystery") {
+      const setKey = { Joyful: "joyful", Sorrowful: "sorrowful", Glorious: "glorious", Luminous: "luminous" };
+      const key = setKey[mysterySet];
+      if (key) return `/audio/mystery_${key}_${s.decadeIndex + 1}.mp3`;
+    }
+    return null;
+  };
+
+  // Speak the current step whenever autoPlay is on and the step changes
+  useEffect(() => {
+    if (!autoPlay || screen !== "praying") return;
+
+    window.speechSynthesis.cancel();
+    const s = sequence[currentStep];
+    if (!s || s.type === "complete") return;
+
+    const pauseMs = s.type === "mystery" ? 5000 : 2500;
+    const audioFile = audioFileForStep(s);
+
+    const onEnd = () => {
+      setIsSpeaking(false);
+      if (autoPlayRef.current) {
+        setTimeout(() => {
+          if (autoPlayRef.current) {
+            setCurrentStep(c => Math.min(c + 1, seqLenRef.current - 1));
+            setExpandedPrayer(null);
+          }
+        }, pauseMs);
+      }
+    };
+
+    if (audioFile) {
+      let cancelled = false;
+      const audio = new Audio(audioFile);
+      audio.play()
+        .then(() => { if (!cancelled) setIsSpeaking(true); })
+        .catch(() => { /* play() rejected — audio will be silent, onEnd won't fire */ });
+      audio.onended = () => { if (!cancelled) onEnd(); };
+      return () => {
+        cancelled = true;
+        audio.onended = null;
+        audio.pause();
+        audio.src = "";
+        window.speechSynthesis.cancel();
+        setIsSpeaking(false);
+      };
+    } else {
+      speakWithTTS(s, onEnd);
+      return () => { window.speechSynthesis.cancel(); setIsSpeaking(false); };
+    }
+
+    function speakWithTTS(step, onend) {
+      let text = "";
+      if (step.type === "prayer") {
+        const p = PRAYERS[step.prayer];
+        text = p.name + ". " + p.text;
+      } else if (step.type === "mystery") {
+        const m = step.mystery;
+        text = `Mystery ${step.decadeIndex + 1}: ${m.title}. ${m.scripture}. ${m.description}`;
+      }
+      if (!text) return;
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.78;
+      utterance.pitch = 0.88;
+      utterance.volume = 1.0;
+
+      const assignVoice = () => {
+        const voices = window.speechSynthesis.getVoices();
+        const enhancedFeminine = [
+          "Samantha (Enhanced)", "Karen (Enhanced)", "Moira (Enhanced)",
+          "Tessa (Enhanced)", "Fiona (Enhanced)", "Veena (Enhanced)",
+        ];
+        const feminineFallback = ["Samantha", "Karen", "Moira", "Tessa", "Fiona", "Veena", "Victoria", "Serena"];
+        const pick =
+          voices.find(v => enhancedFeminine.includes(v.name)) ||
+          voices.find(v => feminineFallback.includes(v.name)) ||
+          voices.find(v => v.lang === "en-US" && v.localService) ||
+          voices.find(v => v.lang.startsWith("en") && v.localService) ||
+          voices[0];
+        if (pick) utterance.voice = pick;
+      };
+      if (window.speechSynthesis.getVoices().length > 0) assignVoice();
+      else window.speechSynthesis.onvoiceschanged = assignVoice;
+
+      setIsSpeaking(true);
+      utterance.onend = onend;
+      utterance.onerror = () => setIsSpeaking(false);
+      window.speechSynthesis.speak(utterance);
+    }
+  }, [autoPlay, currentStep, screen, sequence, mysterySet]);
+
   // PWA meta tags — inject into document head
   useEffect(() => {
     const metas = [
@@ -984,6 +1111,13 @@ export default function RosaryApp() {
     setSavedProgress(null);
   }, [mysterySet]);
 
+  const toggleAutoPlay = () => {
+    const next = !autoPlay;
+    setAutoPlay(next);
+    autoPlayRef.current = next;
+    if (!next) { window.speechSynthesis.cancel(); setIsSpeaking(false); }
+  };
+
   const advance = () => {
     if (currentStep < sequence.length - 1) {
       setCurrentStep(c => c + 1);
@@ -1009,6 +1143,7 @@ export default function RosaryApp() {
     @keyframes fadeIn { from { opacity:0; transform:translateY(5px); } to { opacity:1; transform:none; } }
     @keyframes splashFade { 0% { opacity:1; } 80% { opacity:1; } 100% { opacity:0; } }
     @keyframes pulseBead { 0%,100% { transform:scale(1); opacity:0.7; } 50% { transform:scale(1.15); opacity:1; } }
+    @keyframes speakPulse { 0%,100% { opacity:0.5; } 50% { opacity:1; } }
     * { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; background: #1a0d2e; }
     body { -webkit-user-select: none; user-select: none; }
@@ -1766,6 +1901,20 @@ export default function RosaryApp() {
             ← Home
           </button>
           <div style={{ fontSize: 12, color: "white", fontFamily: "'Lora',serif", fontWeight: 700 }}>{mysterySet} Mysteries</div>
+          <button onClick={toggleAutoPlay} title={autoPlay ? "Stop Sleep Mode" : "Sleep Mode — reads prayers aloud"} style={{
+            background: autoPlay ? "rgba(200,160,232,0.25)" : "none",
+            border: autoPlay ? "1px solid rgba(200,160,232,0.5)" : "1px solid transparent",
+            borderRadius: 20, padding: "4px 10px", cursor: "pointer",
+            display: "flex", alignItems: "center", gap: 5,
+            transition: "all 0.2s",
+          }}>
+            <span style={{ fontSize: 16 }}>🌙</span>
+            {autoPlay && (
+              <span style={{ fontSize: 10, color: "#c9a0e8", fontFamily: "'Lora',serif", letterSpacing: 0.5, animation: "speakPulse 1.4s ease-in-out infinite" }}>
+                {isSpeaking ? "speaking…" : "pausing…"}
+              </span>
+            )}
+          </button>
         </div>
       </div>
 
