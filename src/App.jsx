@@ -842,6 +842,7 @@ export default function RosaryApp() {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const autoPlayRef = useRef(false);
   const seqLenRef = useRef(sequence.length);
+  const audioRef = useRef(null);
 
   // Feedback state
   const [showFeedback, setShowFeedback] = useState(false);
@@ -1015,16 +1016,19 @@ export default function RosaryApp() {
 
     if (audioFile) {
       let cancelled = false;
-      const audio = new Audio(audioFile);
+      if (!audioRef.current) audioRef.current = new Audio();
+      const audio = audioRef.current;
+      const handleEnded = () => { if (!cancelled) onEnd(); };
+      audio.addEventListener('ended', handleEnded);
+      audio.src = audioFile;
+      audio.load();
       audio.play()
         .then(() => { if (!cancelled) setIsSpeaking(true); })
-        .catch(() => { /* play() rejected — audio will be silent, onEnd won't fire */ });
-      audio.onended = () => { if (!cancelled) onEnd(); };
+        .catch(() => { /* iOS blocked — silence */ });
       return () => {
         cancelled = true;
-        audio.onended = null;
+        audio.removeEventListener('ended', handleEnded);
         audio.pause();
-        audio.src = "";
         window.speechSynthesis.cancel();
         setIsSpeaking(false);
       };
@@ -2071,8 +2075,10 @@ export default function RosaryApp() {
               maxHeight: "80vh", overflowY: "auto",
               animation: "fadeIn 0.25s ease",
             }}>
-              {/* Handle */}
-              <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99, margin: "0 auto 20px" }} />
+              {/* Handle — tap to dismiss */}
+              <div onClick={() => setLearnMore(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center" }}>
+                <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.4)", borderRadius: 99 }} />
+              </div>
               {/* Mystery title */}
               <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif", letterSpacing: 1.5, textTransform: "uppercase", marginBottom: 6 }}>
                 Mystery {decadeIdx + 1}
