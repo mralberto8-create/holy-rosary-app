@@ -1908,7 +1908,31 @@ export default function RosaryApp() {
             display: "flex", alignItems: "center", gap: 5,
             transition: "all 0.2s",
           }}>
-            <span style={{ fontSize: 16 }}>🌙</span>
+            {/* Crescent moon with boy fishing — DreamWorks style */}
+            <svg width="32" height="34" viewBox="0 0 36 38" fill="none">
+              <defs>
+                <mask id="moonMask">
+                  <rect width="36" height="38" fill="white"/>
+                  <circle cx="21" cy="15" r="11.5" fill="black"/>
+                </mask>
+              </defs>
+              {/* Crescent body */}
+              <circle cx="15" cy="17" r="13.5" fill={autoPlay ? "#FFD97D" : "rgba(200,160,232,0.75)"} mask="url(#moonMask)"/>
+              {/* Boy — sitting on the lower horn of the crescent */}
+              {/* Head */}
+              <circle cx="23" cy="26.5" r="2.2" fill={autoPlay ? "#FFD97D" : "rgba(200,160,232,0.75)"}/>
+              {/* Body */}
+              <rect x="21.3" y="28.5" width="3.4" height="3.5" rx="0.8" fill={autoPlay ? "#FFD97D" : "rgba(200,160,232,0.75)"}/>
+              {/* Legs dangling down */}
+              <line x1="22" y1="32" x2="20.5" y2="35.5" stroke={autoPlay ? "#FFD97D" : "rgba(200,160,232,0.75)"} strokeWidth="1.6" strokeLinecap="round"/>
+              <line x1="24" y1="32" x2="23.5" y2="35.5" stroke={autoPlay ? "#FFD97D" : "rgba(200,160,232,0.75)"} strokeWidth="1.6" strokeLinecap="round"/>
+              {/* Fishing rod */}
+              <line x1="24.5" y1="29.5" x2="31" y2="22.5" stroke={autoPlay ? "#FFD97D" : "rgba(200,160,232,0.75)"} strokeWidth="1.3" strokeLinecap="round"/>
+              {/* Fishing line */}
+              <line x1="31" y1="22.5" x2="33" y2="30" stroke={autoPlay ? "#FFD97D" : "rgba(200,160,232,0.6)"} strokeWidth="0.8" strokeLinecap="round"/>
+              {/* Float / bobber */}
+              <circle cx="33" cy="30.5" r="1.2" fill={autoPlay ? "#FFD97D" : "rgba(200,160,232,0.75)"}/>
+            </svg>
             {autoPlay && (
               <span style={{ fontSize: 10, color: "#c9a0e8", fontFamily: "'Lora',serif", letterSpacing: 0.5, animation: "speakPulse 1.4s ease-in-out infinite" }}>
                 {isSpeaking ? "speaking…" : "pausing…"}
