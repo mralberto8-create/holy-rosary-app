@@ -865,6 +865,11 @@ export default function RosaryApp() {
   // User Guide
   const [showUserGuide, setShowUserGuide] = useState(false);
 
+  // FAQ
+  const [showFAQ, setShowFAQ] = useState(false);
+  const [faqTab, setFaqTab] = useState("about");
+  const [faqOpenSection, setFaqOpenSection] = useState(null);
+
   // MJK Novena
   const [showMJK, setShowMJK] = useState(false);
   const [prayerIntention, setPrayerIntention] = useState("");
@@ -1825,24 +1830,203 @@ export default function RosaryApp() {
             </div>
           </div>
         )}
+        {showFAQ && (() => {
+          const aboutSections = [
+            {
+              title: "What the Rosary Actually Is",
+              body: `At its core, the Rosary is the Gospel prayed slowly.\n\nEach of the twenty Mysteries is a scene drawn directly from the life of Jesus — His birth in Bethlehem, His baptism in the Jordan, His agony in the Garden, His death on the Cross, His resurrection on the third day. To pray the Rosary is to walk through the entire sweep of the Gospel, pausing at each moment to let it sink into the heart.\n\nThe prayers themselves — the Our Father, the Hail Mary, the Glory Be — are either taken word for word from Scripture or deeply rooted in it. The Our Father is the prayer Jesus Himself taught us (Matthew 6:9–13). The first half of the Hail Mary is composed entirely of the words of the Angel Gabriel and Elizabeth, straight from the Gospel of Luke.\n\nThe repetition of the Hail Mary creates a kind of interior quiet in which the mind and heart are free to rest on Christ. The words become almost like a heartbeat — steady and unobtrusive — while the soul gazes at Jesus.`,
+            },
+            {
+              title: "Do Catholics Pray to Mary?",
+              body: `When Catholics speak to Mary, they are not worshiping her. They are asking her to intercede — to bring their needs before her Son, just as a dear friend might be asked to pray on someone's behalf. This is called intercessory prayer, and it is thoroughly biblical.\n\nSt. Paul urged the early Christians to pray for one another: "I urge you, brothers and sisters… to join me in my struggle by praying to God for me" (Romans 15:30). James wrote: "The prayer of a righteous person is powerful and effective" (James 5:16).\n\nThe Church teaches clearly that Jesus Christ is the one Mediator between God and humanity (1 Timothy 2:5). Mary does not replace that mediation — she participates in it, as all intercessors do, by directing prayer toward her Son. Catholics do not believe Mary has power of her own. They believe she has a mother's ear with her Son — and they ask her to use it.`,
+            },
+            {
+              title: "The Wedding at Cana",
+              body: `Perhaps no moment in Scripture illuminates Mary's role more beautifully than the Wedding at Cana (John 2:1–11) — one of the Luminous Mysteries of the Rosary.\n\nJesus and Mary are guests at a wedding in Cana. The wine runs out. Mary notices — and what does she do? She doesn't solve it herself. She goes quietly to Jesus and says: "They have no wine."\n\nJesus responds: "Woman, what does this have to do with me? My hour has not yet come." Yet Mary, with serene confidence, turns to the servants and says words that have echoed through Christian history: "Do whatever He tells you."\n\nJesus performs His first public miracle. Look at the pattern:\n\nA need arises → Mary brings it to Jesus → Jesus acts → Mary's final recorded words in all of Scripture are a direct command to follow Christ.\n\nThis is Mary's role. Always and only. She does not say "Come to me." She says "Go to Him." The Rosary does exactly the same thing.`,
+            },
+            {
+              title: "Standing Beside Mary at the Cross",
+              body: `One of the most profound gifts of the Rosary is that it invites the soul to see the mysteries of Christ's life through Mary's eyes.\n\nConsider the Fifth Sorrowful Mystery: the Crucifixion. As you pray, you are not merely reading about the death of Jesus from a distance. You are standing where Mary stood — at the foot of the Cross, watching her Son die for the sins of the world.\n\nThis is the genius of the Rosary. It does not merely inform — it forms. It does not merely teach about Christ — it draws the soul into relationship with Christ, through the motherly companionship of the one who knew Him best.`,
+            },
+            {
+              title: "A Response to Concerns About Heresy",
+              body: `Some Christians, with genuine faith and sincere concern, have called the Catholic veneration of Mary a heresy — a worship of a creature in the place of God. This concern deserves a respectful and direct response.\n\nThe Rosary, properly understood, is not a departure from the Gospel — it is the Gospel, prayed and contemplated. Every mystery is a scene from the life of Christ. Every Our Father is the prayer He taught us. Every Glory Be is a doxology of praise to the Trinity.\n\nThe Catholic Church has never taught that Mary is divine, equal to Christ, or a source of grace in herself. The Catechism is explicit: "Mary's role in the Church is inseparable from her union with Christ and flows directly from it."\n\nIf honoring the mother of Jesus is heresy, then one must reckon with Elizabeth, who cried out under the inspiration of the Holy Spirit: "Blessed are you among women, and blessed is the fruit of your womb!" (Luke 1:42). The Church has simply never stopped saying what Elizabeth said.`,
+            },
+            {
+              title: "An Invitation",
+              body: `If you have never prayed the Rosary, or if you have held it at arm's length out of suspicion or misunderstanding, consider this: pick it up, and let it lead you where it has always led — to the life, death, and resurrection of Jesus Christ, the Son of God and the Savior of the world.\n\nMary will not keep you. She never does. She will simply say, as she said to the servants at Cana, what she has always said:\n\n"Do whatever He tells you."`,
+            },
+          ];
+
+          const historySections = [
+            {
+              title: "The Earliest Roots (3rd–4th Century)",
+              body: `Long before the Rosary took its familiar form, the earliest Christians felt the need to return, again and again, to God. The Desert Fathers of Egypt and Syria, as early as the 3rd and 4th centuries, would carry pouches of small stones, moving one pebble at a time as they repeated prayers throughout the day. It was a simple, humble practice — prayer made physical, anchored in the body as much as the soul.\n\nThe goal was the repetition of 150 Psalms, the great ancient prayer book of the Church. The number 150 would echo through the centuries as the Rosary slowly took shape.`,
+            },
+            {
+              title: "The People's Prayer: From Psalms to Hail Marys",
+              body: `As Christianity spread into villages and towns, most ordinary Christians — farmers, tradespeople, mothers, and children — could not read. The Latin Psalms were beyond their reach. Yet their hearts burned with the same desire to pray.\n\nAnd so, quietly and gradually, the faithful began to substitute 150 Our Fathers for the 150 Psalms, keeping count on knotted ropes or simple strings of beads called paternosters — a word that means "Our Father." Later, as devotion to Mary deepened, the Our Fathers gave way to 150 Hail Marys, drawn directly from the words of the Angel Gabriel and Elizabeth in Luke.\n\nThis became known as the Psalter of Mary — the Poor Man's Psalter. A grandmother in a medieval village, unable to read a single word, holding her beads and whispering the same prayer that monks chanted in great stone monasteries.`,
+            },
+            {
+              title: "The Hail Mary: Scripture Woven Into Prayer",
+              body: `The prayer at the heart of the Rosary grew slowly, like a tree putting down roots.\n\nThe first part came from the Angel Gabriel's greeting at the Annunciation: "Hail, full of grace, the Lord is with you" (Luke 1:28). The second part came from Elizabeth: "Blessed are you among women, and blessed is the fruit of your womb" (Luke 1:42).\n\nOver time, the name of Jesus was added at the center — grounding the prayer in Christ. Finally, the second half — "Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death" — was gradually added, reaching its final form around the 16th century. What had begun as pure Scripture had become a complete prayer, always pointing toward her Son.`,
+            },
+            {
+              title: "St. Dominic and the Dominican Gift (13th Century)",
+              body: `According to a beloved tradition, the Virgin Mary appeared to St. Dominic — a Spanish priest preaching against heresy in southern France — and entrusted him with the Rosary as a spiritual weapon of such power that it could turn hearts back to the truth of the Gospel.\n\nMost historians note the Rosary was already developing before Dominic's time. But what is certain: the Dominican Order embraced the Rosary with extraordinary zeal, preaching it across Europe and establishing Rosary confraternities — communities of ordinary people who committed to praying it together. St. Dominic may not have invented the Rosary, but he and his brothers gave it wings.`,
+            },
+            {
+              title: "The Mysteries: From Repetition to Contemplation (15th Century)",
+              body: `In the 15th century, a Dominican priest named Alanus de Rupe helped popularize a practice that would transform the Rosary: pairing each group of prayers with a Mystery — a scene from the life of Jesus to hold in the heart while the lips moved in prayer.\n\nSuddenly, the Rosary was not just counting prayers. It was a walking meditation through the entire Gospel. This was the insight that made the Rosary what it truly is: not mere repetition, but contemplation carried on the wings of repetition.`,
+            },
+            {
+              title: "The Physical Rosary: Crucifix and Beads (15th–16th Century)",
+              body: `The prayers of the Rosary developed first — the physical form we recognize today came together gradually over the 15th and 16th centuries.\n\nThe crucifix began appearing attached to the pendant section in the 1400s, as devotion to Christ's Passion deepened throughout the Church. Before that, rosaries were often simple knotted cords or plain loops of beads with no crucifix attached.\n\nBy the 16th century, rosary-making had become a craft in its own right, and the familiar form solidified: a crucifix at the base of the pendant, a large bead for the Our Father, three small beads for the Hail Marys, and then the circular loop of five decades — each decade anchored by a large Our Father bead and ten smaller Hail Mary beads.\n\nPope Pius V's 1569 standardization of the prayer structure gave the physical beads their definitive meaning and sequence. From that point forward, the hardware and the prayers were locked together as one unified whole.\n\nThe 2002 addition of the Luminous Mysteries by Pope John Paul II changed the prayer content — but not the beads themselves. The physical rosary you hold today is, in all its essentials, the same object Catholics have held in their hands for roughly five hundred years.`,
+            },
+            {
+              title: "Pope Pius V and the Battle of Lepanto (1571)",
+              body: `In 1569, Pope Pius V — himself a Dominican — gave the Rosary its formal structure: five decades per session, with fifteen Mysteries arranged into three groups: the Joyful, the Sorrowful, and the Glorious.\n\nTwo years later, a massive Ottoman fleet threatened to overwhelm Christian Europe at the Battle of Lepanto. Pope Pius V called on all of Christendom to pray the Rosary. Against all odds, the Christian fleet prevailed.\n\nPope Pius V attributed the victory to Our Lady of the Rosary. He established October 7th as the Feast of Our Lady of the Rosary — celebrated on that date ever since. The event cemented the Rosary's place at the very heart of Catholic identity.`,
+            },
+            {
+              title: "Fatima: Mary's Own Request (1917)",
+              body: `In the spring and summer of 1917, three shepherd children in Fatima, Portugal — Lucia, Francisco, and Jacinta — reported a series of apparitions of the Virgin Mary. The world was in the grip of the First World War, and Mary's request was the same in each appearance: "Pray the Rosary every day."\n\nThe Fatima apparitions, approved by the Church, sent a wave of renewed Rosary devotion around the world. For millions of Catholics in the 20th century, the Rosary became not just a tradition inherited from the past, but a living response to a mother's gentle, persistent call.`,
+            },
+            {
+              title: "St. John Paul II: The Luminous Mysteries (2002)",
+              body: `In October 2002, Pope John Paul II — who had carried a Rosary in his hand for virtually his entire priestly life — gave the Church a gift. In his apostolic letter Rosarium Virginis Mariae, he added a fourth set of Mysteries: the Luminous Mysteries, or Mysteries of Light.\n\nThese five new meditations focused on the public ministry of Jesus: His Baptism in the Jordan, the Wedding at Cana, the Proclamation of the Kingdom, the Transfiguration, and the Institution of the Eucharist.\n\nJohn Paul called the Rosary "my favorite prayer." It was the first structural change to the Rosary in over four centuries.`,
+            },
+            {
+              title: "What the Rosary Is, At Its Heart",
+              body: `Across seventeen centuries, through the hands of desert monks, medieval villagers, Dominican friars, popes, and shepherd children, the Rosary arrived at what it is today: a prayer of twenty mysteries, one hundred and fifty Hail Marys, and a lifetime of contemplation.\n\nIt is Scripture prayed slowly. It is the Gospel held in the hands. It is a mother's voice, passed from generation to generation, whispering the same thing she has always whispered — come, and look at my Son.\n\nHowever you came to the Rosary — by inheritance, by choice, or by some quiet grace you can't quite explain — you are part of a story that has been unfolding for a very long time. And every bead you pray adds one more voice to that great, unbroken chorus.`,
+            },
+          ];
+
+          const sections = faqTab === "about" ? aboutSections : historySections;
+
+          return (
+            <div style={{
+              position: "fixed", inset: 0, zIndex: 9990,
+              background: "rgba(0,0,0,0.6)",
+              display: "flex", justifyContent: "center",
+            }}>
+              <div style={{
+                width: "100%", maxWidth: 390,
+                background: "linear-gradient(180deg,#faf7fc,#f0eaf5)",
+                display: "flex", flexDirection: "column",
+                height: "100%",
+              }}>
+                {/* Header */}
+                <div style={{
+                  display: "flex", alignItems: "center",
+                  padding: "14px 16px", flexShrink: 0,
+                  background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)",
+                  borderBottom: "1px solid rgba(255,255,255,0.1)",
+                }}>
+                  <button onClick={() => setShowFAQ(false)} style={{
+                    background: "none", border: "none", color: "white",
+                    fontFamily: "'Lora',serif", fontSize: 15, cursor: "pointer",
+                    display: "flex", alignItems: "center", gap: 6,
+                  }}>← Back</button>
+                  <div style={{ flex: 1, textAlign: "center", color: "white", fontFamily: "'Lora',serif", fontSize: 15, fontWeight: 700, marginRight: 48 }}>
+                    Rosary FAQ
+                  </div>
+                </div>
+
+                {/* Tabs */}
+                <div style={{
+                  display: "flex", flexShrink: 0,
+                  borderBottom: "1px solid #e8dff0",
+                  background: "white",
+                }}>
+                  {[["about", "About the Rosary"], ["history", "History"]].map(([tab, label]) => (
+                    <button key={tab} onClick={() => { setFaqTab(tab); setFaqOpenSection(null); }} style={{
+                      flex: 1, padding: "12px 8px",
+                      background: "none", border: "none",
+                      borderBottom: faqTab === tab ? "3px solid #6b3fa0" : "3px solid transparent",
+                      color: faqTab === tab ? "#6b3fa0" : "#7a6680",
+                      fontFamily: "'Lora',serif", fontSize: 13, fontWeight: faqTab === tab ? 700 : 500,
+                      cursor: "pointer", transition: "all 0.15s",
+                    }}>{label}</button>
+                  ))}
+                </div>
+
+                {/* Intro blurb */}
+                <div style={{ flexShrink: 0, padding: "16px 18px 0", background: "white" }}>
+                  {faqTab === "about" ? (
+                    <div style={{ fontSize: 13, color: "#4a3550", fontFamily: "'Lora',serif", lineHeight: 1.75, fontStyle: "italic", paddingBottom: 14, borderBottom: "1px solid #f0eaf5" }}>
+                      One of the most common misunderstandings about the Rosary is that Catholics pray to Mary instead of to Jesus. The truth is both simple and beautiful: the Rosary is a meditation on the life of Jesus Christ. Mary's role is not to stand between the soul and Christ — it is to lead the soul to Christ, just as she has always done.
+                    </div>
+                  ) : (
+                    <div style={{ fontSize: 13, color: "#4a3550", fontFamily: "'Lora',serif", lineHeight: 1.75, fontStyle: "italic", paddingBottom: 14, borderBottom: "1px solid #f0eaf5" }}>
+                      The Rosary is one of the most beloved prayers in the history of the Christian faith — not because it was handed down complete and polished, but because it grew organically, shaped by the devotion of countless ordinary believers across many centuries.
+                    </div>
+                  )}
+                </div>
+
+                {/* Accordion sections */}
+                <div style={{ flex: 1, overflowY: "auto", padding: "12px 16px 80px", background: "white" }}>
+                  {sections.map((sec, i) => {
+                    const isOpen = faqOpenSection === i;
+                    return (
+                      <div key={i} style={{ marginBottom: 8, borderRadius: 12, border: "1px solid #e8dff0", overflow: "hidden" }}>
+                        <button onClick={() => setFaqOpenSection(isOpen ? null : i)} style={{
+                          width: "100%", padding: "14px 16px",
+                          background: isOpen ? "#f5eeff" : "white",
+                          border: "none", cursor: "pointer",
+                          display: "flex", justifyContent: "space-between", alignItems: "center",
+                          textAlign: "left",
+                        }}>
+                          <span style={{ fontSize: 13, fontWeight: 700, color: isOpen ? "#6b3fa0" : "#2d1b3d", fontFamily: "'Lora',serif", lineHeight: 1.4 }}>
+                            {sec.title}
+                          </span>
+                          <span style={{ color: "#6b3fa0", fontSize: 18, fontWeight: 700, flexShrink: 0, marginLeft: 8 }}>
+                            {isOpen ? "−" : "+"}
+                          </span>
+                        </button>
+                        {isOpen && (
+                          <div style={{ padding: "0 16px 16px", background: "#faf5ff" }}>
+                            {sec.body.split("\n\n").map((para, pi) => (
+                              <p key={pi} style={{ fontSize: 13, color: "#3a2a4a", fontFamily: "'Lora',serif", lineHeight: 1.85, margin: "12px 0 0" }}>
+                                {para}
+                              </p>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          );
+        })()}
+
         <div style={{ background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)", padding: "20px 20px 16px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div>
             <div style={{ fontSize: 12, color: "#c9a0e8", letterSpacing: 2, textTransform: "uppercase" }}>The Holy</div>
             <div style={{ fontSize: 28, fontWeight: 700 }}>Rosary</div>
           </div>
-          <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
             <button onClick={() => setShowUserGuide(true)} style={{
               background: "rgba(255,255,255,0.12)",
               border: "1px solid rgba(200,160,232,0.4)",
-              borderRadius: 10, padding: "8px 12px",
+              borderRadius: 10, padding: "8px 10px",
               color: "white", fontFamily: "'Lora',serif",
               fontSize: 12, fontWeight: 700, cursor: "pointer",
               letterSpacing: 0.5,
             }}>Guide</button>
+            <button onClick={() => { setShowFAQ(true); setFaqTab("about"); setFaqOpenSection(null); }} style={{
+              background: "rgba(255,255,255,0.12)",
+              border: "1px solid rgba(200,160,232,0.4)",
+              borderRadius: 10, padding: "8px 10px",
+              color: "white", fontFamily: "'Lora',serif",
+              fontSize: 12, fontWeight: 700, cursor: "pointer",
+              letterSpacing: 0.5,
+            }}>FAQ</button>
             <button onClick={() => setShowMJK(true)} style={{
               background: "rgba(255,255,255,0.12)",
               border: "1px solid rgba(200,160,232,0.4)",
-              borderRadius: 10, padding: "8px 14px",
+              borderRadius: 10, padding: "8px 10px",
               color: "white", fontFamily: "'Lora',serif",
               fontSize: 12, fontWeight: 700, cursor: "pointer",
               letterSpacing: 0.5, lineHeight: 1.4, textAlign: "center",
