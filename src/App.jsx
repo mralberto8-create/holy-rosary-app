@@ -639,10 +639,10 @@ function RosaryShape({ sequence, currentStep, onBeadTap, mini = false, activeMys
         const isCrucifix = b.beadType === "crucifix";
         const isLarge = b.beadType === "large";
         const active = isActive(b.stepIndex);
-        // Pendant HM beads are positions 2,3,4 (stepIndex 2,3,4)
+        // Pendant HM beads are at stepIndex 3,4,5 (bottom→top: 1,2,3)
         // Show number 1,2,3 only while still in pendant intro phase
-        const isPendantHM = !isCrucifix && !isLarge && b.stepIndex >= 2 && b.stepIndex <= 4;
-        const pendantHMNum = b.stepIndex - 1; // stepIndex 2→1, 3→2, 4→3
+        const isPendantHM = !isCrucifix && !isLarge && b.stepIndex >= 3 && b.stepIndex <= 5;
+        const pendantHMNum = b.stepIndex - 2; // stepIndex 3→1, 4→2, 5→3
         const showPendantNum = isPendantHM && inPendant && b.stepIndex <= currentStep;
 
         if (isCrucifix) {
