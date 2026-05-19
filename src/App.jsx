@@ -37,6 +37,179 @@ const PRAYERS = {
   },
 };
 
+// ── PIETA PRAYER BOOK DATA ───────────────────────────────────────────────────
+
+const PIETA_PRAYERS = [
+  {
+    category: "Daily Prayers",
+    prayers: [
+      {
+        name: "Sign of the Cross",
+        text: "In the name of the Father, and of the Son, and of the Holy Spirit. Amen.",
+      },
+      {
+        name: "Our Father",
+        text: "Our Father, who art in heaven, hallowed be Thy name; Thy kingdom come; Thy will be done on earth as it is in heaven. Give us this day our daily bread; and forgive us our trespasses as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil. Amen.",
+      },
+      {
+        name: "Hail Mary",
+        text: "Hail Mary, full of grace, the Lord is with thee; blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.",
+      },
+      {
+        name: "Glory Be",
+        text: "Glory be to the Father, and to the Son, and to the Holy Spirit; as it was in the beginning, is now, and ever shall be, world without end. Amen.",
+      },
+      {
+        name: "Apostles' Creed",
+        text: "I believe in God, the Father almighty, Creator of heaven and earth, and in Jesus Christ, His only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died and was buried; He descended into hell; on the third day He rose again from the dead; He ascended into heaven, and is seated at the right hand of God the Father almighty; from there He will come to judge the living and the dead. I believe in the Holy Spirit, the holy catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and life everlasting. Amen.",
+      },
+      {
+        name: "Daily Offering",
+        text: "O Jesus, through the Immaculate Heart of Mary, I offer You my prayers, works, joys and sufferings of this day for all the intentions of Your Sacred Heart, in union with the Holy Sacrifice of the Mass throughout the world, in reparation for my sins, for the intentions of all our associates, and in particular for the intention recommended this month by the Holy Father. Amen.",
+      },
+      {
+        name: "Morning Offering",
+        subtitle: "Act of Dedication",
+        text: "O my God, in union with the Immaculate Heart of Mary, I offer Thee the Precious Blood of Jesus from all the altars throughout the world, joining with it the offering of my every thought, word, and action of this day.\n\nO my Jesus, I desire today to gain every indulgence and merit I can, and I offer them, together with myself, to Mary Immaculate — that she may best apply them to the interests of Thy most Sacred Heart. Precious Blood of Jesus, save us! Immaculate Heart of Mary, pray for us! Sacred Heart of Jesus, have mercy on us! Amen.",
+      },
+      {
+        name: "Evening Prayer",
+        text: "O my God, I thank Thee for all the benefits which I have ever received from Thee, and particularly for those of this day. Give me light to see what sins I have committed, and grant me grace to be truly sorry for them.\n\nI have sinned against Thee, O Lord, have mercy on me. Examine your conscience.\n\nI am sorry for having offended Thee, O Lord. I firmly resolve, with the help of Thy grace, to avoid sin and the near occasion of sin, and to confess my sins as soon as possible. Amen.\n\nRemember, O most gracious Virgin Mary, that never was it known that anyone who fled to thy protection, implored thy help, or sought thy intercession, was left unaided. Inspired by this confidence, I fly unto thee, O Virgin of virgins, my Mother! To thee I come; before thee I stand, sinful and sorrowful. O Mother of the Word Incarnate, despise not my petitions, but in thy mercy hear and answer me. Amen.",
+      },
+      {
+        name: "Angelus",
+        subtitle: "Prayed at 6am, noon, and 6pm",
+        text: "V. The Angel of the Lord declared unto Mary.\nR. And she conceived of the Holy Spirit.\n\nHail Mary, full of grace, the Lord is with thee; blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.\n\nV. Behold the handmaid of the Lord.\nR. Be it done unto me according to thy word.\n\nHail Mary...\n\nV. And the Word was made flesh.\nR. And dwelt among us.\n\nHail Mary...\n\nV. Pray for us, O holy Mother of God.\nR. That we may be made worthy of the promises of Christ.\n\nLet us pray: Pour forth, we beseech Thee, O Lord, Thy grace into our hearts, that we to whom the Incarnation of Christ Thy Son was made known by the message of an Angel, may by His Passion and Cross be brought to the glory of His Resurrection. Through the same Christ our Lord. Amen.",
+      },
+    ],
+  },
+  {
+    category: "Acts of Faith, Hope & Love",
+    prayers: [
+      {
+        name: "Act of Faith",
+        text: "O my God, I firmly believe that Thou art one God in three Divine Persons, Father, Son and Holy Spirit. I believe that Thy divine Son became man, and died for our sins, and that He will come to judge the living and the dead. I believe these and all the truths which the holy Catholic Church teaches, because Thou hast revealed them, Who canst neither deceive nor be deceived. Amen.",
+      },
+      {
+        name: "Act of Hope",
+        text: "O my God, relying on Thy almighty power and infinite mercy and promises, I hope to obtain pardon of my sins, the help of Thy grace, and life everlasting, through the merits of Jesus Christ, my Lord and Redeemer. Amen.",
+      },
+      {
+        name: "Act of Love",
+        text: "O my God, I love Thee above all things, with my whole heart and soul, because Thou art all good and worthy of all love. I love my neighbor as myself for the love of Thee. I forgive all who have injured me, and ask pardon of all whom I have injured. Amen.",
+      },
+      {
+        name: "Act of Contrition",
+        text: "O my God, I am heartily sorry for having offended Thee, and I detest all my sins because of Thy just punishments, but most of all because they offend Thee, my God, Who art all good and deserving of all my love. I firmly resolve, with the help of Thy grace, to sin no more and to avoid the near occasion of sin. Amen.",
+      },
+    ],
+  },
+  {
+    category: "Prayers to Our Lady",
+    prayers: [
+      {
+        name: "Hail Holy Queen",
+        subtitle: "Salve Regina",
+        text: "Hail, Holy Queen, Mother of Mercy, our life, our sweetness and our hope! To thee do we cry, poor banished children of Eve; to thee do we send up our sighs, mourning and weeping in this valley of tears. Turn then, most gracious advocate, thine eyes of mercy toward us, and after this our exile, show unto us the blessed fruit of thy womb, Jesus. O clement, O loving, O sweet Virgin Mary!\n\nV. Pray for us, O holy Mother of God.\nR. That we may be made worthy of the promises of Christ.",
+      },
+      {
+        name: "Memorare",
+        text: "Remember, O most gracious Virgin Mary, that never was it known that anyone who fled to thy protection, implored thy help, or sought thy intercession, was left unaided. Inspired by this confidence, I fly unto thee, O Virgin of virgins, my Mother! To thee I come; before thee I stand, sinful and sorrowful. O Mother of the Word Incarnate, despise not my petitions, but in thy mercy hear and answer me. Amen.",
+      },
+      {
+        name: "Ave Maris Stella",
+        subtitle: "Hail, Star of the Sea",
+        text: "Hail, bright star of ocean,\nGod's own Mother blest,\nEver sinless Virgin,\nGate of heavenly rest.\n\nTaking that sweet Ave\nWhich from Gabriel came,\nPeace confirm within us,\nChanging Eva's name.\n\nBreak the captives' fetters,\nLight on blindness pour,\nAll our ills expelling,\nEvery bliss implore.\n\nShow thyself a Mother;\nMay the Word Divine,\nBorn for us thy Infant,\nHear our prayers through thine.\n\nVirgin all excelling,\nMildest of the mild,\nFreed from guilt, preserve us,\nPure and undefiled.\n\nKeep our life all spotless,\nMake our way secure,\nTill we find in Jesus\nJoy forevermore.\n\nThrough the highest heaven\nTo the Almighty Three,\nFather, Son and Spirit,\nOne same glory be. Amen.",
+      },
+      {
+        name: "Magnificat",
+        subtitle: "Canticle of Mary — Luke 1:46–55",
+        text: "My soul proclaims the greatness of the Lord,\nmy spirit rejoices in God my Savior\nfor He has looked with favor on His lowly servant.\n\nFrom this day all generations will call me blessed:\nthe Almighty has done great things for me,\nand holy is His Name.\n\nHe has mercy on those who fear Him\nin every generation.\n\nHe has shown the strength of His arm,\nHe has scattered the proud in their conceit.\n\nHe has cast down the mighty from their thrones,\nand has lifted up the lowly.\n\nHe has filled the hungry with good things,\nand the rich He has sent away empty.\n\nHe has come to the help of His servant Israel\nfor He has remembered His promise of mercy,\nthe promise He made to our fathers,\nto Abraham and his children forever. Amen.",
+      },
+      {
+        name: "Flos Carmeli",
+        subtitle: "Flower of Carmel",
+        text: "Flower of Carmel,\nTall vine blossom laden;\nSplendor of heaven,\nChildbearing yet maiden.\nNone equals thee.\n\nMother so tender,\nWho no man didst know,\nOn Carmel's children\nThy favors bestow.\nStar of the Sea. Amen.",
+      },
+    ],
+  },
+  {
+    category: "Prayers of the Saints",
+    prayers: [
+      {
+        name: "Anima Christi",
+        subtitle: "Soul of Christ — 14th century",
+        text: "Soul of Christ, sanctify me.\nBody of Christ, save me.\nBlood of Christ, inebriate me.\nWater from the side of Christ, wash me.\nPassion of Christ, strengthen me.\nO Good Jesus, hear me.\nWithin Thy wounds, hide me.\nSuffer me not to be separated from Thee.\nFrom the malicious enemy defend me.\nIn the hour of my death call me,\nAnd bid me come unto Thee,\nThat I may praise Thee with Thy saints\nAnd with Thy angels forever and ever. Amen.",
+      },
+      {
+        name: "St. Gertrude's Prayer",
+        subtitle: "For the Holy Souls in Purgatory",
+        intro: "Our Lord told St. Gertrude the Great that the following prayer would release 1,000 souls from purgatory each time it is said.",
+        text: "Eternal Father, I offer Thee the Most Precious Blood of Thy Divine Son, Jesus, in union with the Masses said throughout the world today, for all the Holy Souls in Purgatory, for sinners everywhere, for sinners in the universal Church, those in my own home and within my family. Amen.",
+      },
+      {
+        name: "Prayer of St. Francis",
+        subtitle: "Make Me an Instrument of Thy Peace",
+        text: "Lord, make me an instrument of Thy peace.\nWhere there is hatred, let me sow love;\nWhere there is injury, pardon;\nWhere there is doubt, faith;\nWhere there is despair, hope;\nWhere there is darkness, light;\nWhere there is sadness, joy.\n\nO Divine Master, grant that I may not so much seek\nTo be consoled as to console,\nTo be understood as to understand,\nTo be loved as to love.\n\nFor it is in giving that we receive;\nIt is in pardoning that we are pardoned;\nAnd it is in dying that we are born to eternal life. Amen.",
+      },
+      {
+        name: "Litany of Humility",
+        subtitle: "Cardinal Merry del Val (1865–1930)",
+        text: "O Jesus, meek and humble of heart, hear me.\n\nFrom the desire of being esteemed, deliver me, Jesus.\nFrom the desire of being loved, deliver me, Jesus.\nFrom the desire of being extolled, deliver me, Jesus.\nFrom the desire of being honored, deliver me, Jesus.\nFrom the desire of being praised, deliver me, Jesus.\nFrom the desire of being preferred to others, deliver me, Jesus.\nFrom the desire of being consulted, deliver me, Jesus.\nFrom the desire of being approved, deliver me, Jesus.\n\nFrom the fear of being humiliated, deliver me, Jesus.\nFrom the fear of being despised, deliver me, Jesus.\nFrom the fear of suffering rebukes, deliver me, Jesus.\nFrom the fear of being calumniated, deliver me, Jesus.\nFrom the fear of being forgotten, deliver me, Jesus.\nFrom the fear of being ridiculed, deliver me, Jesus.\nFrom the fear of being wronged, deliver me, Jesus.\nFrom the fear of being suspected, deliver me, Jesus.\n\nThat others may be loved more than I, Jesus grant me the grace to desire it.\nThat others may be esteemed more than I, Jesus grant me the grace to desire it.\nThat, in the opinion of the world, others may increase and I may decrease, Jesus grant me the grace to desire it.\nThat others may be chosen and I set aside, Jesus grant me the grace to desire it.\nThat others may be praised and I go unnoticed, Jesus grant me the grace to desire it.\nThat others may be preferred to me in everything, Jesus grant me the grace to desire it.\nThat others may become holier than I, provided that I may become as holy as I should, Jesus grant me the grace to desire it. Amen.",
+      },
+    ],
+  },
+  {
+    category: "Prayers for Protection",
+    prayers: [
+      {
+        name: "Guardian Angel Prayer",
+        text: "Angel of God, my guardian dear,\nTo whom God's love commits me here,\nEver this day be at my side,\nTo light and guard, to rule and guide. Amen.",
+      },
+      {
+        name: "St. Michael Prayer",
+        text: "Saint Michael the Archangel, defend us in battle. Be our defense against the wickedness and snares of the devil. May God rebuke him, we humbly pray, and do thou, O Prince of the heavenly hosts, by the power of God, thrust into hell Satan, and all the evil spirits who prowl about the world seeking the ruin of souls. Amen.",
+      },
+      {
+        name: "Come, Holy Spirit",
+        text: "Come, Holy Spirit, fill the hearts of Thy faithful and kindle in them the fire of Thy love.\n\nV. Send forth Thy Spirit and they shall be created.\nR. And Thou shalt renew the face of the earth.\n\nLet us pray: O God, Who didst instruct the hearts of the faithful by the light of the Holy Spirit, grant us by the same Spirit to have a right judgment in all things and evermore to rejoice in His consolation. Through Christ Our Lord. Amen.",
+      },
+    ],
+  },
+  {
+    category: "Prayers for the Departed",
+    prayers: [
+      {
+        name: "Prayer for the Holy Souls",
+        text: "O God, the Creator and Redeemer of all the faithful, grant to the souls of Thy servants departed the remission of all their sins, that through our pious supplications they may obtain that pardon which they have always desired. Thou who livest and reignest world without end. Amen.\n\nEternal rest grant unto them, O Lord, and let perpetual light shine upon them. May they rest in peace. Amen.\n\nMay their souls and the souls of all the faithful departed, through the mercy of God, rest in peace. Amen.",
+      },
+      {
+        name: "De Profundis",
+        subtitle: "Psalm 130 — For the Dead",
+        text: "Out of the depths I cry to Thee, O Lord;\nLord, hear my voice!\nLet Thine ears be attentive\nTo the voice of my supplications.\n\nIf Thou, O Lord, shouldst mark iniquities,\nLord, who could stand?\nBut there is forgiveness with Thee,\nThat Thou mayest be feared.\n\nI wait for the Lord, my soul waits,\nAnd in His word I hope;\nMy soul waits for the Lord\nMore than watchmen for the morning.\n\nO Israel, hope in the Lord!\nFor with the Lord there is steadfast love,\nAnd with Him is plenteous redemption.\nAnd He will redeem Israel\nFrom all his iniquities.\n\nEternal rest grant unto them, O Lord,\nAnd let perpetual light shine upon them.\nMay they rest in peace. Amen.",
+      },
+    ],
+  },
+  {
+    category: "Spiritual Communion & Mass",
+    prayers: [
+      {
+        name: "Spiritual Communion",
+        subtitle: "St. Alphonsus Liguori (1696–1787)",
+        text: "My Jesus, I believe that Thou art present in the Most Holy Sacrament. I love Thee above all things, and I desire to receive Thee into my soul. Since I cannot at this moment receive Thee sacramentally, come at least spiritually into my heart.\n\nI embrace Thee as if Thou wert already there, and I unite myself wholly to Thee. Never permit me to be separated from Thee. Amen.",
+      },
+      {
+        name: "Before Holy Communion",
+        text: "Lord, I am not worthy that Thou shouldst enter under my roof, but only say the word and my soul shall be healed.\n\nO Lord, I am not worthy of the least of Thy favors; yet, since Thou dost invite me to receive Thee, I come with full confidence in Thy goodness and mercy. Thou art the Physician of souls; mine is sick — heal it by Thy holy presence. Thou art the Bread of life; I am hungry — feed me with Thyself.\n\nO Sacrament most holy, O Sacrament divine, all praise and all thanksgiving be every moment Thine.",
+      },
+      {
+        name: "After Holy Communion",
+        text: "Soul of Christ, sanctify me. Body of Christ, save me. Blood of Christ, inebriate me. Water from the side of Christ, wash me. Passion of Christ, strengthen me.\n\nO good Jesus, hear me; within Thy wounds hide me; suffer me not to be separated from Thee. From the malicious enemy defend me. In the hour of my death call me, and bid me come to Thee, that with Thy saints I may praise Thee forever and ever. Amen.\n\nI thank Thee, O Lord, for the grace which Thou hast given me in receiving Thy Body and Blood. I pray Thee, O Lord, that the reception of this Sacrament may be to me a pardon of sins, a complete forgiveness, a communion of faith, a progress in virtue, and an attainment of salvation. Amen.",
+      },
+    ],
+  },
+];
+
 // ── MYSTERY CONTENT ──────────────────────────────────────────────────────────
 // Short and long versions of each mystery's reflection and prayer intention.
 // Edit these over time to grow the content.
@@ -872,6 +1045,10 @@ export default function RosaryApp() {
 
   // MJK Novena
   const [showMJK, setShowMJK] = useState(false);
+
+  // Pieta Prayer Book
+  const [pietaScreen, setPietaScreen] = useState(null); // null | "splash" | "list" | "prayer"
+  const [pietaSelectedPrayer, setPietaSelectedPrayer] = useState(null);
   const [prayerIntention, setPrayerIntention] = useState("");
   const [prayerName, setPrayerName] = useState("");
   const [prayerLocation, setPrayerLocation] = useState("");
@@ -2001,12 +2178,12 @@ export default function RosaryApp() {
           );
         })()}
 
-        <div style={{ background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)", padding: "20px 20px 16px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <div>
+        <div style={{ background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)", padding: "20px 20px 16px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+          <div style={{ flexShrink: 0 }}>
             <div style={{ fontSize: 12, color: "#c9a0e8", letterSpacing: 2, textTransform: "uppercase" }}>The Holy</div>
             <div style={{ fontSize: 28, fontWeight: 700 }}>Rosary</div>
           </div>
-          <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap", justifyContent: "flex-end" }}>
             <button onClick={() => setShowUserGuide(true)} style={{
               background: "rgba(255,255,255,0.12)",
               border: "1px solid rgba(200,160,232,0.4)",
@@ -2032,6 +2209,16 @@ export default function RosaryApp() {
               letterSpacing: 0.5, lineHeight: 1.4, textAlign: "center",
             }}>
               MJK<br/>Novena
+            </button>
+            <button onClick={() => setPietaScreen("splash")} style={{
+              background: "rgba(255,215,100,0.15)",
+              border: "1px solid rgba(255,215,100,0.45)",
+              borderRadius: 10, padding: "8px 10px",
+              color: "#ffd764", fontFamily: "'Lora',serif",
+              fontSize: 12, fontWeight: 700, cursor: "pointer",
+              letterSpacing: 0.5, lineHeight: 1.4, textAlign: "center",
+            }}>
+              Pieta<br/>Prayers
             </button>
           </div>
         </div>
@@ -2187,6 +2374,143 @@ export default function RosaryApp() {
 
           <div style={{ height: 24 }} />
         </div>
+
+        {/* ── PIETA PRAYER BOOK ── */}
+        {pietaScreen === "splash" && (
+          <div style={{
+            position: "fixed", inset: 0, zIndex: 9990,
+            display: "flex", flexDirection: "column",
+            alignItems: "center", justifyContent: "center",
+          }}>
+            <img src="/pieta-sky.png" alt="" style={{
+              position: "absolute", inset: 0, width: "100%", height: "100%",
+              objectFit: "cover", objectPosition: "center 30%",
+            }} />
+            <div style={{
+              position: "absolute", inset: 0,
+              background: "linear-gradient(to bottom, rgba(10,5,20,0.2) 0%, rgba(10,5,20,0.5) 55%, rgba(10,5,20,0.88) 100%)",
+            }} />
+            <div style={{ position: "relative", textAlign: "center", padding: "0 32px" }}>
+              <div style={{
+                fontSize: 11, color: "rgba(255,215,100,0.85)", fontFamily: "'Lora',serif",
+                letterSpacing: 3, textTransform: "uppercase", marginBottom: 14,
+              }}>Judith's</div>
+              <div style={{
+                fontSize: 30, fontWeight: 700, color: "#fff",
+                fontFamily: "'Lora',serif", lineHeight: 1.25, marginBottom: 6,
+              }}>Pieta Prayer Book</div>
+              <div style={{
+                fontSize: 13, color: "rgba(255,230,180,0.8)", fontFamily: "'Lora',serif",
+                fontStyle: "italic", marginBottom: 52, lineHeight: 1.7,
+              }}>My God, how I love Thee!<br/>— St. Thérèse of the Child Jesus</div>
+              <button onClick={() => setPietaScreen("list")} style={{
+                background: "rgba(255,215,100,0.18)", border: "1.5px solid rgba(255,215,100,0.6)",
+                borderRadius: 14, padding: "14px 44px",
+                color: "#ffd764", fontFamily: "'Lora',serif",
+                fontSize: 16, fontWeight: 700, cursor: "pointer", letterSpacing: 0.5,
+              }}>Open Prayer Book</button>
+              <div style={{ marginTop: 22 }}>
+                <button onClick={() => setPietaScreen(null)} style={{
+                  background: "none", border: "none", color: "rgba(255,255,255,0.5)",
+                  fontFamily: "'Lora',serif", fontSize: 13, cursor: "pointer",
+                }}>← Back</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {pietaScreen === "list" && (
+          <div style={{
+            position: "fixed", inset: 0, zIndex: 9990,
+            background: "linear-gradient(180deg,#1a0d2e,#0f0720)",
+            display: "flex", flexDirection: "column",
+            maxWidth: 390, margin: "0 auto",
+          }}>
+            <div style={{
+              padding: "52px 20px 16px",
+              background: "linear-gradient(180deg,rgba(107,63,160,0.35),transparent)",
+              borderBottom: "1px solid rgba(200,160,232,0.15)", flexShrink: 0,
+            }}>
+              <button onClick={() => setPietaScreen("splash")} style={{
+                background: "none", border: "none", color: "rgba(200,160,232,0.7)",
+                fontFamily: "'Lora',serif", fontSize: 13, cursor: "pointer",
+                marginBottom: 8, padding: 0,
+              }}>← Back</button>
+              <div style={{ fontSize: 10, color: "rgba(255,215,100,0.7)", fontFamily: "'Lora',serif", letterSpacing: 2.5, textTransform: "uppercase", marginBottom: 4 }}>Judith's</div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>Pieta Prayer Book</div>
+            </div>
+            <div style={{ overflowY: "auto", flex: 1, padding: "12px 16px 40px" }}>
+              {PIETA_PRAYERS.map((group, gi) => (
+                <div key={gi} style={{ marginBottom: 24 }}>
+                  <div style={{
+                    fontSize: 10, color: "rgba(255,215,100,0.7)", fontFamily: "'Lora',serif",
+                    letterSpacing: 2, textTransform: "uppercase", marginBottom: 10, paddingLeft: 4,
+                  }}>{group.category}</div>
+                  {group.prayers.map((p, pi) => (
+                    <button key={pi} onClick={() => { setPietaSelectedPrayer(p); setPietaScreen("prayer"); }} style={{
+                      width: "100%", background: "rgba(255,255,255,0.05)",
+                      border: "1px solid rgba(200,160,232,0.15)",
+                      borderRadius: 12, padding: "14px 16px",
+                      marginBottom: 8, cursor: "pointer",
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                      textAlign: "left",
+                    }}>
+                      <div>
+                        <div style={{ fontSize: 15, fontWeight: 600, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>{p.name}</div>
+                        {p.subtitle && <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif", marginTop: 2, fontStyle: "italic" }}>{p.subtitle}</div>}
+                      </div>
+                      <div style={{ color: "rgba(200,160,232,0.5)", fontSize: 18, marginLeft: 8 }}>›</div>
+                    </button>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {pietaScreen === "prayer" && pietaSelectedPrayer && (
+          <div style={{
+            position: "fixed", inset: 0, zIndex: 9990,
+            background: "linear-gradient(180deg,#1a0d2e,#0f0720)",
+            display: "flex", flexDirection: "column",
+            maxWidth: 390, margin: "0 auto",
+          }}>
+            <div style={{
+              padding: "52px 20px 16px",
+              background: "linear-gradient(180deg,rgba(107,63,160,0.35),transparent)",
+              borderBottom: "1px solid rgba(200,160,232,0.15)", flexShrink: 0,
+            }}>
+              <button onClick={() => setPietaScreen("list")} style={{
+                background: "none", border: "none", color: "rgba(200,160,232,0.7)",
+                fontFamily: "'Lora',serif", fontSize: 13, cursor: "pointer",
+                marginBottom: 8, padding: 0,
+              }}>← Prayer List</button>
+              <div style={{ fontSize: 22, fontWeight: 700, color: "#f0e6ff", fontFamily: "'Lora',serif", lineHeight: 1.3 }}>
+                {pietaSelectedPrayer.name}
+              </div>
+              {pietaSelectedPrayer.subtitle && (
+                <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginTop: 4, fontStyle: "italic" }}>
+                  {pietaSelectedPrayer.subtitle}
+                </div>
+              )}
+            </div>
+            <div style={{ overflowY: "auto", flex: 1, padding: "24px 20px 60px" }}>
+              {pietaSelectedPrayer.intro && (
+                <div style={{
+                  fontSize: 13, color: "rgba(255,215,100,0.8)", fontFamily: "'Lora',serif",
+                  fontStyle: "italic", lineHeight: 1.75, marginBottom: 20,
+                  padding: "12px 16px", background: "rgba(255,215,100,0.06)",
+                  borderRadius: 10, borderLeft: "2px solid rgba(255,215,100,0.3)",
+                }}>{pietaSelectedPrayer.intro}</div>
+              )}
+              <div style={{
+                fontSize: 16, color: "#d4b8f0", fontFamily: "'Lora',serif",
+                lineHeight: 1.95, whiteSpace: "pre-wrap",
+              }}>{pietaSelectedPrayer.text}</div>
+            </div>
+          </div>
+        )}
+
       </div>
     );
   }
