@@ -47,6 +47,13 @@ const PRAYERS = {
 // Why Daily Rosary, Rosary Promises of Mary, Graces from Masses.
 
 const PIETA_PRAYERS = [
+  // ── SECTION: JUDITH'S FAVORITES ───────────────────────────────────────────
+  {
+    category: "★ Judith's Favorites",
+    prayers: [
+      { name: "St. Joseph Prayer", subtitle: "Coming Soon", text: "This prayer will be added soon. Check back for updates." },
+    ],
+  },
   // ── SECTION: DAILY PRAYERS ────────────────────────────────────────────────
   {
     category: "Daily Prayers",
