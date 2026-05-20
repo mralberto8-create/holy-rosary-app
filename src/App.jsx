@@ -2513,6 +2513,7 @@ export default function RosaryApp() {
             position: "fixed", inset: 0, zIndex: 9990,
             display: "flex", flexDirection: "column",
             alignItems: "center", justifyContent: "center",
+            background: "#1a0d2e",
           }}>
             <img src="/pieta-sky.png" alt="" style={{
               position: "absolute", inset: 0, width: "100%", height: "100%",
