@@ -38,103 +38,88 @@ const PRAYERS = {
 };
 
 // ── PIETA PRAYER BOOK DATA ───────────────────────────────────────────────────
+// Categories match the Pieta Prayer Book index sections.
+// All sections now have placeholders. Full texts still needed for:
+// Chaplet of Faith, Hail Mary of Gold, Our Lady of Czestochowa, Our Lady of Ephesus,
+// Novena — Glory Be to the Father, St. Bridget's Prayers 4–15, St. Joseph Prayer,
+// Three Beautiful Prayers, True Letter, Unity Prayer, Brother Estanislao,
+// Letter to Messina, Litany to Sacred Head, Mystic Picture, Why Daily Mass,
+// Why Daily Rosary, Rosary Promises of Mary, Graces from Masses.
 
 const PIETA_PRAYERS = [
+  // ── SECTION: DAILY PRAYERS ────────────────────────────────────────────────
   {
     category: "Daily Prayers",
     prayers: [
-      {
-        name: "Sign of the Cross",
-        text: "In the name of the Father, and of the Son, and of the Holy Spirit. Amen.",
-      },
-      {
-        name: "Our Father",
-        text: "Our Father, who art in heaven, hallowed be Thy name; Thy kingdom come; Thy will be done on earth as it is in heaven. Give us this day our daily bread; and forgive us our trespasses as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil. Amen.",
-      },
-      {
-        name: "Hail Mary",
-        text: "Hail Mary, full of grace, the Lord is with thee; blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.",
-      },
-      {
-        name: "Glory Be",
-        text: "Glory be to the Father, and to the Son, and to the Holy Spirit; as it was in the beginning, is now, and ever shall be, world without end. Amen.",
-      },
-      {
-        name: "Apostles' Creed",
-        text: "I believe in God, the Father almighty, Creator of heaven and earth, and in Jesus Christ, His only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died and was buried; He descended into hell; on the third day He rose again from the dead; He ascended into heaven, and is seated at the right hand of God the Father almighty; from there He will come to judge the living and the dead. I believe in the Holy Spirit, the holy catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and life everlasting. Amen.",
-      },
-      {
-        name: "Daily Offering",
-        text: "O Jesus, through the Immaculate Heart of Mary, I offer You my prayers, works, joys and sufferings of this day for all the intentions of Your Sacred Heart, in union with the Holy Sacrifice of the Mass throughout the world, in reparation for my sins, for the intentions of all our associates, and in particular for the intention recommended this month by the Holy Father. Amen.",
-      },
-      {
-        name: "Morning Offering",
-        subtitle: "Act of Dedication",
-        text: "O my God, in union with the Immaculate Heart of Mary, I offer Thee the Precious Blood of Jesus from all the altars throughout the world, joining with it the offering of my every thought, word, and action of this day.\n\nO my Jesus, I desire today to gain every indulgence and merit I can, and I offer them, together with myself, to Mary Immaculate — that she may best apply them to the interests of Thy most Sacred Heart. Precious Blood of Jesus, save us! Immaculate Heart of Mary, pray for us! Sacred Heart of Jesus, have mercy on us! Amen.",
-      },
-      {
-        name: "Evening Prayer",
-        text: "O my God, I thank Thee for all the benefits which I have ever received from Thee, and particularly for those of this day. Give me light to see what sins I have committed, and grant me grace to be truly sorry for them.\n\nI have sinned against Thee, O Lord, have mercy on me. Examine your conscience.\n\nI am sorry for having offended Thee, O Lord. I firmly resolve, with the help of Thy grace, to avoid sin and the near occasion of sin, and to confess my sins as soon as possible. Amen.\n\nRemember, O most gracious Virgin Mary, that never was it known that anyone who fled to thy protection, implored thy help, or sought thy intercession, was left unaided. Inspired by this confidence, I fly unto thee, O Virgin of virgins, my Mother! To thee I come; before thee I stand, sinful and sorrowful. O Mother of the Word Incarnate, despise not my petitions, but in thy mercy hear and answer me. Amen.",
-      },
-      {
-        name: "Angelus",
-        subtitle: "Prayed at 6am, noon, and 6pm",
-        text: "V. The Angel of the Lord declared unto Mary.\nR. And she conceived of the Holy Spirit.\n\nHail Mary, full of grace, the Lord is with thee; blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.\n\nV. Behold the handmaid of the Lord.\nR. Be it done unto me according to thy word.\n\nHail Mary...\n\nV. And the Word was made flesh.\nR. And dwelt among us.\n\nHail Mary...\n\nV. Pray for us, O holy Mother of God.\nR. That we may be made worthy of the promises of Christ.\n\nLet us pray: Pour forth, we beseech Thee, O Lord, Thy grace into our hearts, that we to whom the Incarnation of Christ Thy Son was made known by the message of an Angel, may by His Passion and Cross be brought to the glory of His Resurrection. Through the same Christ our Lord. Amen.",
-      },
+      { name: "Sign of the Cross", text: "In the name of the Father, and of the Son, and of the Holy Spirit. Amen." },
+      { name: "Our Father", text: "Our Father, who art in heaven, hallowed be Thy name; Thy kingdom come; Thy will be done on earth as it is in heaven. Give us this day our daily bread; and forgive us our trespasses as we forgive those who trespass against us; and lead us not into temptation, but deliver us from evil. Amen." },
+      { name: "Hail Mary", text: "Hail Mary, full of grace, the Lord is with thee; blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen." },
+      { name: "Glory Be", text: "Glory be to the Father, and to the Son, and to the Holy Spirit; as it was in the beginning, is now, and ever shall be, world without end. Amen." },
+      { name: "Apostles' Creed", text: "I believe in God, the Father almighty, Creator of heaven and earth, and in Jesus Christ, His only Son, our Lord, who was conceived by the Holy Spirit, born of the Virgin Mary, suffered under Pontius Pilate, was crucified, died and was buried; He descended into hell; on the third day He rose again from the dead; He ascended into heaven, and is seated at the right hand of God the Father almighty; from there He will come to judge the living and the dead. I believe in the Holy Spirit, the holy catholic Church, the communion of saints, the forgiveness of sins, the resurrection of the body, and life everlasting. Amen." },
+      { name: "Daily Offering", text: "O Jesus, through the Immaculate Heart of Mary, I offer You my prayers, works, joys and sufferings of this day for all the intentions of Your Sacred Heart, in union with the Holy Sacrifice of the Mass throughout the world, in reparation for my sins, for the intentions of all our associates, and in particular for the intention recommended this month by the Holy Father. Amen." },
+      { name: "Morning Offering", subtitle: "Act of Dedication", text: "O my God, in union with the Immaculate Heart of Mary, I offer Thee the Precious Blood of Jesus from all the altars throughout the world, joining with it the offering of my every thought, word, and action of this day.\n\nO my Jesus, I desire today to gain every indulgence and merit I can, and I offer them, together with myself, to Mary Immaculate — that she may best apply them to the interests of Thy most Sacred Heart. Precious Blood of Jesus, save us! Immaculate Heart of Mary, pray for us! Sacred Heart of Jesus, have mercy on us! Amen." },
+      { name: "Evening Prayer", text: "O my God, I thank Thee for all the benefits which I have ever received from Thee, and particularly for those of this day. Give me light to see what sins I have committed, and grant me grace to be truly sorry for them.\n\nI have sinned against Thee, O Lord, have mercy on me. Examine your conscience.\n\nI am sorry for having offended Thee, O Lord. I firmly resolve, with the help of Thy grace, to avoid sin and the near occasion of sin, and to confess my sins as soon as possible. Amen.\n\nRemember, O most gracious Virgin Mary, that never was it known that anyone who fled to thy protection, implored thy help, or sought thy intercession, was left unaided. Inspired by this confidence, I fly unto thee, O Virgin of virgins, my Mother! To thee I come; before thee I stand, sinful and sorrowful. O Mother of the Word Incarnate, despise not my petitions, but in thy mercy hear and answer me. Amen." },
+      { name: "Angelus", subtitle: "Prayed at 6am, noon, and 6pm", text: "V. The Angel of the Lord declared unto Mary.\nR. And she conceived of the Holy Spirit.\n\nHail Mary, full of grace, the Lord is with thee; blessed art thou among women, and blessed is the fruit of thy womb, Jesus. Holy Mary, Mother of God, pray for us sinners, now and at the hour of our death. Amen.\n\nV. Behold the handmaid of the Lord.\nR. Be it done unto me according to thy word.\n\nHail Mary...\n\nV. And the Word was made flesh.\nR. And dwelt among us.\n\nHail Mary...\n\nV. Pray for us, O holy Mother of God.\nR. That we may be made worthy of the promises of Christ.\n\nLet us pray: Pour forth, we beseech Thee, O Lord, Thy grace into our hearts, that we to whom the Incarnation of Christ Thy Son was made known by the message of an Angel, may by His Passion and Cross be brought to the glory of His Resurrection. Through the same Christ our Lord. Amen." },
     ],
   },
+  // ── SECTION: ACTS ─────────────────────────────────────────────────────────
   {
-    category: "Acts of Faith, Hope & Love",
+    category: "Acts",
+    prayers: [
+      { name: "Act of Faith", text: "O my God, I firmly believe that Thou art one God in three Divine Persons, Father, Son and Holy Spirit. I believe that Thy divine Son became man, and died for our sins, and that He will come to judge the living and the dead. I believe these and all the truths which the holy Catholic Church teaches, because Thou hast revealed them, Who canst neither deceive nor be deceived. Amen." },
+      { name: "Act of Hope", text: "O my God, relying on Thy almighty power and infinite mercy and promises, I hope to obtain pardon of my sins, the help of Thy grace, and life everlasting, through the merits of Jesus Christ, my Lord and Redeemer. Amen." },
+      { name: "Act of Love", text: "O my God, I love Thee above all things, with my whole heart and soul, because Thou art all good and worthy of all love. I love my neighbor as myself for the love of Thee. I forgive all who have injured me, and ask pardon of all whom I have injured. Amen." },
+      { name: "Act of Contrition", text: "O my God, I am heartily sorry for having offended Thee, and I detest all my sins because of Thy just punishments, but most of all because they offend Thee, my God, Who art all good and deserving of all my love. I firmly resolve, with the help of Thy grace, to sin no more and to avoid the near occasion of sin. Amen." },
+      { name: "St. Joseph Prayer", subtitle: "Coming Soon", text: "This prayer will be added soon. Check back for updates." },
+      { name: "Daily Neglects Prayer", text: "O Lord Jesus, I ask forgiveness for the daily neglects I have committed this day:\n\nFor the times I have failed to offer up my sufferings.\nFor the times I have not accepted the cross Thou hast given me.\nFor the times I have not striven to overcome my faults.\nFor the times I have not praised or thanked Thee.\nFor the times I have missed opportunities to do good.\nFor the times I have not prayed with attention and devotion.\nFor the times I have neglected the inspirations of the Holy Spirit.\n\nO Jesus, I am sorry for all these daily neglects. Have mercy on me. Grant me the grace to be more faithful to Thee in the days ahead. Through the intercession of Thy most holy Mother Mary, help me to grow in love and in the practice of virtue. Amen." },
+    ],
+  },
+  // ── SECTION: CHAPLETS ─────────────────────────────────────────────────────
+  {
+    category: "Chaplets",
     prayers: [
       {
-        name: "Act of Faith",
-        text: "O my God, I firmly believe that Thou art one God in three Divine Persons, Father, Son and Holy Spirit. I believe that Thy divine Son became man, and died for our sins, and that He will come to judge the living and the dead. I believe these and all the truths which the holy Catholic Church teaches, because Thou hast revealed them, Who canst neither deceive nor be deceived. Amen.",
+        name: "Chaplet of Faith",
+        subtitle: "Coming Soon",
+        text: "This prayer will be added soon. Check back for updates.",
       },
       {
-        name: "Act of Hope",
-        text: "O my God, relying on Thy almighty power and infinite mercy and promises, I hope to obtain pardon of my sins, the help of Thy grace, and life everlasting, through the merits of Jesus Christ, my Lord and Redeemer. Amen.",
+        name: "Divine Mercy Chaplet",
+        subtitle: "As given to St. Faustina Kowalska",
+        intro: "Begin with the Our Father, Hail Mary, and Apostles' Creed. Then on the large beads say the Eternal Father prayer; on the 10 small beads say the For the Sake prayer. Repeat for 5 decades. Close with the Holy God prayer (3 times).",
+        text: "OPENING (once):\nOur Father... Hail Mary... Apostles' Creed...\n\nON THE LARGE BEADS (once per decade):\nEternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world.\n\nON THE 10 SMALL BEADS (each decade):\nFor the sake of His sorrowful Passion, have mercy on us and on the whole world.\n\n— Repeat for all 5 decades —\n\nCLOSING (3 times):\nHoly God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world.\n\nOPTIONAL CLOSING PRAYER:\nEternal God, in whom mercy is endless and the treasury of compassion inexhaustible, look kindly upon us and increase Your mercy in us, that in difficult moments we might not despair nor become despondent, but with great confidence submit ourselves to Your holy will, which is Love and Mercy itself. Amen.",
       },
       {
-        name: "Act of Love",
-        text: "O my God, I love Thee above all things, with my whole heart and soul, because Thou art all good and worthy of all love. I love my neighbor as myself for the love of Thee. I forgive all who have injured me, and ask pardon of all whom I have injured. Amen.",
-      },
-      {
-        name: "Act of Contrition",
-        text: "O my God, I am heartily sorry for having offended Thee, and I detest all my sins because of Thy just punishments, but most of all because they offend Thee, my God, Who art all good and deserving of all my love. I firmly resolve, with the help of Thy grace, to sin no more and to avoid the near occasion of sin. Amen.",
+        name: "Chaplet of St. Michael",
+        subtitle: "In honor of the 9 Choirs of Angels",
+        intro: "Pray one Our Father and three Hail Marys after each of the nine salutations. Close with four Our Fathers in honor of St. Michael, St. Gabriel, St. Raphael, and your Guardian Angel.",
+        text: "By the intercession of St. Michael and the celestial Choir of Seraphim, may the Lord make us worthy to burn with the fire of perfect charity. Amen.\n(1 Our Father, 3 Hail Marys)\n\nBy the intercession of St. Michael and the celestial Choir of Cherubim, may the Lord grant us grace to leave the ways of sin and run in the paths of Christian perfection. Amen.\n(1 Our Father, 3 Hail Marys)\n\nBy the intercession of St. Michael and the celestial Choir of Thrones, may the Lord infuse into our hearts a true and sincere spirit of humility. Amen.\n(1 Our Father, 3 Hail Marys)\n\nBy the intercession of St. Michael and the celestial Choir of Dominations, may the Lord give us grace to govern our senses and overcome any unruly passions. Amen.\n(1 Our Father, 3 Hail Marys)\n\nBy the intercession of St. Michael and the celestial Choir of Virtues, may the Lord preserve us from evil and falling into temptation. Amen.\n(1 Our Father, 3 Hail Marys)\n\nBy the intercession of St. Michael and the celestial Choir of Powers, may the Lord protect our souls against the snares and temptations of the devil. Amen.\n(1 Our Father, 3 Hail Marys)\n\nBy the intercession of St. Michael and the celestial Choir of Principalities, may God fill our souls with a true spirit of obedience. Amen.\n(1 Our Father, 3 Hail Marys)\n\nBy the intercession of St. Michael and the celestial Choir of Archangels, may the Lord give us perseverance in faith and in all good works in order that we may attain the glory of paradise. Amen.\n(1 Our Father, 3 Hail Marys)\n\nBy the intercession of St. Michael and the celestial Choir of all the Angels, may the Lord grant us to be protected by them in this mortal life and conducted in the life to come to heaven. Amen.\n(1 Our Father, 3 Hail Marys)\n\nCLOSING (4 Our Fathers):\nO glorious prince St. Michael, chief and commander of the heavenly hosts, guardian of souls, vanquisher of rebel spirits, servant in the house of the Divine King — deliver us from all evil who turn to you with confidence, and enable us by your gracious protection to serve God more and more faithfully every day. Amen.",
       },
     ],
   },
+  // ── SECTION: CONSECRATIONS ────────────────────────────────────────────────
   {
-    category: "Prayers to Our Lady",
+    category: "Consecrations",
     prayers: [
       {
-        name: "Hail Holy Queen",
-        subtitle: "Salve Regina",
-        text: "Hail, Holy Queen, Mother of Mercy, our life, our sweetness and our hope! To thee do we cry, poor banished children of Eve; to thee do we send up our sighs, mourning and weeping in this valley of tears. Turn then, most gracious advocate, thine eyes of mercy toward us, and after this our exile, show unto us the blessed fruit of thy womb, Jesus. O clement, O loving, O sweet Virgin Mary!\n\nV. Pray for us, O holy Mother of God.\nR. That we may be made worthy of the promises of Christ.",
+        name: "Consecration to the Blessed Virgin Mary",
+        text: "My Queen and my Mother, I give myself entirely to thee, and to show my devotion to thee, I consecrate to thee this day my eyes, my ears, my mouth, my heart, my whole being without reserve.\n\nWherefore, good Mother, as I am your own, keep me, guard me, as your property and possession. Amen.\n\nO Mary, my Queen, I consecrate to thee my body and soul, my goods, both interior and exterior, and even the value of all my good actions, past, present, and future; leaving to thee the entire and full right of disposing of me and all that belongs to me, without exception, according to thy good pleasure, for the greater glory of God, in time and in eternity. Amen.",
       },
       {
-        name: "Memorare",
-        text: "Remember, O most gracious Virgin Mary, that never was it known that anyone who fled to thy protection, implored thy help, or sought thy intercession, was left unaided. Inspired by this confidence, I fly unto thee, O Virgin of virgins, my Mother! To thee I come; before thee I stand, sinful and sorrowful. O Mother of the Word Incarnate, despise not my petitions, but in thy mercy hear and answer me. Amen.",
+        name: "Consecration to Jesus Christ",
+        text: "Lord Jesus Christ, I consecrate myself today anew and without reserve to Thy divine Heart.\n\nI consecrate to Thee my body with all its senses, my soul with all its faculties, my entire being. I consecrate to Thee all my thoughts, words, and deeds, all my sufferings and labors, all my hopes, consolations, and joys. In particular I consecrate to Thee this poor heart of mine, so that it may love only Thee and be consumed as a victim in the fires of Thy love.\n\nI place my trust not in my own merits but solely in the merits of Thy most Sacred Heart. Amen.",
       },
       {
-        name: "Ave Maris Stella",
-        subtitle: "Hail, Star of the Sea",
-        text: "Hail, bright star of ocean,\nGod's own Mother blest,\nEver sinless Virgin,\nGate of heavenly rest.\n\nTaking that sweet Ave\nWhich from Gabriel came,\nPeace confirm within us,\nChanging Eva's name.\n\nBreak the captives' fetters,\nLight on blindness pour,\nAll our ills expelling,\nEvery bliss implore.\n\nShow thyself a Mother;\nMay the Word Divine,\nBorn for us thy Infant,\nHear our prayers through thine.\n\nVirgin all excelling,\nMildest of the mild,\nFreed from guilt, preserve us,\nPure and undefiled.\n\nKeep our life all spotless,\nMake our way secure,\nTill we find in Jesus\nJoy forevermore.\n\nThrough the highest heaven\nTo the Almighty Three,\nFather, Son and Spirit,\nOne same glory be. Amen.",
-      },
-      {
-        name: "Magnificat",
-        subtitle: "Canticle of Mary — Luke 1:46–55",
-        text: "My soul proclaims the greatness of the Lord,\nmy spirit rejoices in God my Savior\nfor He has looked with favor on His lowly servant.\n\nFrom this day all generations will call me blessed:\nthe Almighty has done great things for me,\nand holy is His Name.\n\nHe has mercy on those who fear Him\nin every generation.\n\nHe has shown the strength of His arm,\nHe has scattered the proud in their conceit.\n\nHe has cast down the mighty from their thrones,\nand has lifted up the lowly.\n\nHe has filled the hungry with good things,\nand the rich He has sent away empty.\n\nHe has come to the help of His servant Israel\nfor He has remembered His promise of mercy,\nthe promise He made to our fathers,\nto Abraham and his children forever. Amen.",
-      },
-      {
-        name: "Flos Carmeli",
-        subtitle: "Flower of Carmel",
-        text: "Flower of Carmel,\nTall vine blossom laden;\nSplendor of heaven,\nChildbearing yet maiden.\nNone equals thee.\n\nMother so tender,\nWho no man didst know,\nOn Carmel's children\nThy favors bestow.\nStar of the Sea. Amen.",
+        name: "Consecration for the Last Two Hours",
+        subtitle: "To be prayed at the time of death or for the dying",
+        intro: "A prayer of consecration and trust for the final hours of life, or to be offered for those who are dying.",
+        text: "O Jesus, through the most pure Heart of Mary, I offer Thee all the prayers, works, joys, sufferings, and the precious moments that remain to me in this life.\n\nI unite them with the merits of Thy Passion and Death, and with the intercession of Thy most holy Mother, the angels, and all the saints.\n\nI offer them for the salvation of souls, for the intentions of the Holy Father, for the poor souls in purgatory, and especially for those who are now in their final agony, that they may not be lost.\n\nMay the souls of all the faithful departed, through the mercy of God, rest in peace. Amen.\n\nO Mary, Mother of grace, Mother of mercy — shield us from the enemy and receive us at the hour of death. Amen.",
       },
     ],
   },
+  // ── SECTION: PRAYERS TO JESUS CHRIST ─────────────────────────────────────
   {
-    category: "Prayers of the Saints",
+    category: "Prayers to Jesus Christ",
     prayers: [
       {
         name: "Anima Christi",
@@ -142,15 +127,100 @@ const PIETA_PRAYERS = [
         text: "Soul of Christ, sanctify me.\nBody of Christ, save me.\nBlood of Christ, inebriate me.\nWater from the side of Christ, wash me.\nPassion of Christ, strengthen me.\nO Good Jesus, hear me.\nWithin Thy wounds, hide me.\nSuffer me not to be separated from Thee.\nFrom the malicious enemy defend me.\nIn the hour of my death call me,\nAnd bid me come unto Thee,\nThat I may praise Thee with Thy saints\nAnd with Thy angels forever and ever. Amen.",
       },
       {
+        name: "Prayer Before the Crucifix",
+        text: "Behold, O good and sweetest Jesus, I cast myself upon my knees in Thy sight, and with the most fervent desire of my soul I pray and beseech Thee that Thou wouldst impress upon my heart lively sentiments of faith, hope, and charity, with true repentance for my sins and a firm desire of amendment.\n\nWhile with deep affection and grief of soul I ponder within myself and mentally contemplate Thy five most precious wounds, having before mine eyes that which David spoke in prophecy of Thee, O good Jesus:\n\n\"They have pierced my hands and my feet; they have numbered all my bones.\" Amen.",
+      },
+      {
+        name: "Prayer to the Holy Face",
+        subtitle: "For reparation and mercy",
+        text: "O Lord Jesus, in offering Thee this prayer, I unite myself to the intentions of Thy holy Face.\n\nO adorable Face of Jesus, more beautiful than the sun, more dazzling than the lightning — I adore Thee, I love Thee, I offer Thee all my actions.\n\nGrant me, O Lord, to walk always in Thy light. Enlighten my soul as Thou dost enlighten the countenance of Thy saints. Draw me to Thyself through the veil of Thy holy humanity, to the glory of Thy divinity.\n\nO Face of Jesus, I adore Thee with all the love of my heart. Amen.\n\nEternal Father, I offer Thee the adorable Face of Thy beloved Son for the honor and glory of Thy name, for the conversion of sinners, and for the salvation of the dying. Amen.",
+      },
+      {
+        name: "Prayer to the Sacred Head",
+        subtitle: "Wound of the Crown of Thorns",
+        text: "O most merciful Jesus, lover of souls, I pray Thee, by the agony of Thy most Sacred Heart, and by the sorrows of Thy Immaculate Mother, to wash in Thy most Precious Blood the sinners of the whole world who are now in their agony and who are to die this day.\n\nO adorable Sacred Head of my Lord Jesus Christ, crowned with thorns — I adore Thee. I venerate Thy crown of thorns, so painful and so ignominious, placed upon Thy most holy head. I offer Thee my own head, my thoughts, my desires, my will.\n\nO Jesus, meek and humble of heart, make my heart like unto Thine. Amen.",
+      },
+      {
+        name: "Prayer to the Holy Wounds",
+        subtitle: "For the souls in purgatory",
+        text: "Eternal Father, I offer Thee the wounds of Our Lord Jesus Christ to heal the wounds of our souls.\n\nMy Jesus, pardon and mercy through the merits of Thy holy wounds.\n\nO my Jesus, I adore Thy most precious wounds. I unite myself to the merits of Thy Passion, and I offer to Thy Eternal Father the drops of Thy Precious Blood which fell for the sins of men.\n\nI offer them for sinners; I offer them for all the souls in purgatory; I offer them for myself. Have mercy, O Lord, on all for whom Thy Blood was shed. Amen.",
+      },
+      {
+        name: "Prayer to the Shoulder Wound",
+        subtitle: "The most neglected wound of Our Lord",
+        intro: "Our Lord revealed to St. Bernard that the wound in His shoulder, caused by carrying the heavy cross, was the most painful of all His wounds and the most neglected.",
+        text: "O loving Jesus, meek Lamb of God, I, a miserable sinner, salute and worship the most sacred wound of Thy shoulder on which Thou didst bear Thy heavy cross, which so tore Thy flesh and laid bare Thy bones as to inflict anguish greater than any other wound of Thy most blessed Body.\n\nI adore Thee, O Jesus most sorrowful; I praise and glorify Thee, and give Thee thanks for this most sacred and painful wound, beseeching Thee that by this wound Thou wilt grant me Thy grace to carry my cross and follow Thee all the days of my life.\n\nAmen.",
+      },
+    ],
+  },
+  // ── SECTION: PRAYERS TO OUR LADY ─────────────────────────────────────────
+  {
+    category: "Prayers to Our Lady",
+    prayers: [
+      { name: "Hail Mary of Gold", subtitle: "Coming Soon", text: "This prayer will be added soon. Check back for updates." },
+      { name: "Our Lady of Czestochowa", subtitle: "Coming Soon", text: "This prayer will be added soon. Check back for updates." },
+      { name: "Our Lady of Ephesus", subtitle: "Coming Soon", text: "This prayer will be added soon. Check back for updates." },
+      { name: "Rosary Promises of Mary", subtitle: "Coming Soon", text: "This reflection will be added soon. Check back for updates." },
+      { name: "Hail Holy Queen", subtitle: "Salve Regina", text: "Hail, Holy Queen, Mother of Mercy, our life, our sweetness and our hope! To thee do we cry, poor banished children of Eve; to thee do we send up our sighs, mourning and weeping in this valley of tears. Turn then, most gracious advocate, thine eyes of mercy toward us, and after this our exile, show unto us the blessed fruit of thy womb, Jesus. O clement, O loving, O sweet Virgin Mary!\n\nV. Pray for us, O holy Mother of God.\nR. That we may be made worthy of the promises of Christ." },
+      { name: "Memorare", text: "Remember, O most gracious Virgin Mary, that never was it known that anyone who fled to thy protection, implored thy help, or sought thy intercession, was left unaided. Inspired by this confidence, I fly unto thee, O Virgin of virgins, my Mother! To thee I come; before thee I stand, sinful and sorrowful. O Mother of the Word Incarnate, despise not my petitions, but in thy mercy hear and answer me. Amen." },
+      { name: "Magnificat", subtitle: "Canticle of Mary — Luke 1:46–55", text: "My soul proclaims the greatness of the Lord,\nmy spirit rejoices in God my Savior\nfor He has looked with favor on His lowly servant.\n\nFrom this day all generations will call me blessed:\nthe Almighty has done great things for me,\nand holy is His Name.\n\nHe has mercy on those who fear Him\nin every generation.\n\nHe has shown the strength of His arm,\nHe has scattered the proud in their conceit.\n\nHe has cast down the mighty from their thrones,\nand has lifted up the lowly.\n\nHe has filled the hungry with good things,\nand the rich He has sent away empty.\n\nHe has come to the help of His servant Israel\nfor He has remembered His promise of mercy,\nthe promise He made to our fathers,\nto Abraham and his children forever. Amen." },
+      { name: "Ave Maris Stella", subtitle: "Hail, Star of the Sea", text: "Hail, bright star of ocean,\nGod's own Mother blest,\nEver sinless Virgin,\nGate of heavenly rest.\n\nTaking that sweet Ave\nWhich from Gabriel came,\nPeace confirm within us,\nChanging Eva's name.\n\nBreak the captives' fetters,\nLight on blindness pour,\nAll our ills expelling,\nEvery bliss implore.\n\nShow thyself a Mother;\nMay the Word Divine,\nBorn for us thy Infant,\nHear our prayers through thine.\n\nVirgin all excelling,\nMildest of the mild,\nFreed from guilt, preserve us,\nPure and undefiled.\n\nKeep our life all spotless,\nMake our way secure,\nTill we find in Jesus\nJoy forevermore.\n\nThrough the highest heaven\nTo the Almighty Three,\nFather, Son and Spirit,\nOne same glory be. Amen." },
+      { name: "Flos Carmeli", subtitle: "Flower of Carmel", text: "Flower of Carmel,\nTall vine blossom laden;\nSplendor of heaven,\nChildbearing yet maiden.\nNone equals thee.\n\nMother so tender,\nWho no man didst know,\nOn Carmel's children\nThy favors bestow.\nStar of the Sea. Amen." },
+      {
+        name: "Devotion to the Sorrowful & Immaculate Heart of Mary",
+        text: "O most holy Heart of Mary, full of goodness, show thy love toward us. Let the flame of thy heart, O Mary, descend upon all people. We love thee so much. We long so much that thou be adored.\n\nO Mary, sweet Mother, show us thy love for us. May all who ask thy intercession feel the power of thy motherly heart. O Mary, meek and humble of heart, remember us when we sin.\n\nO Immaculate Heart of Mary, burning with love for God and for souls, be thou the way that leads to God. In thee let our hearts find rest, in thy sorrows our consolation, in thy arms our refuge. Amen.",
+      },
+      {
+        name: "Golden Arrow",
+        subtitle: "As given to Sr. Mary of St. Peter, 1843",
+        intro: "Our Lord revealed to Sr. Mary of St. Peter that souls who would recite this prayer would console Him for blasphemies against His Holy Name.",
+        text: "May the most holy, most sacred, most adorable, most incomprehensible and unutterable Name of God be always praised, blessed, loved, adored and glorified, in heaven, on earth, and under the earth, by all the creatures of God, and by the Sacred Heart of Our Lord Jesus Christ in the Most Holy Sacrament of the Altar. Amen.",
+      },
+    ],
+  },
+  // ── SECTION: PRAYERS FOR PROTECTION ──────────────────────────────────────
+  {
+    category: "Prayers for Protection",
+    prayers: [
+      { name: "Guardian Angel Prayer", text: "Angel of God, my guardian dear,\nTo whom God's love commits me here,\nEver this day be at my side,\nTo light and guard, to rule and guide. Amen." },
+      { name: "St. Michael Prayer", text: "Saint Michael the Archangel, defend us in battle. Be our defense against the wickedness and snares of the devil. May God rebuke him, we humbly pray, and do thou, O Prince of the heavenly hosts, by the power of God, thrust into hell Satan, and all the evil spirits who prowl about the world seeking the ruin of souls. Amen." },
+      { name: "Come, Holy Spirit", text: "Come, Holy Spirit, fill the hearts of Thy faithful and kindle in them the fire of Thy love.\n\nV. Send forth Thy Spirit and they shall be created.\nR. And Thou shalt renew the face of the earth.\n\nLet us pray: O God, Who didst instruct the hearts of the faithful by the light of the Holy Spirit, grant us by the same Spirit to have a right judgment in all things and evermore to rejoice in His consolation. Through Christ Our Lord. Amen." },
+      {
+        name: "Prayer to Defeat Satan",
+        text: "O Divine Eternal Father, in union with Thy Divine Son and the Holy Spirit, and through the Immaculate Heart of Mary, I beg Thee to destroy the power of Thy greatest enemy — the evil spirits.\n\nCast them into the deepest recesses of hell and chain them there forever! Take possession of Thy Kingdom which Thou hast created and which is rightfully Thine.\n\nHeavenly Father, give us the reign of the Sacred Heart of Jesus and the Immaculate Heart of Mary. I repeat this prayer out of pure love for Thee with every beat of my heart and with every breath I take. Amen.",
+      },
+      {
+        name: "Blessing Against Storm",
+        text: "Jesus Christ, a King of glory, has come in peace. God became man, and the Word was made flesh. Christ was born of a Virgin. Christ suffered. Christ was crucified. Christ died. Christ rose from the dead. Christ ascended into heaven. Christ conquers. Christ reigns. Christ orders. May Christ protect us from all storms and lightning.\n\nChrist went through their midst in peace, and the word was made flesh. Christ is with us, Maria. Flee, ye enemy spirits, because the Lion of the tribe of Judah, the root of David, has won. Holy God! Holy, Mighty God! Holy, Immortal God! Have mercy on us. Amen.",
+      },
+    ],
+  },
+  // ── SECTION: PURGATORY / PRAYERS FOR THE DEPARTED ────────────────────────
+  {
+    category: "Purgatory & Prayers for the Departed",
+    prayers: [
+      {
         name: "St. Gertrude's Prayer",
         subtitle: "For the Holy Souls in Purgatory",
         intro: "Our Lord told St. Gertrude the Great that the following prayer would release 1,000 souls from purgatory each time it is said.",
         text: "Eternal Father, I offer Thee the Most Precious Blood of Thy Divine Son, Jesus, in union with the Masses said throughout the world today, for all the Holy Souls in Purgatory, for sinners everywhere, for sinners in the universal Church, those in my own home and within my family. Amen.",
       },
+      { name: "Prayer for the Holy Souls", text: "O God, the Creator and Redeemer of all the faithful, grant to the souls of Thy servants departed the remission of all their sins, that through our pious supplications they may obtain that pardon which they have always desired. Thou who livest and reignest world without end. Amen.\n\nEternal rest grant unto them, O Lord, and let perpetual light shine upon them. May they rest in peace. Amen.\n\nMay their souls and the souls of all the faithful departed, through the mercy of God, rest in peace. Amen." },
+      { name: "De Profundis", subtitle: "Psalm 130 — For the Dead", text: "Out of the depths I cry to Thee, O Lord;\nLord, hear my voice!\nLet Thine ears be attentive\nTo the voice of my supplications.\n\nIf Thou, O Lord, shouldst mark iniquities,\nLord, who could stand?\nBut there is forgiveness with Thee,\nThat Thou mayest be feared.\n\nI wait for the Lord, my soul waits,\nAnd in His word I hope;\nMy soul waits for the Lord\nMore than watchmen for the morning.\n\nO Israel, hope in the Lord!\nFor with the Lord there is steadfast love,\nAnd with Him is plenteous redemption.\nAnd He will redeem Israel\nFrom all his iniquities.\n\nEternal rest grant unto them, O Lord,\nAnd let perpetual light shine upon them.\nMay they rest in peace. Amen." },
       {
-        name: "Prayer of St. Francis",
-        subtitle: "Make Me an Instrument of Thy Peace",
-        text: "Lord, make me an instrument of Thy peace.\nWhere there is hatred, let me sow love;\nWhere there is injury, pardon;\nWhere there is doubt, faith;\nWhere there is despair, hope;\nWhere there is darkness, light;\nWhere there is sadness, joy.\n\nO Divine Master, grant that I may not so much seek\nTo be consoled as to console,\nTo be understood as to understand,\nTo be loved as to love.\n\nFor it is in giving that we receive;\nIt is in pardoning that we are pardoned;\nAnd it is in dying that we are born to eternal life. Amen.",
+        name: "Cemetery Visit Prayer",
+        text: "O God, Lord of mercies, grant to the souls of Thy servants and handmaidens, whose anniversary we commemorate, a place of cool repose, the blessedness of quiet, the brightness of light.\n\nThrough Christ our Lord. Amen.\n\nEternal rest grant unto them, O Lord, and let perpetual light shine upon them. May they rest in peace. Amen.\n\nV. From the gate of hell...\nR. Deliver their souls, O Lord.\n\nV. May they rest in peace.\nR. Amen.\n\nV. O Lord, hear my prayer.\nR. And let my cry come unto Thee.",
+      },
+    ],
+  },
+  // ── SECTION: LITANIES ─────────────────────────────────────────────────────
+  {
+    category: "Litanies",
+    prayers: [
+      {
+        name: "Litany to the Sacred Head",
+        subtitle: "Coming Soon",
+        text: "This litany will be added soon. Check back for updates.",
       },
       {
         name: "Litany of Humility",
@@ -159,53 +229,113 @@ const PIETA_PRAYERS = [
       },
     ],
   },
+  // ── SECTION: NOVENAS ──────────────────────────────────────────────────────
   {
-    category: "Prayers for Protection",
+    category: "Novenas",
     prayers: [
       {
-        name: "Guardian Angel Prayer",
-        text: "Angel of God, my guardian dear,\nTo whom God's love commits me here,\nEver this day be at my side,\nTo light and guard, to rule and guide. Amen.",
+        name: "Novena — Glory Be to the Father",
+        subtitle: "Coming Soon",
+        text: "This novena will be added soon. Check back for updates.",
       },
       {
-        name: "St. Michael Prayer",
-        text: "Saint Michael the Archangel, defend us in battle. Be our defense against the wickedness and snares of the devil. May God rebuke him, we humbly pray, and do thou, O Prince of the heavenly hosts, by the power of God, thrust into hell Satan, and all the evil spirits who prowl about the world seeking the ruin of souls. Amen.",
+        name: "54-Day Rosary Novena",
+        subtitle: "27 days petition + 27 days thanksgiving",
+        intro: "Pray five decades of the Rosary each day for 54 consecutive days. The first 27 days are in petition; the final 27 days are in thanksgiving — prayed as if the grace has already been granted.",
+        text: "This novena was first prayed in Naples, Italy in 1884. A young woman named Fortuna Agrelli, gravely ill and given up by doctors, was cured after praying this novena. Our Lady appeared to her on the last day and said:\n\n\"Whoever desires to obtain favors from me should make three novenas of the prayers of the Rosary in petition, and three novenas in thanksgiving.\"\n\nDAYS 1–27 (Petition):\nPray five decades of the Rosary each day. After each decade, add:\n\n\"O my Queen, my Mother, I give myself entirely to you, and to show my devotion to you, I consecrate to you this day my eyes, my ears, my mouth, my heart, my whole being without reserve. Wherefore, good Mother, as I am your own, keep me, guard me as your property and possession. Amen.\"\n\nDAYS 28–54 (Thanksgiving):\nContinue praying five decades of the Rosary each day, now in gratitude — trusting that Our Lady has heard your petition and interceded with her Son on your behalf.\n\n\"Most Holy Virgin, Mother of God, I thank you for the graces you have granted me through this novena. I offer you my love and gratitude, and I renew my consecration to you. Keep me always close to your Immaculate Heart, and guide me to your Son, Jesus. Amen.\"",
       },
       {
-        name: "Come, Holy Spirit",
-        text: "Come, Holy Spirit, fill the hearts of Thy faithful and kindle in them the fire of Thy love.\n\nV. Send forth Thy Spirit and they shall be created.\nR. And Thou shalt renew the face of the earth.\n\nLet us pray: O God, Who didst instruct the hearts of the faithful by the light of the Holy Spirit, grant us by the same Spirit to have a right judgment in all things and evermore to rejoice in His consolation. Through Christ Our Lord. Amen.",
+        name: "Novena to St. Thérèse",
+        subtitle: "The Little Flower — 9-day novena",
+        intro: "Pray once each day for nine consecutive days, along with five decades of the Rosary.",
+        text: "O Little Thérèse of the Child Jesus, please pick for me a rose from the heavenly gardens and send it to me as a message of love.\n\nO Little Flower of Jesus, ask God today to grant the favors I now place with confidence in your hands.\n\n(Mention your specific intentions here.)\n\nSt. Thérèse, help me to always believe, as you did, in God's great love for me, so that I might imitate your \"Little Way\" each day.\n\nAmen.\n\n—\n\nSt. Thérèse, you said that you would spend your heaven doing good on earth and that you would let fall a shower of roses. Through the intercession of Our Lady, obtain for me from God the graces I hope for with so much confidence.\n\nYou loved God so much during your life on earth; kindle in my heart a flame of that same love. And in return for all the roses you send me, I will love God more and more, and one day I will come to heaven to thank you.\n\nSt. Thérèse of the Child Jesus, pray for us.",
+      },
+      {
+        name: "Novena to the Infant of Prague",
+        subtitle: "9-day prayer for urgent intentions",
+        intro: "Pray once each day for nine consecutive days.",
+        text: "O Jesus, who said, 'Ask and you shall receive, seek and you shall find, knock and it shall be opened to you,' through the intercession of Mary, Your most holy Mother, I knock, I seek, I ask that my prayer be granted.\n\n(Mention your intention.)\n\nO Jesus, who said, 'All that you ask of the Father in My Name, He will grant you,' through the intercession of Mary, Your most holy Mother, I humbly and urgently ask your Father in Your Name that my prayer be granted.\n\n(Mention your intention.)\n\nO Jesus, who said, 'Heaven and earth shall pass away but My word shall not pass away,' through the intercession of Mary, Your most holy Mother, I feel confident that my prayer will be granted.\n\n(Mention your intention.)\n\nO Infant Jesus, I believe in Your love for me. I trust in Your promises. I consecrate myself entirely to You. I surrender to Your will, whatever it may be. And I ask You, with confidence born of love and trust, to hear my prayer.\n\nInfant Jesus, have mercy on me. Amen.",
+      },
+      {
+        name: "Jesus, King of All Nations",
+        subtitle: "Prayer of consecration and petition",
+        text: "O Jesus, King of all nations, may Your reign be recognized on earth.\n\nI acknowledge Your kingship and I consecrate myself to You. Rule over me, Lord Jesus, and grant that Your Kingdom may come into every area of my life and into the whole world.\n\nLord Jesus, King of all nations, have mercy on us and on the whole world. Deliver us from the power of evil. Protect the Church and guide her. Unite all peoples under Your gentle and loving reign.\n\nO Lord Jesus, we turn to You in our need. Stretch out Your almighty hand over us, over our families, over our nation, and over the world. You are our King — come and reign. Our hearts are Your throne.\n\nJesus, King of all nations, I trust in You.\nJesus, King of all nations, I believe in You.\nJesus, King of all nations, I love You.\n\nAmen.",
+      },
+      {
+        name: "Sacred Heart Novena",
+        subtitle: "9-day novena of trust",
+        intro: "Pray once each day for nine consecutive days. This novena is especially powerful when prayed with the Act of Consecration to the Sacred Heart.",
+        text: "O my Jesus, Thou hast said: 'Truly I say to you, ask and you will receive, seek and you will find, knock and it will be opened to you.' Behold, I knock; I seek and I ask for the grace of:\n\n(Mention your intention.)\n\nOur Father... Hail Mary... Glory Be...\n\nO Sacred Heart of Jesus, I place all my trust in Thee.\n\n—\n\nO my Jesus, Thou hast said: 'Truly I say to you, if you ask anything of the Father in My name, He will give it to you.' Behold, in Thy name I ask the Father for the grace of:\n\n(Mention your intention.)\n\nOur Father... Hail Mary... Glory Be...\n\nO Sacred Heart of Jesus, I place all my trust in Thee.\n\n—\n\nO my Jesus, Thou hast said: 'Truly I say to you, heaven and earth will pass away but My words will not pass away.' Encouraged by Thy infallible words, I now ask for the grace of:\n\n(Mention your intention.)\n\nOur Father... Hail Mary... Glory Be...\n\nO Sacred Heart of Jesus, I place all my trust in Thee.\n\nO Sacred Heart of Jesus, for whom it is impossible not to have compassion on the afflicted, have pity on us miserable sinners and grant us the grace which we ask of Thee, through the Sorrowful and Immaculate Heart of Mary, Thy tender Mother and ours.\n\nHail, Guardian of the Redeemer, Spouse of the Blessed Virgin Mary. To you God entrusted His only Son; in you Mary placed her trust; with you Christ became man. Blessed Joseph, to us too, show yourself a father and guide us in the way of life. Obtain for us grace, mercy, and courage, and defend us from every evil. Amen.",
       },
     ],
   },
+  // ── SECTION: PRAYERS OF THE SAINTS ───────────────────────────────────────
   {
-    category: "Prayers for the Departed",
+    category: "Prayers of the Saints",
     prayers: [
       {
-        name: "Prayer for the Holy Souls",
-        text: "O God, the Creator and Redeemer of all the faithful, grant to the souls of Thy servants departed the remission of all their sins, that through our pious supplications they may obtain that pardon which they have always desired. Thou who livest and reignest world without end. Amen.\n\nEternal rest grant unto them, O Lord, and let perpetual light shine upon them. May they rest in peace. Amen.\n\nMay their souls and the souls of all the faithful departed, through the mercy of God, rest in peace. Amen.",
+        name: "St. Bridget's Prayers",
+        subtitle: "15 Prayers of St. Bridget of Sweden (d. 1373)",
+        intro: "Our Lord promised St. Bridget that whoever prayed these 15 prayers for one year would free 15 souls from purgatory, convert 15 sinners, and receive many other graces. The prayers meditate on the wounds and Passion of Christ.",
+        text: "1. O Jesus Christ, Eternal Sweetness to those who love Thee, joy surpassing all joy and all desire, Salvation and Hope of all sinners, Who hast proved that Thou hast no greater desire than to be among men, even assuming human nature at the fullness of time for the love of men, recall all the sufferings Thou hast endured from the instant of Thy conception, and especially during Thy Passion, as it was decreed and ordained from all eternity in the Divine plan. Remember, O Lord, that during the Last Supper with Thy disciples, having washed their feet, Thou gavest them Thy most precious Body and Blood, and while gently consoling them, Thou didst foretell Thy coming Passion. Remember the sadness and bitterness which Thou didst experience in Thy Soul as Thou Thyself bore witness saying: 'My Soul is sorrowful even unto death.' Remember all the fear, anguish and pain that Thou didst suffer in Thy delicate Body before the torment of the Crucifixion, when, after praying three times, bathed in a sweat of blood, Thou wast betrayed by Judas, Thy disciple, arrested by the mob, accused by false witnesses, unjustly judged by three judges, condemned though innocent, and publicly mocked. Remember that Thou wast stripped of Thy garments and clothed in those of derision; that Thy Face and Eyes were veiled, that Thou wast buffeted, crowned with thorns, given a reed in Thy Hands, that Thou wast crushed with blows and overwhelmed with affronts and outrages. In memory of all these pains and sufferings which Thou didst endure before Thy Passion on the Cross, grant me before my death true contrition, a sincere and entire confession, worthy satisfaction and the remission of all my sins. Amen.\n\n2. O Jesus, true liberty of Angels, Paradise of delights, remember the horror and sadness which Thou didst endure when Thy enemies, like furious lions, surrounded Thee, and by thousands of insults, spits, blows, lacerations and other unheard-of cruelties, tormented Thee at will. In consideration of these torments and insulting words, I beseech Thee, O my Savior, to deliver me from all my enemies, visible and invisible, and to bring me, under Thy protection, to the perfection of eternal salvation. Amen.\n\n3. O Jesus, Creator of Heaven and earth, Whom nothing can encompass or limit, Thou Who dost enfold and hold all things in Thy loving arms, remember the very bitter pain Thou didst suffer when the Jews nailed Thy sacred Hands and Feet to the Cross by blow after blow with big and blunt nails, and not finding Thee in a pitiable enough state to satisfy their rage, they enlarged Thy Wounds, and added new pains to Thy torture. In consideration of the anguish this caused Thee, I implore Thee, O Lord and God, to grant me, I who am a sinner, to have fear of Thee, true penitence, and amendment of my life. Amen.\n\n(Continue with prayers 4–15 from the Pieta Prayer Book, pages 8–15.)",
       },
       {
-        name: "De Profundis",
-        subtitle: "Psalm 130 — For the Dead",
-        text: "Out of the depths I cry to Thee, O Lord;\nLord, hear my voice!\nLet Thine ears be attentive\nTo the voice of my supplications.\n\nIf Thou, O Lord, shouldst mark iniquities,\nLord, who could stand?\nBut there is forgiveness with Thee,\nThat Thou mayest be feared.\n\nI wait for the Lord, my soul waits,\nAnd in His word I hope;\nMy soul waits for the Lord\nMore than watchmen for the morning.\n\nO Israel, hope in the Lord!\nFor with the Lord there is steadfast love,\nAnd with Him is plenteous redemption.\nAnd He will redeem Israel\nFrom all his iniquities.\n\nEternal rest grant unto them, O Lord,\nAnd let perpetual light shine upon them.\nMay they rest in peace. Amen.",
+        name: "St. Bridget's Prayers 4–15",
+        subtitle: "Coming Soon",
+        text: "The remaining 12 of the 15 Prayers of St. Bridget of Sweden will be added soon. Check back for updates.",
+      },
+      {
+        name: "Three Beautiful Prayers",
+        subtitle: "Coming Soon",
+        text: "This prayer will be added soon. Check back for updates.",
+      },
+      {
+        name: "True Letter",
+        subtitle: "Coming Soon",
+        text: "This prayer will be added soon. Check back for updates.",
+      },
+      {
+        name: "Unity Prayer",
+        subtitle: "Coming Soon",
+        text: "This prayer will be added soon. Check back for updates.",
+      },
+      {
+        name: "Brother Estanislao",
+        subtitle: "Coming Soon",
+        text: "This prayer will be added soon. Check back for updates.",
+      },
+      {
+        name: "Letter to Messina",
+        subtitle: "Coming Soon",
+        text: "This prayer will be added soon. Check back for updates.",
+      },
+      {
+        name: "Mystic Picture",
+        subtitle: "Coming Soon",
+        text: "This reflection will be added soon. Check back for updates.",
+      },
+      {
+        name: "Prayer of St. Francis",
+        subtitle: "Make Me an Instrument of Thy Peace",
+        text: "Lord, make me an instrument of Thy peace.\nWhere there is hatred, let me sow love;\nWhere there is injury, pardon;\nWhere there is doubt, faith;\nWhere there is despair, hope;\nWhere there is darkness, light;\nWhere there is sadness, joy.\n\nO Divine Master, grant that I may not so much seek\nTo be consoled as to console,\nTo be understood as to understand,\nTo be loved as to love.\n\nFor it is in giving that we receive;\nIt is in pardoning that we are pardoned;\nAnd it is in dying that we are born to eternal life. Amen.",
+      },
+      {
+        name: "Radiating Christ",
+        subtitle: "Fr. Pedro Arrupe SJ (1907–1991)",
+        text: "Lord Jesus,\nHelp me to spread Your fragrance everywhere I go.\nFlood my soul with Your spirit and life.\nPenetrate and possess my whole being so utterly that all my life may only be a radiance of Yours.\n\nShine through me, and be so in me that every soul I come in contact with may feel Your presence in my soul. Let them look up and see no longer me, but only Jesus.\n\nStay with me and then I shall begin to shine as You shine, so to shine as to be a light to others. The light, O Jesus, will be all from You; none of it will be mine. It will be You shining on others through me.\n\nLet me thus praise You in the way You love best — by shining on those around me. Let me preach You without preaching, not by words but by my example, by the catching force, the sympathetic influence of what I do, the evident fullness of the love my heart bears to You.\n\nAmen.",
       },
     ],
   },
+  // ── SECTION: SPIRITUAL COMMUNION & MASS ──────────────────────────────────
   {
     category: "Spiritual Communion & Mass",
     prayers: [
-      {
-        name: "Spiritual Communion",
-        subtitle: "St. Alphonsus Liguori (1696–1787)",
-        text: "My Jesus, I believe that Thou art present in the Most Holy Sacrament. I love Thee above all things, and I desire to receive Thee into my soul. Since I cannot at this moment receive Thee sacramentally, come at least spiritually into my heart.\n\nI embrace Thee as if Thou wert already there, and I unite myself wholly to Thee. Never permit me to be separated from Thee. Amen.",
-      },
-      {
-        name: "Before Holy Communion",
-        text: "Lord, I am not worthy that Thou shouldst enter under my roof, but only say the word and my soul shall be healed.\n\nO Lord, I am not worthy of the least of Thy favors; yet, since Thou dost invite me to receive Thee, I come with full confidence in Thy goodness and mercy. Thou art the Physician of souls; mine is sick — heal it by Thy holy presence. Thou art the Bread of life; I am hungry — feed me with Thyself.\n\nO Sacrament most holy, O Sacrament divine, all praise and all thanksgiving be every moment Thine.",
-      },
-      {
-        name: "After Holy Communion",
-        text: "Soul of Christ, sanctify me. Body of Christ, save me. Blood of Christ, inebriate me. Water from the side of Christ, wash me. Passion of Christ, strengthen me.\n\nO good Jesus, hear me; within Thy wounds hide me; suffer me not to be separated from Thee. From the malicious enemy defend me. In the hour of my death call me, and bid me come to Thee, that with Thy saints I may praise Thee forever and ever. Amen.\n\nI thank Thee, O Lord, for the grace which Thou hast given me in receiving Thy Body and Blood. I pray Thee, O Lord, that the reception of this Sacrament may be to me a pardon of sins, a complete forgiveness, a communion of faith, a progress in virtue, and an attainment of salvation. Amen.",
-      },
+      { name: "Why Daily Mass", subtitle: "Coming Soon", text: "This reflection will be added soon. Check back for updates." },
+      { name: "Why Daily Rosary", subtitle: "Coming Soon", text: "This reflection will be added soon. Check back for updates." },
+      { name: "Graces from Masses", subtitle: "Coming Soon", text: "This reflection will be added soon. Check back for updates." },
+      { name: "Spiritual Communion", subtitle: "St. Alphonsus Liguori (1696–1787)", text: "My Jesus, I believe that Thou art present in the Most Holy Sacrament. I love Thee above all things, and I desire to receive Thee into my soul. Since I cannot at this moment receive Thee sacramentally, come at least spiritually into my heart.\n\nI embrace Thee as if Thou wert already there, and I unite myself wholly to Thee. Never permit me to be separated from Thee. Amen." },
+      { name: "Before Holy Communion", text: "Lord, I am not worthy that Thou shouldst enter under my roof, but only say the word and my soul shall be healed.\n\nO Lord, I am not worthy of the least of Thy favors; yet, since Thou dost invite me to receive Thee, I come with full confidence in Thy goodness and mercy. Thou art the Physician of souls; mine is sick — heal it by Thy holy presence. Thou art the Bread of life; I am hungry — feed me with Thyself.\n\nO Sacrament most holy, O Sacrament divine, all praise and all thanksgiving be every moment Thine." },
+      { name: "After Holy Communion", text: "Soul of Christ, sanctify me. Body of Christ, save me. Blood of Christ, inebriate me. Water from the side of Christ, wash me. Passion of Christ, strengthen me.\n\nO good Jesus, hear me; within Thy wounds hide me; suffer me not to be separated from Thee. From the malicious enemy defend me. In the hour of my death call me, and bid me come to Thee, that with Thy saints I may praise Thee forever and ever. Amen.\n\nI thank Thee, O Lord, for the grace which Thou hast given me in receiving Thy Body and Blood. I pray Thee, O Lord, that the reception of this Sacrament may be to me a pardon of sins, a complete forgiveness, a communion of faith, a progress in virtue, and an attainment of salvation. Amen." },
     ],
   },
 ];
@@ -1049,6 +1179,8 @@ export default function RosaryApp() {
   // Pieta Prayer Book
   const [pietaScreen, setPietaScreen] = useState(null); // null | "splash" | "list" | "prayer"
   const [pietaSelectedPrayer, setPietaSelectedPrayer] = useState(null);
+  const pietaListScrollRef = useRef(null);
+  const pietaListScrollPos = useRef(0);
   const [prayerIntention, setPrayerIntention] = useState("");
   const [prayerName, setPrayerName] = useState("");
   const [prayerLocation, setPrayerLocation] = useState("");
@@ -2388,31 +2520,36 @@ export default function RosaryApp() {
             }} />
             <div style={{
               position: "absolute", inset: 0,
-              background: "linear-gradient(to bottom, rgba(10,5,20,0.2) 0%, rgba(10,5,20,0.5) 55%, rgba(10,5,20,0.88) 100%)",
+              background: "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35) 100%)",
             }} />
             <div style={{ position: "relative", textAlign: "center", padding: "0 32px" }}>
               <div style={{
-                fontSize: 11, color: "rgba(255,215,100,0.85)", fontFamily: "'Lora',serif",
+                fontSize: 11, color: "#ffe88a", fontFamily: "'Lora',serif",
                 letterSpacing: 3, textTransform: "uppercase", marginBottom: 14,
+                textShadow: "0 1px 3px rgba(0,0,0,0.9), 0 2px 12px rgba(0,0,0,0.8)",
               }}>Judith's</div>
               <div style={{
                 fontSize: 30, fontWeight: 700, color: "#fff",
                 fontFamily: "'Lora',serif", lineHeight: 1.25, marginBottom: 6,
+                textShadow: "0 1px 3px rgba(0,0,0,1), 0 3px 16px rgba(0,0,0,0.9)",
               }}>Pieta Prayer Book</div>
               <div style={{
-                fontSize: 13, color: "rgba(255,230,180,0.8)", fontFamily: "'Lora',serif",
+                fontSize: 13, color: "#fff", fontFamily: "'Lora',serif",
                 fontStyle: "italic", marginBottom: 52, lineHeight: 1.7,
+                textShadow: "0 1px 3px rgba(0,0,0,1), 0 2px 12px rgba(0,0,0,0.9)",
               }}>My God, how I love Thee!<br/>— St. Thérèse of the Child Jesus</div>
               <button onClick={() => setPietaScreen("list")} style={{
-                background: "rgba(255,215,100,0.18)", border: "1.5px solid rgba(255,215,100,0.6)",
+                background: "rgba(0,0,0,0.35)", border: "1.5px solid rgba(255,255,255,0.9)",
                 borderRadius: 14, padding: "14px 44px",
-                color: "#ffd764", fontFamily: "'Lora',serif",
+                color: "#fff", fontFamily: "'Lora',serif",
                 fontSize: 16, fontWeight: 700, cursor: "pointer", letterSpacing: 0.5,
+                textShadow: "0 1px 4px rgba(0,0,0,0.8)",
               }}>Open Prayer Book</button>
               <div style={{ marginTop: 22 }}>
                 <button onClick={() => setPietaScreen(null)} style={{
-                  background: "none", border: "none", color: "rgba(255,255,255,0.5)",
+                  background: "none", border: "none", color: "#fff",
                   fontFamily: "'Lora',serif", fontSize: 13, cursor: "pointer",
+                  textShadow: "0 1px 4px rgba(0,0,0,0.9)",
                 }}>← Back</button>
               </div>
             </div>
@@ -2439,7 +2576,7 @@ export default function RosaryApp() {
               <div style={{ fontSize: 10, color: "rgba(255,215,100,0.7)", fontFamily: "'Lora',serif", letterSpacing: 2.5, textTransform: "uppercase", marginBottom: 4 }}>Judith's</div>
               <div style={{ fontSize: 22, fontWeight: 700, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>Pieta Prayer Book</div>
             </div>
-            <div style={{ overflowY: "auto", flex: 1, padding: "12px 16px 40px" }}>
+            <div ref={pietaListScrollRef} style={{ overflowY: "auto", flex: 1, padding: "12px 16px 40px" }}>
               {PIETA_PRAYERS.map((group, gi) => (
                 <div key={gi} style={{ marginBottom: 24 }}>
                   <div style={{
@@ -2447,7 +2584,7 @@ export default function RosaryApp() {
                     letterSpacing: 2, textTransform: "uppercase", marginBottom: 10, paddingLeft: 4,
                   }}>{group.category}</div>
                   {group.prayers.map((p, pi) => (
-                    <button key={pi} onClick={() => { setPietaSelectedPrayer(p); setPietaScreen("prayer"); }} style={{
+                    <button key={pi} onClick={() => { pietaListScrollPos.current = pietaListScrollRef.current?.scrollTop || 0; setPietaSelectedPrayer(p); setPietaScreen("prayer"); }} style={{
                       width: "100%", background: "rgba(255,255,255,0.05)",
                       border: "1px solid rgba(200,160,232,0.15)",
                       borderRadius: 12, padding: "14px 16px",
@@ -2480,7 +2617,7 @@ export default function RosaryApp() {
               background: "linear-gradient(180deg,rgba(107,63,160,0.35),transparent)",
               borderBottom: "1px solid rgba(200,160,232,0.15)", flexShrink: 0,
             }}>
-              <button onClick={() => setPietaScreen("list")} style={{
+              <button onClick={() => { setPietaScreen("list"); setTimeout(() => { if (pietaListScrollRef.current) pietaListScrollRef.current.scrollTop = pietaListScrollPos.current; }, 0); }} style={{
                 background: "none", border: "none", color: "rgba(200,160,232,0.7)",
                 fontFamily: "'Lora',serif", fontSize: 13, cursor: "pointer",
                 marginBottom: 8, padding: 0,
