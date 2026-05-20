@@ -1200,6 +1200,7 @@ export default function RosaryApp() {
   // Pieta Prayer Book
   const [pietaScreen, setPietaScreen] = useState(null); // null | "splash" | "list" | "prayer"
   const [pietaSelectedPrayer, setPietaSelectedPrayer] = useState(null);
+  const [pietaExpandedGroups, setPietaExpandedGroups] = useState(new Set());
   const pietaListScrollRef = useRef(null);
   const pietaListScrollPos = useRef(0);
   const [prayerIntention, setPrayerIntention] = useState("");
@@ -2619,30 +2620,58 @@ export default function RosaryApp() {
               <div style={{ fontSize: 22, fontWeight: 700, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>Pieta Prayer Book</div>
             </div>
             <div ref={pietaListScrollRef} style={{ overflowY: "auto", flex: 1, padding: "12px 16px 40px" }}>
-              {PIETA_PRAYERS.map((group, gi) => (
-                <div key={gi} style={{ marginBottom: 24 }}>
-                  <div style={{
-                    fontSize: 10, color: "rgba(255,215,100,0.7)", fontFamily: "'Lora',serif",
-                    letterSpacing: 2, textTransform: "uppercase", marginBottom: 10, paddingLeft: 4,
-                  }}>{group.category}</div>
-                  {group.prayers.map((p, pi) => (
-                    <button key={pi} onClick={() => { pietaListScrollPos.current = pietaListScrollRef.current?.scrollTop || 0; setPietaSelectedPrayer(p); setPietaScreen("prayer"); }} style={{
-                      width: "100%", background: "rgba(255,255,255,0.05)",
-                      border: "1px solid rgba(200,160,232,0.15)",
-                      borderRadius: 12, padding: "14px 16px",
-                      marginBottom: 8, cursor: "pointer",
-                      display: "flex", alignItems: "center", justifyContent: "space-between",
-                      textAlign: "left",
-                    }}>
-                      <div>
-                        <div style={{ fontSize: 15, fontWeight: 600, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>{p.name}</div>
-                        {p.subtitle && <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif", marginTop: 2, fontStyle: "italic" }}>{p.subtitle}</div>}
+              {PIETA_PRAYERS.map((group, gi) => {
+                const isExpanded = pietaExpandedGroups.has(gi);
+                return (
+                  <div key={gi} style={{ marginBottom: 8 }}>
+                    <button
+                      onClick={() => setPietaExpandedGroups(prev => {
+                        const next = new Set(prev);
+                        if (next.has(gi)) next.delete(gi); else next.add(gi);
+                        return next;
+                      })}
+                      style={{
+                        width: "100%", background: isExpanded ? "rgba(107,63,160,0.2)" : "rgba(255,255,255,0.03)",
+                        border: "1px solid rgba(200,160,232,0.18)",
+                        borderRadius: isExpanded ? "12px 12px 0 0" : 12,
+                        padding: "12px 16px", cursor: "pointer",
+                        display: "flex", alignItems: "center", justifyContent: "space-between",
+                      }}
+                    >
+                      <div style={{
+                        fontSize: 10, color: "rgba(255,215,100,0.85)", fontFamily: "'Lora',serif",
+                        letterSpacing: 2, textTransform: "uppercase",
+                      }}>{group.category}</div>
+                      <div style={{ color: "rgba(255,215,100,0.7)", fontSize: 10, letterSpacing: 1 }}>
+                        {isExpanded ? "▲" : "▼"}
                       </div>
-                      <div style={{ color: "rgba(200,160,232,0.5)", fontSize: 18, marginLeft: 8 }}>›</div>
                     </button>
-                  ))}
-                </div>
-              ))}
+                    {isExpanded && (
+                      <div style={{
+                        border: "1px solid rgba(200,160,232,0.18)", borderTop: "none",
+                        borderRadius: "0 0 12px 12px", padding: "8px 8px 4px", marginBottom: 12,
+                      }}>
+                        {group.prayers.map((p, pi) => (
+                          <button key={pi} onClick={() => { pietaListScrollPos.current = pietaListScrollRef.current?.scrollTop || 0; setPietaSelectedPrayer(p); setPietaScreen("prayer"); }} style={{
+                            width: "100%", background: "rgba(255,255,255,0.05)",
+                            border: "1px solid rgba(200,160,232,0.1)",
+                            borderRadius: 10, padding: "13px 14px",
+                            marginBottom: 6, cursor: "pointer",
+                            display: "flex", alignItems: "center", justifyContent: "space-between",
+                            textAlign: "left",
+                          }}>
+                            <div>
+                              <div style={{ fontSize: 15, fontWeight: 600, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>{p.name}</div>
+                              {p.subtitle && <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif", marginTop: 2, fontStyle: "italic" }}>{p.subtitle}</div>}
+                            </div>
+                            <div style={{ color: "rgba(200,160,232,0.5)", fontSize: 18, marginLeft: 8 }}>›</div>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
             </div>
           </div>
         )}

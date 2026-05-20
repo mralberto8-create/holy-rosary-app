@@ -40,10 +40,11 @@ cd /Users/markalberto/Downloads/holy-rosary-app/holy-rosary-app && npm start
 - **Mystery selection** — 4 buttons (Joyful, Sorrowful, Glorious, Luminous); auto-suggests by day of week with ✦ Suggested label
 - **Progress resume card** — appears if localStorage has an in-progress rosary; shows mystery set + % complete; Resume or Start Fresh
 - **Mystery list** — shows all 5 mysteries for selected set with expandable meditations (title, scripture, fruit, short intention, full meditation)
-- **3 top action buttons:** Guide · FAQ · MJK Novena
+- **4 top action buttons:** Guide · FAQ · MJK Novena · Pieta Prayers
 - **Guide** — 8-section user guide modal
 - **FAQ** — tabbed modal: "About the Rosary" (6 accordion sections) and "History" (9 accordion sections)
 - **MJK Novena** — full-screen overlay showing `/mjk-novena.jpg`
+- **Pieta Prayers** — "Judith's Pieta Prayer Book": splash screen (pieta-sky.png background), prayer list (7 categories, 28 public domain prayers), individual prayer view. Copyrighted prayers not yet added.
 
 ---
 
