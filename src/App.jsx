@@ -738,18 +738,29 @@ function DecadeArc({ sequence, currentStep, onBeadTap }) {
         const beadR = large ? 16 : 13;
         const active = isActive(b.stepIndex);
         const reached = b.stepIndex <= currentStep || (activeMysteryOurFather && b.stepIndex <= activeMysteryOurFather);
+        const largeReached = large && reached;
         const showNum = !large && b.beadInDecade != null && reached;
-        const textCol = active ? "#2d1b3d" : "rgba(255,255,255,0.95)";
+        const textCol = (active || largeReached) ? "#2d1b3d" : "rgba(255,255,255,0.95)";
+        const largeFill = largeReached ? "url(#arcGradActive)" : beadFill(b.stepIndex);
+        const largeStroke = largeReached ? "#ffd700" : beadStroke(b.stepIndex);
         return (
           <g key={b.stepIndex} onClick={() => onBeadTap(b.stepIndex)} style={{ cursor: "pointer" }}>
-            {active && <circle cx={b.x} cy={b.y} r={beadR + 7} fill="rgba(255,215,0,0.15)" />}
+            {(active || largeReached) && <circle cx={b.x} cy={b.y} r={beadR + 7} fill="rgba(255,215,0,0.15)" />}
             <circle cx={b.x} cy={b.y} r={beadR}
-              fill={beadFill(b.stepIndex)} stroke={beadStroke(b.stepIndex)}
+              fill={large ? largeFill : beadFill(b.stepIndex)}
+              stroke={large ? largeStroke : beadStroke(b.stepIndex)}
               strokeWidth={active ? 2.5 : 1.5}
-              filter={active ? "url(#arcGlow)" : "url(#arcShadow)"}
+              filter={(active || largeReached) ? "url(#arcGlow)" : "url(#arcShadow)"}
             />
             {large && <circle cx={b.x} cy={b.y} r={beadR - 5} fill="none"
-              stroke={active ? "rgba(255,215,0,0.6)" : "rgba(200,168,232,0.4)"} strokeWidth="1" />}
+              stroke={(active || largeReached) ? "rgba(255,215,0,0.6)" : "rgba(200,168,232,0.4)"} strokeWidth="1" />}
+            {large && largeReached && b.decade != null && (
+              <text x={b.x} y={b.y + 1} textAnchor="middle" dominantBaseline="middle"
+                fontSize="10" fontWeight="700"
+                fill="#2d1b3d" fontFamily="sans-serif" pointerEvents="none">
+                {["1st","2nd","3rd","4th","5th"][b.decade]}
+              </text>
+            )}
             {showNum && (
               <text x={b.x} y={b.y + 1} textAnchor="middle" dominantBaseline="middle"
                 fontSize={b.beadInDecade >= 10 ? "10" : "12"} fontWeight="700"
@@ -912,13 +923,23 @@ function RosaryShape({ sequence, currentStep, onBeadTap, mini = false, activeMys
         const isHM = !large;
         const inActiveDecade = b.decade === activeDecadeIndex;
         const reached = b.stepIndex <= currentStep || (activeMysteryOurFather && b.stepIndex <= activeMysteryOurFather);
+        const largeReached = large && reached;
         const showNumber = isHM && inActiveDecade && reached && b.beadInDecade != null;
         const textCol = active ? "#2d1b3d" : "rgba(255,255,255,0.9)";
+        const largeFill = largeReached ? "url(#gradActive)" : beadFill(b.stepIndex);
+        const largeStroke = largeReached ? "#ffd700" : beadStroke(b.stepIndex);
         return (
           <g key={b.stepIndex} onClick={() => onBeadTap(b.stepIndex)} style={{ cursor: "pointer" }}>
-            {active && <circle cx={b.x} cy={b.y} r={r + (mini ? 3 : 7)} fill="rgba(255,215,0,0.15)" />}
-            <circle cx={b.x} cy={b.y} r={r} fill={beadFill(b.stepIndex)} stroke={beadStroke(b.stepIndex)} strokeWidth={active ? 2 : 1} filter={active ? "url(#glowGold)" : "url(#softShadow)"} />
-            {large && <circle cx={b.x} cy={b.y} r={r - (mini ? 2 : 4)} fill="none" stroke={active ? "rgba(255,215,0,0.6)" : "rgba(200,168,232,0.4)"} strokeWidth="1" />}
+            {(active || largeReached) && <circle cx={b.x} cy={b.y} r={r + (mini ? 3 : 7)} fill="rgba(255,215,0,0.15)" />}
+            <circle cx={b.x} cy={b.y} r={r} fill={large ? largeFill : beadFill(b.stepIndex)} stroke={large ? largeStroke : beadStroke(b.stepIndex)} strokeWidth={active ? 2 : 1} filter={(active || largeReached) ? "url(#glowGold)" : "url(#softShadow)"} />
+            {large && <circle cx={b.x} cy={b.y} r={r - (mini ? 2 : 4)} fill="none" stroke={(active || largeReached) ? "rgba(255,215,0,0.6)" : "rgba(200,168,232,0.4)"} strokeWidth="1" />}
+            {largeReached && b.decade != null && (
+              <text x={b.x} y={b.y + 0.5} textAnchor="middle" dominantBaseline="middle"
+                fontSize={mini ? "4" : "6.5"} fontWeight="700"
+                fill="#2d1b3d" fontFamily="sans-serif" pointerEvents="none">
+                {mini ? b.decade + 1 : ["1st","2nd","3rd","4th","5th"][b.decade]}
+              </text>
+            )}
             {showNumber && !mini && (
               <text x={b.x} y={b.y + 1} textAnchor="middle" dominantBaseline="middle"
                 fontSize={b.beadInDecade >= 10 ? "7.5" : "8.5"} fontWeight="700"
@@ -1886,6 +1907,30 @@ export default function RosaryApp() {
               icon: null,
               lines: [
                 "Tap the MJK Novena button in the top right of the home screen to open a special novena prayer.",
+              ],
+            },
+            {
+              heading: "Judith's Pieta Prayer Book",
+              icon: "📖",
+              lines: [
+                "Tap the Pieta Prayers button in the top right of the home screen to open Judith's Pieta Prayer Book.",
+                "You'll land on a sky splash screen. Tap Open Prayer Book to enter.",
+                "Prayers are organized into 12 sections — Daily Prayers, Acts, Chaplets, Consecrations, Prayers to Jesus Christ, Prayers to Our Lady, Prayers for Protection, Purgatory & Prayers for the Departed, Litanies, Novenas, Prayers of the Saints, and Spiritual Communion & Mass.",
+                "Scroll through the list and tap any prayer to open the full text.",
+                "Tap ← Prayer List to go back. The app will return you to exactly where you were in the list.",
+                "Prayers marked Coming Soon will be added in a future update.",
+              ],
+            },
+            {
+              heading: "History of the Pieta Prayer Book",
+              icon: "✝",
+              lines: [
+                "The Pieta Prayer Book was compiled by MLOR Corporation — My Love of the Rosary — and first published in the 1950s in the United States. It was designed as a compact, affordable Catholic prayer booklet that could fit in a pocket or purse.",
+                "\"Pieta\" refers to Michelangelo's famous marble sculpture (1498–1499) depicting the Virgin Mary holding the body of Jesus after the Crucifixion — the image on the cover of the book. The word Pietà is Italian for \"pity\" or \"compassion.\"",
+                "It became one of the most widely distributed Catholic prayer books in American history, with over 22 million copies printed. It was sold for just a few cents so that no Catholic family would be without one.",
+                "The quote on the cover — \"My God, how I love Thee!\" — is attributed to St. Thérèse of the Child Jesus, the same words on the Pieta Prayer Book splash screen in this app.",
+                "The book draws from centuries of Catholic tradition — prayers from the saints, litanies, novenas, chaplets, and devotions — most of which are in the public domain.",
+                "It remains in print today and is still distributed at parishes, hospitals, and Catholic bookstores. Many Catholic families have passed their copies down through generations — much like Judith's well-worn copy.",
               ],
             },
           ].map(({ heading, icon, moonIcon, navIcons, lines }) => (
