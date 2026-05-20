@@ -2518,28 +2518,24 @@ export default function RosaryApp() {
               position: "absolute", inset: 0, width: "100%", height: "100%",
               objectFit: "cover", objectPosition: "center 30%",
             }} />
-            <div style={{
-              position: "absolute", inset: 0,
-              background: "linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0) 40%, rgba(0,0,0,0.35) 100%)",
-            }} />
             <div style={{ position: "relative", textAlign: "center", padding: "0 32px" }}>
               <div style={{
                 fontSize: 11, color: "#ffe88a", fontFamily: "'Lora',serif",
                 letterSpacing: 3, textTransform: "uppercase", marginBottom: 14,
-                textShadow: "0 1px 3px rgba(0,0,0,0.9), 0 2px 12px rgba(0,0,0,0.8)",
+                textShadow: "0 1px 4px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.9)",
               }}>Judith's</div>
               <div style={{
                 fontSize: 30, fontWeight: 700, color: "#fff",
                 fontFamily: "'Lora',serif", lineHeight: 1.25, marginBottom: 6,
-                textShadow: "0 1px 3px rgba(0,0,0,1), 0 3px 16px rgba(0,0,0,0.9)",
+                textShadow: "0 1px 4px rgba(0,0,0,1), 0 0 24px rgba(0,0,0,1)",
               }}>Pieta Prayer Book</div>
               <div style={{
                 fontSize: 13, color: "#fff", fontFamily: "'Lora',serif",
                 fontStyle: "italic", marginBottom: 52, lineHeight: 1.7,
-                textShadow: "0 1px 3px rgba(0,0,0,1), 0 2px 12px rgba(0,0,0,0.9)",
+                textShadow: "0 1px 4px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.9)",
               }}>My God, how I love Thee!<br/>— St. Thérèse of the Child Jesus</div>
               <button onClick={() => setPietaScreen("list")} style={{
-                background: "rgba(0,0,0,0.35)", border: "1.5px solid rgba(255,255,255,0.9)",
+                background: "rgba(0,0,0,0.4)", border: "1.5px solid rgba(255,255,255,0.9)",
                 borderRadius: 14, padding: "14px 44px",
                 color: "#fff", fontFamily: "'Lora',serif",
                 fontSize: 16, fontWeight: 700, cursor: "pointer", letterSpacing: 0.5,
@@ -2549,7 +2545,7 @@ export default function RosaryApp() {
                 <button onClick={() => setPietaScreen(null)} style={{
                   background: "none", border: "none", color: "#fff",
                   fontFamily: "'Lora',serif", fontSize: 13, cursor: "pointer",
-                  textShadow: "0 1px 4px rgba(0,0,0,0.9)",
+                  textShadow: "0 1px 4px rgba(0,0,0,1)",
                 }}>← Back</button>
               </div>
             </div>
