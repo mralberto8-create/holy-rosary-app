@@ -5,12 +5,13 @@ import { getFirestore } from "firebase/firestore";
 // Paste your Firebase project config values below.
 // Get these from: Firebase Console → Project Settings → Your Apps → Web App
 const firebaseConfig = {
-  apiKey:            "REPLACE_WITH_YOUR_API_KEY",
-  authDomain:        "REPLACE_WITH_YOUR_AUTH_DOMAIN",
-  projectId:         "REPLACE_WITH_YOUR_PROJECT_ID",
-  storageBucket:     "REPLACE_WITH_YOUR_STORAGE_BUCKET",
-  messagingSenderId: "REPLACE_WITH_YOUR_MESSAGING_SENDER_ID",
-  appId:             "REPLACE_WITH_YOUR_APP_ID",
+  apiKey:            "AIzaSyDCFvy4XlqQ0Bdy9o8GbCreNwCeWZMVf98",
+  authDomain:        "holy-rosary-app.firebaseapp.com",
+  projectId:         "holy-rosary-app",
+  storageBucket:     "holy-rosary-app.firebasestorage.app",
+  messagingSenderId: "44895675913",
+  appId:             "1:44895675913:web:d9f1137394791dcd6fbad8",
+  measurementId:     "G-9DQESL40FB",
 };
 
 const app = initializeApp(firebaseConfig);
