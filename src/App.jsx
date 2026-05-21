@@ -1,4 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import { db } from "./firebase";
+import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "firebase/firestore";
 
 // ── DATA ────────────────────────────────────────────────────────────────────
 
@@ -1216,29 +1218,35 @@ export default function RosaryApp() {
   const [prayerList, setPrayerList] = useState([]);
   const [prayerSubmitted, setPrayerSubmitted] = useState(false);
 
-  // Load feedback, prayers, and saved progress on mount
+  // Real-time Firestore listeners + load saved progress on mount
   useEffect(() => {
-    async function loadData() {
-      try {
-        const result = await window.storage.get("rosary_feedback", true);
-        if (result) setFeedbackList(JSON.parse(result.value));
-      } catch (e) { setFeedbackList([]); }
-      try {
-        const result = await window.storage.get("rosary_prayers", true);
-        if (result) setPrayerList(JSON.parse(result.value));
-      } catch (e) { setPrayerList([]); }
-      try {
-        const raw = localStorage.getItem("rosary_progress");
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          if (parsed && parsed.currentStep > 0) {
-            setSavedProgress(parsed);
-            setShowResumePrompt(true);
-          }
+    // Live prayer intentions — updates instantly for all users
+    const prayersQ = query(collection(db, "prayers"), orderBy("createdAt", "desc"));
+    const unsubPrayers = onSnapshot(prayersQ,
+      snap => setPrayerList(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      () => setPrayerList([])
+    );
+
+    // Live feedback
+    const feedbackQ = query(collection(db, "feedback"), orderBy("createdAt", "desc"));
+    const unsubFeedback = onSnapshot(feedbackQ,
+      snap => setFeedbackList(snap.docs.map(d => ({ id: d.id, ...d.data() }))),
+      () => setFeedbackList([])
+    );
+
+    // Rosary progress lives in localStorage (device-only, intentional)
+    try {
+      const raw = localStorage.getItem("rosary_progress");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        if (parsed && parsed.currentStep > 0) {
+          setSavedProgress(parsed);
+          setShowResumePrompt(true);
         }
-      } catch (e) { /* ignore */ }
-    }
-    loadData();
+      }
+    } catch (e) { /* ignore */ }
+
+    return () => { unsubPrayers(); unsubFeedback(); };
   }, []);
 
   // Save progress to localStorage while praying
@@ -1249,21 +1257,19 @@ export default function RosaryApp() {
     }
   }, [screen, currentStep, mysterySet, sequence.length]);
 
-  // Save feedback to storage
+  // Save feedback to Firestore
   async function submitFeedback() {
     const entry = {
-      id: Date.now(),
       date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" }),
       rating: feedbackRating,
       thumb: feedbackThumb,
       comment: feedbackComment.trim(),
       name: feedbackName.trim(),
       location: feedbackLocation.trim(),
+      createdAt: serverTimestamp(),
     };
-    const updated = [entry, ...feedbackList];
     try {
-      await window.storage.set("rosary_feedback", JSON.stringify(updated), true);
-      setFeedbackList(updated);
+      await addDoc(collection(db, "feedback"), entry);
       setFeedbackSubmitted(true);
       setFeedbackRating(0);
       setFeedbackThumb(null);
@@ -1271,28 +1277,26 @@ export default function RosaryApp() {
       setFeedbackName("");
       setFeedbackLocation("");
       setTimeout(() => { setFeedbackSubmitted(false); setShowFeedback(false); }, 1800);
-    } catch (e) { console.error("Storage error:", e); }
+    } catch (e) { console.error("Firestore error:", e); }
   }
 
-  // Save prayer intention to storage
+  // Save prayer intention to Firestore
   async function submitPrayer() {
     const entry = {
-      id: Date.now(),
       date: new Date().toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric", hour: "2-digit", minute: "2-digit" }),
       intention: prayerIntention.trim(),
       name: prayerName.trim(),
       location: prayerLocation.trim(),
+      createdAt: serverTimestamp(),
     };
-    const updated = [entry, ...prayerList];
     try {
-      await window.storage.set("rosary_prayers", JSON.stringify(updated), true);
-      setPrayerList(updated);
+      await addDoc(collection(db, "prayers"), entry);
       setPrayerSubmitted(true);
       setPrayerIntention("");
       setPrayerName("");
       setPrayerLocation("");
       setTimeout(() => { setPrayerSubmitted(false); setShowPrayerWarrior(false); }, 1800);
-    } catch (e) { console.error("Storage error:", e); }
+    } catch (e) { console.error("Firestore error:", e); }
   }
 
   useEffect(() => {
