@@ -95,6 +95,7 @@ const PIETA_PRAYERS = [
       {
         name: "Divine Mercy Chaplet",
         subtitle: "As given to St. Faustina Kowalska",
+        history: "According to her spiritual diary, Jesus Christ appeared to St. Faustina on February 22, 1931, in Płock, Poland, and instructed her to have an image painted with the signature \"Jesus, I trust in You.\" This marked the beginning of the worldwide Divine Mercy devotion, which emphasizes complete reliance on God's mercy.",
         intro: "Begin with the Our Father, Hail Mary, and Apostles' Creed. Then on the large beads say the Eternal Father prayer; on the 10 small beads say the For the Sake prayer. Repeat for 5 decades. Close with the Holy God prayer (3 times).",
         text: "OPENING (once):\nOur Father... Hail Mary... Apostles' Creed...\n\nON THE LARGE BEADS (once per decade):\nEternal Father, I offer You the Body and Blood, Soul and Divinity of Your dearly beloved Son, Our Lord Jesus Christ, in atonement for our sins and those of the whole world.\n\nON THE 10 SMALL BEADS (each decade):\nFor the sake of His sorrowful Passion, have mercy on us and on the whole world.\n\n— Repeat for all 5 decades —\n\nCLOSING (3 times):\nHoly God, Holy Mighty One, Holy Immortal One, have mercy on us and on the whole world.\n\nOPTIONAL CLOSING PRAYER:\nEternal God, in whom mercy is endless and the treasury of compassion inexhaustible, look kindly upon us and increase Your mercy in us, that in difficult moments we might not despair nor become despondent, but with great confidence submit ourselves to Your holy will, which is Love and Mercy itself. Amen.",
       },
@@ -1210,6 +1211,7 @@ export default function RosaryApp() {
   const [pietaScreen, setPietaScreen] = useState(null); // null | "splash" | "list" | "prayer"
   const [pietaSelectedPrayer, setPietaSelectedPrayer] = useState(null);
   const [pietaExpandedGroups, setPietaExpandedGroups] = useState(new Set());
+  const [pietaSearch, setPietaSearch] = useState("");
   const pietaListScrollRef = useRef(null);
   const pietaListScrollPos = useRef(0);
   const [prayerIntention, setPrayerIntention] = useState("");
@@ -1963,7 +1965,7 @@ export default function RosaryApp() {
                 "The Pieta Prayer Book was compiled by MLOR Corporation — My Love of the Rosary — and first published in the 1950s in the United States. It was designed as a compact, affordable Catholic prayer booklet that could fit in a pocket or purse.",
                 "\"Pieta\" refers to Michelangelo's famous marble sculpture (1498–1499) depicting the Virgin Mary holding the body of Jesus after the Crucifixion — the image on the cover of the book. The word Pietà is Italian for \"pity\" or \"compassion.\"",
                 "It became one of the most widely distributed Catholic prayer books in American history, with over 22 million copies printed. It was sold for just a few cents so that no Catholic family would be without one.",
-                "The quote on the cover — \"My God, how I love Thee!\" — is attributed to St. Thérèse of the Child Jesus, the same words on the Pieta Prayer Book splash screen in this app.",
+                "The quote on the cover — \"Jesus, I trust in You.\" — is attributed to St. Maria Faustina Kowalska, the same words on the Pieta Prayer Book splash screen in this app.",
                 "The book draws from centuries of Catholic tradition — prayers from the saints, litanies, novenas, chaplets, and devotions — most of which are in the public domain.",
                 "It remains in print today and is still distributed at parishes, hospitals, and Catholic bookstores. Many Catholic families have passed their copies down through generations — much like Judith's well-worn copy.",
               ],
@@ -2611,10 +2613,12 @@ export default function RosaryApp() {
                 textShadow: "0 1px 4px rgba(0,0,0,1), 0 0 24px rgba(0,0,0,1)",
               }}>Pieta Prayer Book</div>
               <div style={{
-                fontSize: 15, fontWeight: 700, color: "#fff", fontFamily: "'Lora',serif",
-                fontStyle: "italic", marginBottom: 52, lineHeight: 1.7,
-                textShadow: "0 1px 4px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.9)",
-              }}>My God, how I love Thee!<br/>— St. Thérèse of the Child Jesus</div>
+                fontFamily: "'Lora',serif", fontStyle: "italic", marginBottom: 28, lineHeight: 1.7,
+              }}>
+                <span style={{ color: "#8B0000", fontWeight: 700, textShadow: "0 1px 6px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.9)", fontSize: 15 }}>Jesus, I trust in You.</span>
+                <br/>
+                <span style={{ color: "#fff", fontWeight: 700, textShadow: "0 1px 4px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.9)", fontSize: 15 }}>— St. Maria Faustina Kowalska</span>
+              </div>
               <button onClick={() => setPietaScreen("list")} style={{
                 background: "rgba(0,0,0,0.4)", border: "1.5px solid rgba(255,255,255,0.9)",
                 borderRadius: 14, padding: "14px 44px",
@@ -2645,16 +2649,70 @@ export default function RosaryApp() {
               background: "linear-gradient(180deg,rgba(107,63,160,0.35),transparent)",
               borderBottom: "1px solid rgba(200,160,232,0.15)", flexShrink: 0,
             }}>
-              <button onClick={() => setPietaScreen("splash")} style={{
+              <button onClick={() => { setPietaScreen("splash"); setPietaSearch(""); }} style={{
                 background: "none", border: "none", color: "rgba(200,160,232,0.7)",
                 fontFamily: "'Lora',serif", fontSize: 13, cursor: "pointer",
                 marginBottom: 8, padding: 0,
               }}>← Back</button>
               <div style={{ fontSize: 10, color: "rgba(255,215,100,0.7)", fontFamily: "'Lora',serif", letterSpacing: 2.5, textTransform: "uppercase", marginBottom: 4 }}>Judith's</div>
-              <div style={{ fontSize: 22, fontWeight: 700, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>Pieta Prayer Book</div>
+              <div style={{ fontSize: 22, fontWeight: 700, color: "#f0e6ff", fontFamily: "'Lora',serif", marginBottom: 14 }}>Pieta Prayer Book</div>
+              {/* Search bar */}
+              <div style={{ position: "relative" }}>
+                <span style={{ position: "absolute", left: 12, top: "50%", transform: "translateY(-50%)", fontSize: 14, pointerEvents: "none" }}>🔍</span>
+                <input
+                  value={pietaSearch}
+                  onChange={e => setPietaSearch(e.target.value)}
+                  placeholder="Search prayers by name…"
+                  style={{
+                    width: "100%", background: "rgba(255,255,255,0.08)",
+                    border: "1px solid rgba(200,160,232,0.25)", borderRadius: 12,
+                    color: "white", fontFamily: "'Lora',serif", fontSize: 14,
+                    padding: "10px 36px 10px 34px", boxSizing: "border-box",
+                  }}
+                />
+                {pietaSearch.length > 0 && (
+                  <button onClick={() => setPietaSearch("")} style={{
+                    position: "absolute", right: 10, top: "50%", transform: "translateY(-50%)",
+                    background: "none", border: "none", color: "rgba(200,160,232,0.7)",
+                    fontSize: 16, cursor: "pointer", padding: 0, lineHeight: 1,
+                  }}>✕</button>
+                )}
+              </div>
             </div>
             <div ref={pietaListScrollRef} style={{ overflowY: "auto", flex: 1, padding: "12px 16px 40px" }}>
-              {PIETA_PRAYERS.map((group, gi) => {
+
+              {/* ── SEARCH RESULTS ── */}
+              {pietaSearch.trim().length > 0 && (() => {
+                const term = pietaSearch.trim().toLowerCase();
+                const results = PIETA_PRAYERS.flatMap(group =>
+                  group.prayers
+                    .filter(p => p.name.toLowerCase().includes(term))
+                    .map(p => ({ ...p, category: group.category }))
+                );
+                return results.length === 0 ? (
+                  <div style={{ textAlign: "center", padding: "48px 0", color: "#9b7aba", fontFamily: "'Lora',serif", fontStyle: "italic" }}>
+                    No prayers found for "{pietaSearch}"
+                  </div>
+                ) : results.map((p, i) => (
+                  <button key={i} onClick={() => { pietaListScrollPos.current = pietaListScrollRef.current?.scrollTop || 0; setPietaSelectedPrayer(p); setPietaScreen("prayer"); setPietaSearch(""); }} style={{
+                    width: "100%", background: "rgba(255,255,255,0.05)",
+                    border: "1px solid rgba(200,160,232,0.15)",
+                    borderRadius: 12, padding: "14px 16px", marginBottom: 8,
+                    cursor: "pointer", display: "flex", alignItems: "center",
+                    justifyContent: "space-between", textAlign: "left",
+                  }}>
+                    <div>
+                      <div style={{ fontSize: 15, fontWeight: 600, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>{p.name}</div>
+                      <div style={{ fontSize: 10, color: "rgba(255,215,100,0.65)", fontFamily: "'Lora',serif", marginTop: 3, letterSpacing: 1.5, textTransform: "uppercase" }}>{p.category}</div>
+                      {p.subtitle && <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif", marginTop: 2, fontStyle: "italic" }}>{p.subtitle}</div>}
+                    </div>
+                    <div style={{ color: "rgba(200,160,232,0.5)", fontSize: 18, marginLeft: 8 }}>›</div>
+                  </button>
+                ));
+              })()}
+
+              {/* ── GROUPED LIST (shown when not searching) ── */}
+              {pietaSearch.trim().length === 0 && PIETA_PRAYERS.map((group, gi) => {
                 const isExpanded = pietaExpandedGroups.has(gi);
                 return (
                   <div key={gi} style={{ marginBottom: 8 }}>
@@ -2706,6 +2764,7 @@ export default function RosaryApp() {
                   </div>
                 );
               })}
+
             </div>
           </div>
         )}
@@ -2737,6 +2796,23 @@ export default function RosaryApp() {
               )}
             </div>
             <div style={{ overflowY: "auto", flex: 1, padding: "24px 20px 60px" }}>
+              {pietaSelectedPrayer.history && (
+                <div style={{
+                  marginBottom: 20, borderRadius: 12, overflow: "hidden",
+                  border: "1px solid rgba(139,0,0,0.4)",
+                }}>
+                  <div style={{
+                    background: "rgba(139,0,0,0.5)", padding: "8px 14px",
+                    fontSize: 10, fontWeight: 700, color: "rgba(255,200,200,0.95)",
+                    fontFamily: "'Lora',serif", letterSpacing: 2, textTransform: "uppercase",
+                  }}>History</div>
+                  <div style={{
+                    background: "rgba(139,0,0,0.1)", padding: "12px 14px",
+                    fontSize: 13, color: "rgba(255,210,210,0.9)", fontFamily: "'Lora',serif",
+                    lineHeight: 1.75, fontStyle: "italic",
+                  }}>{pietaSelectedPrayer.history}</div>
+                </div>
+              )}
               {pietaSelectedPrayer.intro && (
                 <div style={{
                   fontSize: 13, color: "rgba(255,215,100,0.8)", fontFamily: "'Lora',serif",
