@@ -1529,7 +1529,14 @@ export default function RosaryApp() {
           </div>
         ) : (
           <>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif", marginBottom: 6 }}>Share Your Feedback</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>Share Your Feedback</div>
+              <button onClick={() => setShowFeedback(false)} style={{
+                background: "rgba(255,255,255,0.1)", border: "1px solid rgba(200,160,232,0.3)",
+                borderRadius: 20, color: "white", fontSize: 13, fontFamily: "'Lora',serif",
+                fontWeight: 700, cursor: "pointer", padding: "6px 14px",
+              }}>Done</button>
+            </div>
             <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 20 }}>Help us improve the Holy Rosary app</div>
 
             {/* Star rating */}
@@ -1634,7 +1641,14 @@ export default function RosaryApp() {
 
         {!feedbackPinUnlocked ? (
           <div style={{ textAlign: "center" }}>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif", marginBottom: 8 }}>Enter PIN</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>Enter PIN</div>
+              <button onClick={() => { setShowFeedbackViewer(false); setFeedbackPinInput(""); setFeedbackPinError(false); setFeedbackPinUnlocked(false); }} style={{
+                background: "rgba(255,255,255,0.1)", border: "1px solid rgba(200,160,232,0.3)",
+                borderRadius: 20, color: "white", fontSize: 13, fontFamily: "'Lora',serif",
+                fontWeight: 700, cursor: "pointer", padding: "6px 14px",
+              }}>Done</button>
+            </div>
             <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 20 }}>Feedback viewer is protected</div>
             <input
               type="password"
@@ -1662,14 +1676,21 @@ export default function RosaryApp() {
         ) : (
           <>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>
-                All Feedback ({feedbackList.length})
-              </div>
-              {feedbackList.length > 0 && (
-                <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif" }}>
-                  Avg: {"⭐".repeat(Math.round(feedbackList.filter(f=>f.rating).reduce((a,b)=>a+b.rating,0) / (feedbackList.filter(f=>f.rating).length||1)))}
+              <div>
+                <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>
+                  All Feedback ({feedbackList.length})
                 </div>
-              )}
+                {feedbackList.length > 0 && (
+                  <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginTop: 2 }}>
+                    Avg: {"⭐".repeat(Math.round(feedbackList.filter(f=>f.rating).reduce((a,b)=>a+b.rating,0) / (feedbackList.filter(f=>f.rating).length||1)))}
+                  </div>
+                )}
+              </div>
+              <button onClick={() => { setShowFeedbackViewer(false); setFeedbackPinInput(""); setFeedbackPinError(false); setFeedbackPinUnlocked(false); }} style={{
+                background: "rgba(255,255,255,0.1)", border: "1px solid rgba(200,160,232,0.3)",
+                borderRadius: 20, color: "white", fontSize: 13, fontFamily: "'Lora',serif",
+                fontWeight: 700, cursor: "pointer", padding: "6px 14px",
+              }}>Done</button>
             </div>
             {feedbackList.length === 0 ? (
               <div style={{ textAlign: "center", padding: "30px 0", color: "#9b7aba", fontFamily: "'Lora',serif", fontStyle: "italic" }}>
