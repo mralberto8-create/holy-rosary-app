@@ -1719,7 +1719,9 @@ export default function RosaryApp() {
         animation: "fadeIn 0.2s ease",
       }}>
         <div style={{ padding: "24px 22px max(40px, env(safe-area-inset-bottom))" }}>
-        <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99, margin: "0 auto 20px" }} />
+        <div onClick={() => setShowPrayerWarrior(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center" }}>
+          <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99 }} />
+        </div>
 
         {prayerSubmitted ? (
           <div style={{ textAlign: "center", padding: "20px 0" }}>
@@ -1729,7 +1731,10 @@ export default function RosaryApp() {
           </div>
         ) : (
           <>
-            <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif", marginBottom: 6 }}>⚔️ Prayer Requests</div>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
+              <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>⚔️ Prayer Requests</div>
+              <button onClick={() => setShowPrayerWarrior(false)} style={{ background: "none", border: "none", color: "rgba(200,160,232,0.6)", fontSize: 22, cursor: "pointer", padding: 0, lineHeight: 1 }}>✕</button>
+            </div>
             <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 20 }}>Submit a prayer intention</div>
 
             <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>Prayer intention</div>
@@ -1806,10 +1811,15 @@ export default function RosaryApp() {
         maxHeight: "80vh", overflowY: "auto",
         animation: "fadeIn 0.2s ease",
       }}>
-        <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99, margin: "0 auto 20px" }} />
+        <div onClick={() => setShowPrayerWall(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center" }}>
+          <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99 }} />
+        </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 6 }}>
           <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>🙏 Prayer Wall</div>
-          <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif" }}>{prayerList.length} intention{prayerList.length !== 1 ? "s" : ""}</div>
+          <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif" }}>{prayerList.length} intention{prayerList.length !== 1 ? "s" : ""}</div>
+            <button onClick={() => setShowPrayerWall(false)} style={{ background: "none", border: "none", color: "rgba(200,160,232,0.6)", fontSize: 22, cursor: "pointer", padding: 0, lineHeight: 1 }}>✕</button>
+          </div>
         </div>
         <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 20, fontStyle: "italic" }}>
           Pray for each of these intentions as you read them.
