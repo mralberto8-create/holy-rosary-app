@@ -2168,7 +2168,7 @@ export default function RosaryApp() {
               {/* Top bar with back button */}
               <div style={{
                 display: "flex", alignItems: "center",
-                padding: "14px 16px", flexShrink: 0,
+                padding: "max(14px, env(safe-area-inset-top)) 16px 14px", flexShrink: 0,
                 background: "rgba(0,0,0,0.8)",
                 borderBottom: "1px solid rgba(255,255,255,0.1)",
               }}>
@@ -2363,7 +2363,7 @@ export default function RosaryApp() {
           );
         })()}
 
-        <div style={{ background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)", padding: "20px 20px 16px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
+        <div style={{ background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)", padding: "max(20px, env(safe-area-inset-top)) 20px 16px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
           <div style={{ flexShrink: 0 }}>
             <div style={{ fontSize: 12, color: "#c9a0e8", letterSpacing: 2, textTransform: "uppercase" }}>The Holy</div>
             <div style={{ fontSize: 28, fontWeight: 700 }}>Rosary</div>
@@ -2614,7 +2614,7 @@ export default function RosaryApp() {
             maxWidth: 390, margin: "0 auto",
           }}>
             <div style={{
-              padding: "52px 20px 16px",
+              padding: "max(52px, env(safe-area-inset-top)) 20px 16px",
               background: "linear-gradient(180deg,rgba(107,63,160,0.35),transparent)",
               borderBottom: "1px solid rgba(200,160,232,0.15)", flexShrink: 0,
             }}>
@@ -2691,7 +2691,7 @@ export default function RosaryApp() {
             maxWidth: 390, margin: "0 auto",
           }}>
             <div style={{
-              padding: "52px 20px 16px",
+              padding: "max(52px, env(safe-area-inset-top)) 20px 16px",
               background: "linear-gradient(180deg,rgba(107,63,160,0.35),transparent)",
               borderBottom: "1px solid rgba(200,160,232,0.15)", flexShrink: 0,
             }}>
@@ -2767,7 +2767,7 @@ export default function RosaryApp() {
       }} />
 
       {/* Top bar */}
-      <div style={{ padding: "16px 18px 6px", position: "relative", zIndex: 2 }}>
+      <div style={{ padding: "max(16px, env(safe-area-inset-top)) 18px 6px", position: "relative", zIndex: 2 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <button onClick={() => setScreen("home")} style={{ background: "none", border: "none", color: "#c9a0e8", cursor: "pointer", fontSize: 13, fontFamily: "'Lora',serif" }}>
             ← Home
