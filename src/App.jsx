@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { db } from "./firebase";
-import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp } from "firebase/firestore";
+import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc } from "firebase/firestore";
 
 // ── DATA ────────────────────────────────────────────────────────────────────
 
@@ -1221,6 +1221,14 @@ export default function RosaryApp() {
   const [prayerSubmitted, setPrayerSubmitted] = useState(false);
   const [prayerError, setPrayerError] = useState(false);
 
+  // Admin panel state
+  const [showAdminPin, setShowAdminPin] = useState(false);
+  const [adminPinInput, setAdminPinInput] = useState("");
+  const [adminPinError, setAdminPinError] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
+  const [adminTab, setAdminTab] = useState("prayers");
+  const longPressTimer = useRef(null);
+
   // Real-time Firestore listeners + load saved progress on mount
   useEffect(() => {
     // Live prayer intentions — updates instantly for all users
@@ -1300,6 +1308,14 @@ export default function RosaryApp() {
       setPrayerLocation("");
       setTimeout(() => { setPrayerSubmitted(false); setShowPrayerWarrior(false); }, 1800);
     } catch (e) { console.error("Firestore error:", e); setPrayerError(true); setTimeout(() => setPrayerError(false), 3000); }
+  }
+
+  // Admin delete functions
+  async function deleteprayer(id) {
+    try { await deleteDoc(doc(db, "prayers", id)); } catch (e) { console.error("Delete prayer error:", e); }
+  }
+  async function deleteFeedbackEntry(id) {
+    try { await deleteDoc(doc(db, "feedback", id)); } catch (e) { console.error("Delete feedback error:", e); }
   }
 
   useEffect(() => {
@@ -1639,42 +1655,7 @@ export default function RosaryApp() {
       }}>
         <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99, margin: "0 auto 20px" }} />
 
-        {!feedbackPinUnlocked ? (
-          <div style={{ textAlign: "center" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 8 }}>
-              <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>Enter PIN</div>
-              <button onClick={() => { setShowFeedbackViewer(false); setFeedbackPinInput(""); setFeedbackPinError(false); setFeedbackPinUnlocked(false); }} style={{
-                background: "rgba(255,255,255,0.1)", border: "1px solid rgba(200,160,232,0.3)",
-                borderRadius: 20, color: "white", fontSize: 13, fontFamily: "'Lora',serif",
-                fontWeight: 700, cursor: "pointer", padding: "6px 14px",
-              }}>Done</button>
-            </div>
-            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 20 }}>Feedback viewer is protected</div>
-            <input
-              type="password"
-              value={feedbackPinInput}
-              onChange={e => { setFeedbackPinInput(e.target.value); setFeedbackPinError(false); }}
-              placeholder="PIN"
-              style={{
-                width: "100%", background: "rgba(255,255,255,0.06)",
-                border: `1px solid ${feedbackPinError ? "#ff6b6b" : "rgba(200,160,232,0.2)"}`, borderRadius: 12,
-                color: "white", fontFamily: "'Lora',serif", fontSize: 18,
-                padding: 12, marginBottom: 8, boxSizing: "border-box", textAlign: "center", letterSpacing: 6,
-              }}
-            />
-            {feedbackPinError && <div style={{ fontSize: 12, color: "#ff6b6b", marginBottom: 12 }}>Incorrect PIN</div>}
-            <button onClick={() => {
-              if (feedbackPinInput === "2680") { setFeedbackPinUnlocked(true); setFeedbackPinError(false); }
-              else { setFeedbackPinError(true); setFeedbackPinInput(""); }
-            }} style={{
-              width: "100%", padding: "13px", borderRadius: 14, border: "none",
-              background: "linear-gradient(135deg,#6b3fa0,#9b6dcc)",
-              color: "white", fontFamily: "'Lora',serif", fontSize: 15,
-              fontWeight: 700, cursor: "pointer", marginTop: 4,
-            }}>Unlock</button>
-          </div>
-        ) : (
-          <>
+        <>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
               <div>
                 <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>
@@ -1686,7 +1667,7 @@ export default function RosaryApp() {
                   </div>
                 )}
               </div>
-              <button onClick={() => { setShowFeedbackViewer(false); setFeedbackPinInput(""); setFeedbackPinError(false); setFeedbackPinUnlocked(false); }} style={{
+              <button onClick={() => { setShowFeedbackViewer(false); }} style={{
                 background: "rgba(255,255,255,0.1)", border: "1px solid rgba(200,160,232,0.3)",
                 borderRadius: 20, color: "white", fontSize: 13, fontFamily: "'Lora',serif",
                 fontWeight: 700, cursor: "pointer", padding: "6px 14px",
@@ -1722,7 +1703,6 @@ export default function RosaryApp() {
               </div>
             ))}
           </>
-        )}
       </div>
     </div>
   ) : null;
@@ -1777,7 +1757,7 @@ export default function RosaryApp() {
               }}
             />
 
-            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>First name of person this is for</div>
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>Your first name</div>
             <input
               value={prayerName}
               onChange={e => setPrayerName(e.target.value)}
@@ -1790,7 +1770,7 @@ export default function RosaryApp() {
               }}
             />
 
-            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>Location</div>
+            <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 8 }}>Your location</div>
             <input
               value={prayerLocation}
               onChange={e => setPrayerLocation(e.target.value)}
@@ -2031,10 +2011,207 @@ export default function RosaryApp() {
     </div>
   ) : null;
 
+  // ── ADMIN PIN MODAL ──
+  const AdminPinModal = showAdminPin ? (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 99999,
+      background: "rgba(0,0,0,0.85)",
+      display: "flex", alignItems: "center", justifyContent: "center",
+    }} onClick={() => { setShowAdminPin(false); setAdminPinInput(""); setAdminPinError(false); }}>
+      <div onClick={e => e.stopPropagation()} style={{
+        width: 280, background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
+        borderRadius: 20, padding: "28px 24px 24px",
+        border: "1px solid rgba(200,160,232,0.25)",
+        animation: "fadeIn 0.2s ease",
+        textAlign: "center",
+      }}>
+        <div style={{ fontSize: 28, marginBottom: 10 }}>🔐</div>
+        <div style={{ fontSize: 17, fontWeight: 700, color: "#f0e6ff", fontFamily: "'Lora',serif", marginBottom: 6 }}>Admin Access</div>
+        <div style={{ fontSize: 13, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 20 }}>Enter PIN to continue</div>
+        <input
+          type="password"
+          inputMode="numeric"
+          maxLength={6}
+          value={adminPinInput}
+          onChange={e => { setAdminPinInput(e.target.value); setAdminPinError(false); }}
+          onKeyDown={e => {
+            if (e.key === "Enter") {
+              if (adminPinInput === "2680") {
+                setShowAdminPin(false); setShowAdminPanel(true);
+                setAdminPinInput(""); setAdminPinError(false);
+              } else {
+                setAdminPinError(true); setAdminPinInput("");
+              }
+            }
+          }}
+          autoFocus
+          placeholder="••••"
+          style={{
+            width: "100%", background: "rgba(255,255,255,0.08)",
+            border: `1px solid ${adminPinError ? "#ff6b6b" : "rgba(200,160,232,0.3)"}`,
+            borderRadius: 12, color: "white", fontFamily: "'Lora',serif",
+            fontSize: 22, padding: "10px 14px", textAlign: "center",
+            marginBottom: 8, boxSizing: "border-box", letterSpacing: 6,
+          }}
+        />
+        {adminPinError && (
+          <div style={{ fontSize: 12, color: "#ff6b6b", fontFamily: "'Lora',serif", marginBottom: 12 }}>Incorrect PIN. Try again.</div>
+        )}
+        <div style={{ display: "flex", gap: 10, marginTop: 16 }}>
+          <button onClick={() => { setShowAdminPin(false); setAdminPinInput(""); setAdminPinError(false); }} style={{
+            flex: 1, background: "rgba(255,255,255,0.08)", border: "1px solid rgba(200,160,232,0.2)",
+            borderRadius: 12, color: "#c9a0e8", fontFamily: "'Lora',serif",
+            fontSize: 14, cursor: "pointer", padding: "11px",
+          }}>Cancel</button>
+          <button onClick={() => {
+            if (adminPinInput === "2680") {
+              setShowAdminPin(false); setShowAdminPanel(true);
+              setAdminPinInput(""); setAdminPinError(false);
+            } else {
+              setAdminPinError(true); setAdminPinInput("");
+            }
+          }} style={{
+            flex: 1, background: "linear-gradient(135deg,#6b3fa0,#9b6dcc)",
+            border: "none", borderRadius: 12, color: "white",
+            fontFamily: "'Lora',serif", fontSize: 14, fontWeight: 700,
+            cursor: "pointer", padding: "11px",
+          }}>Unlock</button>
+        </div>
+      </div>
+    </div>
+  ) : null;
+
+  // ── ADMIN PANEL ──
+  const AdminPanel = showAdminPanel ? (
+    <div style={{
+      position: "fixed", inset: 0, zIndex: 99999,
+      background: "rgba(0,0,0,0.9)",
+      display: "flex", flexDirection: "column",
+    }}>
+      <div style={{
+        width: "100%", maxWidth: 390, margin: "0 auto",
+        background: "linear-gradient(180deg,#1a0d2e,#0f0720)",
+        height: "100%", display: "flex", flexDirection: "column",
+      }}>
+        {/* Header */}
+        <div style={{
+          padding: "max(20px, env(safe-area-inset-top)) 20px 16px",
+          background: "linear-gradient(135deg,#2d0a0a,#1a0d2e)",
+          borderBottom: "1px solid rgba(200,80,80,0.3)",
+          flexShrink: 0,
+        }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <div style={{ fontSize: 11, color: "rgba(255,120,120,0.75)", letterSpacing: 2, textTransform: "uppercase", marginBottom: 2, fontFamily: "'Lora',serif" }}>Admin</div>
+              <div style={{ fontSize: 20, fontWeight: 700, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>🛡️ Content Manager</div>
+            </div>
+            <button onClick={() => setShowAdminPanel(false)} style={{
+              background: "rgba(255,255,255,0.08)", border: "1px solid rgba(200,160,232,0.25)",
+              borderRadius: 20, color: "#c9a0e8", fontFamily: "'Lora',serif",
+              fontSize: 14, fontWeight: 700, cursor: "pointer", padding: "7px 16px",
+            }}>Close</button>
+          </div>
+          {/* Tabs */}
+          <div style={{ display: "flex", gap: 8, marginTop: 14 }}>
+            {[["prayers","⚔️ Prayer Requests"],["feedback","💬 Feedback"]].map(([key, label]) => (
+              <button key={key} onClick={() => setAdminTab(key)} style={{
+                flex: 1, padding: "9px 8px", borderRadius: 10, border: "none", cursor: "pointer",
+                background: adminTab === key ? "rgba(107,63,160,0.6)" : "rgba(255,255,255,0.06)",
+                color: adminTab === key ? "white" : "#9b7aba",
+                fontFamily: "'Lora',serif", fontSize: 13, fontWeight: adminTab === key ? 700 : 400,
+                borderBottom: adminTab === key ? "2px solid #9b6dcc" : "2px solid transparent",
+                transition: "all 0.15s",
+              }}>{label}</button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "16px 16px max(80px, env(safe-area-inset-bottom))" }}>
+          {adminTab === "prayers" ? (
+            <>
+              <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 12 }}>
+                {prayerList.length} prayer request{prayerList.length !== 1 ? "s" : ""} — tap 🗑️ to delete
+              </div>
+              {prayerList.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "40px 0", color: "#9b7aba", fontFamily: "'Lora',serif", fontStyle: "italic" }}>No prayer requests yet.</div>
+              ) : prayerList.map(p => (
+                <div key={p.id} style={{
+                  background: "rgba(255,255,255,0.05)", borderRadius: 12,
+                  padding: "12px 14px", marginBottom: 10,
+                  border: "1px solid rgba(200,160,232,0.1)",
+                  display: "flex", gap: 10, alignItems: "flex-start",
+                }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 4 }}>{p.date}</div>
+                    {(p.name || p.location) && (
+                      <div style={{ fontSize: 12, color: "#c9a0e8", fontFamily: "'Lora',serif", marginBottom: 4 }}>
+                        {[p.name, p.location].filter(Boolean).join(" · ")}
+                      </div>
+                    )}
+                    <div style={{ fontSize: 13, color: "#d4b8f0", fontFamily: "'Lora',serif", lineHeight: 1.5 }}>
+                      {p.intention}
+                    </div>
+                  </div>
+                  <button onClick={() => deleteprayer(p.id)} style={{
+                    background: "rgba(220,50,50,0.15)", border: "1px solid rgba(220,50,50,0.3)",
+                    borderRadius: 8, color: "#ff8080", fontSize: 16, cursor: "pointer",
+                    padding: "6px 10px", flexShrink: 0,
+                  }}>🗑️</button>
+                </div>
+              ))}
+            </>
+          ) : (
+            <>
+              <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", marginBottom: 12 }}>
+                {feedbackList.length} feedback entr{feedbackList.length !== 1 ? "ies" : "y"} — tap 🗑️ to delete
+              </div>
+              {feedbackList.length === 0 ? (
+                <div style={{ textAlign: "center", padding: "40px 0", color: "#9b7aba", fontFamily: "'Lora',serif", fontStyle: "italic" }}>No feedback yet.</div>
+              ) : feedbackList.map(f => (
+                <div key={f.id} style={{
+                  background: "rgba(255,255,255,0.05)", borderRadius: 12,
+                  padding: "12px 14px", marginBottom: 10,
+                  border: "1px solid rgba(200,160,232,0.1)",
+                  display: "flex", gap: 10, alignItems: "flex-start",
+                }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 4 }}>
+                      <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif" }}>{f.date}</div>
+                      <div style={{ display: "flex", gap: 4 }}>
+                        {f.rating > 0 && <span style={{ fontSize: 11 }}>{"⭐".repeat(f.rating)}</span>}
+                        {f.thumb && <span style={{ fontSize: 13 }}>{f.thumb === "up" ? "👍" : "👎"}</span>}
+                      </div>
+                    </div>
+                    {(f.name || f.location) && (
+                      <div style={{ fontSize: 12, color: "#c9a0e8", fontFamily: "'Lora',serif", marginBottom: 4 }}>
+                        {[f.name, f.location].filter(Boolean).join(" · ")}
+                      </div>
+                    )}
+                    {f.comment && (
+                      <div style={{ fontSize: 13, color: "#d4b8f0", fontFamily: "'Lora',serif", lineHeight: 1.5 }}>
+                        "{f.comment}"
+                      </div>
+                    )}
+                  </div>
+                  <button onClick={() => deleteFeedbackEntry(f.id)} style={{
+                    background: "rgba(220,50,50,0.15)", border: "1px solid rgba(220,50,50,0.3)",
+                    borderRadius: 8, color: "#ff8080", fontSize: 16, cursor: "pointer",
+                    padding: "6px 10px", flexShrink: 0,
+                  }}>🗑️</button>
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  ) : null;
+
   // ── BOTTOM NAV BAR ──
   const navItems = [
-    { icon: "🙏", label: "Prayer Wall",      action: () => { setShowPrayerWall(true); setShowPrayerWarrior(false); setShowFeedback(false); setShowFeedbackViewer(false); } },
     { icon: "⚔️", label: "Prayer Requests",  action: () => { setShowPrayerWarrior(true); setShowPrayerWall(false); setShowFeedback(false); setShowFeedbackViewer(false); } },
+    { icon: "🙏", label: "Prayer Wall",      action: () => { setShowPrayerWall(true); setShowPrayerWarrior(false); setShowFeedback(false); setShowFeedbackViewer(false); } },
     { icon: "💬", label: "Feedback",         action: () => { setShowFeedback(true); setShowPrayerWall(false); setShowPrayerWarrior(false); setShowFeedbackViewer(false); } },
     { icon: "📋", label: "View Feedback",    action: () => { setShowFeedbackViewer(true); setShowPrayerWall(false); setShowPrayerWarrior(false); setShowFeedback(false); } },
   ];
@@ -2202,6 +2379,8 @@ export default function RosaryApp() {
         {PrayerWarriorPanel}
         {PrayerWall}
         {UserGuide}
+        {AdminPinModal}
+        {AdminPanel}
         {FeedbackButton}
         {showMJK && (
           <div style={{
@@ -2414,7 +2593,15 @@ export default function RosaryApp() {
         })()}
 
         <div style={{ background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)", padding: "max(20px, env(safe-area-inset-top)) 20px 16px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center", gap: 16 }}>
-          <div style={{ flexShrink: 0 }}>
+          <div
+            style={{ flexShrink: 0, cursor: "default", userSelect: "none" }}
+            onMouseDown={() => { longPressTimer.current = setTimeout(() => setShowAdminPin(true), 3000); }}
+            onMouseUp={() => clearTimeout(longPressTimer.current)}
+            onMouseLeave={() => clearTimeout(longPressTimer.current)}
+            onTouchStart={() => { longPressTimer.current = setTimeout(() => setShowAdminPin(true), 3000); }}
+            onTouchEnd={() => clearTimeout(longPressTimer.current)}
+            onTouchCancel={() => clearTimeout(longPressTimer.current)}
+          >
             <div style={{ fontSize: 12, color: "#c9a0e8", letterSpacing: 2, textTransform: "uppercase" }}>The Holy</div>
             <div style={{ fontSize: 28, fontWeight: 700 }}>Rosary</div>
           </div>
@@ -2636,7 +2823,7 @@ export default function RosaryApp() {
               <div style={{
                 fontFamily: "'Lora',serif", fontStyle: "italic", marginBottom: 28, lineHeight: 1.7,
               }}>
-                <span style={{ color: "#8B0000", fontWeight: 700, textShadow: "0 1px 6px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.9)", fontSize: 15 }}>Jesus, I trust in You.</span>
+                <span style={{ color: "#ffe033", fontSize: 13, fontWeight: 700, letterSpacing: 3, textTransform: "uppercase", fontStyle: "normal", fontFamily: "'Lora',serif", textShadow: "0 1px 4px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.9)" }}>Jesus, I trust in You.</span>
                 <br/>
                 <span style={{ color: "#fff", fontWeight: 700, textShadow: "0 1px 4px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.9)", fontSize: 15 }}>— St. Maria Faustina Kowalska</span>
               </div>
