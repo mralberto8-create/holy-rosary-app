@@ -1217,6 +1217,7 @@ export default function RosaryApp() {
   const [prayerLocation, setPrayerLocation] = useState("");
   const [prayerList, setPrayerList] = useState([]);
   const [prayerSubmitted, setPrayerSubmitted] = useState(false);
+  const [prayerError, setPrayerError] = useState(false);
 
   // Real-time Firestore listeners + load saved progress on mount
   useEffect(() => {
@@ -1296,7 +1297,7 @@ export default function RosaryApp() {
       setPrayerName("");
       setPrayerLocation("");
       setTimeout(() => { setPrayerSubmitted(false); setShowPrayerWarrior(false); }, 1800);
-    } catch (e) { console.error("Firestore error:", e); }
+    } catch (e) { console.error("Firestore error:", e); setPrayerError(true); setTimeout(() => setPrayerError(false), 3000); }
   }
 
   useEffect(() => {
@@ -1713,9 +1714,11 @@ export default function RosaryApp() {
       <div onClick={e => e.stopPropagation()} style={{
         width: "100%", maxWidth: 390, margin: "0 auto",
         background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
-        borderRadius: "24px 24px 0 0", padding: "24px 22px 40px",
+        borderRadius: "24px 24px 0 0",
+        maxHeight: "88vh", overflowY: "auto",
         animation: "fadeIn 0.2s ease",
       }}>
+        <div style={{ padding: "24px 22px max(40px, env(safe-area-inset-bottom))" }}>
         <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99, margin: "0 auto 20px" }} />
 
         {prayerSubmitted ? (
@@ -1768,6 +1771,11 @@ export default function RosaryApp() {
               }}
             />
 
+            {prayerError && (
+              <div style={{ fontSize: 13, color: "#ff8a8a", fontFamily: "'Lora',serif", textAlign: "center", marginBottom: 12 }}>
+                Something went wrong. Please try again.
+              </div>
+            )}
             <button onClick={submitPrayer} disabled={!prayerIntention.trim()}
               style={{
                 width: "100%", padding: "13px", borderRadius: 14, border: "none",
@@ -1779,6 +1787,7 @@ export default function RosaryApp() {
             </button>
           </>
         )}
+        </div>
       </div>
     </div>
   ) : null;
