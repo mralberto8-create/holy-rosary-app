@@ -483,7 +483,7 @@ const MYSTERIES = {
     { title: "The Visitation", scripture: "Luke 1:39-56", description: "Mary visits her cousin Elizabeth, who is pregnant with John the Baptist." },
     { title: "The Nativity", scripture: "Luke 2:1-20", description: "Jesus is born in Bethlehem and laid in a manger." },
     { title: "The Presentation", scripture: "Luke 2:22-38", description: "Mary and Joseph present the infant Jesus in the Temple." },
-    { title: "Finding in the Temple", scripture: "Luke 2:41-52", description: "The young Jesus is found teaching in the Temple after being lost for three days." },
+    { title: "Finding Jesus in the Temple", scripture: "Luke 2:41-52", description: "The young Jesus is found teaching in the Temple after being lost for three days." },
   ],
   Sorrowful: [
     { title: "Agony in the Garden", scripture: "Luke 22:39-46", description: "Jesus prays in Gethsemane the night before His Passion." },
@@ -550,6 +550,29 @@ const DAY_MYSTERIES = {
   0: "Glorious", 1: "Joyful", 2: "Sorrowful", 3: "Glorious",
   4: "Luminous", 5: "Sorrowful", 6: "Joyful",
 };
+
+// ── 54-DAY NOVENA HELPERS ─────────────────────────────────────────────────────
+function getNovenaStatus(startDateStr) {
+  if (!startDateStr) return null;
+  const start = new Date(startDateStr + "T00:00:00");
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const diffDays = Math.floor((today - start) / (1000 * 60 * 60 * 24));
+  const currentDay = diffDays + 1;
+  if (currentDay > 54) return { completed: true };
+  const endDate = new Date(start);
+  endDate.setDate(endDate.getDate() + 53);
+  const fmt = d => d.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+  return {
+    completed: false,
+    currentDay,
+    daysRemaining: 54 - currentDay,
+    phase: currentDay <= 27 ? "Petition" : "Thanksgiving",
+    phaseDay: currentDay <= 27 ? currentDay : currentDay - 27,
+    startLabel: fmt(start),
+    endLabel: fmt(endDate),
+  };
+}
 
 // ── SVG ROSARY ────────────────────────────────────────────────────────────────
 //
@@ -978,6 +1001,8 @@ function RosaryShape({ sequence, currentStep, onBeadTap, mini = false, activeMys
         const isPendantHM = !isCrucifix && !isLarge && b.stepIndex >= 3 && b.stepIndex <= 5;
         const pendantHMNum = b.stepIndex - 2; // stepIndex 3→1, 4→2, 5→3
         const showPendantNum = isPendantHM && inPendant && b.stepIndex <= currentStep;
+        const PENDANT_HM_VIRTUE = { 3: "for Faith", 4: "for Hope", 5: "for Charity" };
+        const showVirtue = isPendantHM && inPendant && !mini;
 
         if (isCrucifix) {
           const armH = mini ? 7 : 17, armV = mini ? 10 : 25, thick = mini ? 2.5 : 5;
@@ -1001,6 +1026,16 @@ function RosaryShape({ sequence, currentStep, onBeadTap, mini = false, activeMys
                 fontSize={mini ? "4" : "8.5"} fontWeight="700"
                 fill={active ? "#2d1b3d" : "rgba(255,255,255,0.9)"} fontFamily="sans-serif" pointerEvents="none">
                 {pendantHMNum}
+              </text>
+            )}
+            {showVirtue && active && (
+              <text
+                x={b.x + beadR + 8} y={b.y + 1}
+                textAnchor="start" dominantBaseline="middle"
+                fontSize="10" fontStyle="italic" fontFamily="'Lora',serif"
+                fill="#ffd700"
+                pointerEvents="none">
+                {PENDANT_HM_VIRTUE[b.stepIndex]}
               </text>
             )}
           </g>
@@ -1085,7 +1120,12 @@ function PrayerCard({ step, expanded, onToggle }) {
       }}>
         <div>
           <div style={{ fontSize: 10, color: "#9b7aba", fontFamily: "'Lora',serif", letterSpacing: 1, textTransform: "uppercase", marginBottom: 2 }}>
-            {step.label}
+            {step.label && step.label.includes(" — ") ? (
+              <>
+                {step.label.split(" — ")[0]}
+                <span style={{ color: "#ffd700" }}>{" — "}{step.label.split(" — ")[1]}</span>
+              </>
+            ) : step.label}
           </div>
           <div style={{ fontSize: 18, fontFamily: "'Lora',serif", color: "#f0e6ff", fontWeight: 600 }}>
             {prayer.name}
@@ -1207,6 +1247,10 @@ export default function RosaryApp() {
   // MJK Novena
   const [showMJK, setShowMJK] = useState(false);
 
+  // 54-Day Novena
+  const [novenaStartDate, setNovenaStartDate] = useState(null);
+  const [showNovenaConfirm, setShowNovenaConfirm] = useState(false);
+
   // Pieta Prayer Book
   const [pietaScreen, setPietaScreen] = useState(null); // null | "splash" | "list" | "prayer"
   const [pietaSelectedPrayer, setPietaSelectedPrayer] = useState(null);
@@ -1257,6 +1301,12 @@ export default function RosaryApp() {
       }
     } catch (e) { /* ignore */ }
 
+    // 54-Day Novena
+    try {
+      const saved = localStorage.getItem("novena_54day");
+      if (saved) setNovenaStartDate(saved);
+    } catch (e) { /* ignore */ }
+
     return () => { unsubPrayers(); unsubFeedback(); };
   }, []);
 
@@ -1267,6 +1317,23 @@ export default function RosaryApp() {
       try { localStorage.setItem("rosary_progress", JSON.stringify(progress)); } catch (e) { /* ignore */ }
     }
   }, [screen, currentStep, mysterySet, sequence.length]);
+
+  // Re-check saved progress whenever the home screen is shown
+  // (handles navigating back mid-session, opening modals, etc.)
+  useEffect(() => {
+    if (screen === "home") {
+      try {
+        const raw = localStorage.getItem("rosary_progress");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && parsed.currentStep > 0) {
+            setSavedProgress(parsed);
+            setShowResumePrompt(true);
+          }
+        }
+      } catch (e) { /* ignore */ }
+    }
+  }, [screen]);
 
   // Save feedback to Firestore
   async function submitFeedback() {
@@ -1317,6 +1384,19 @@ export default function RosaryApp() {
   async function deleteFeedbackEntry(id) {
     try { await deleteDoc(doc(db, "feedback", id)); } catch (e) { console.error("Delete feedback error:", e); }
   }
+
+  // 54-Day Novena
+  function startNovena() {
+    const today = new Date().toISOString().split("T")[0];
+    setNovenaStartDate(today);
+    try { localStorage.setItem("novena_54day", today); } catch (e) { /* ignore */ }
+    setShowNovenaConfirm(false);
+  }
+  function cancelNovena() {
+    setNovenaStartDate(null);
+    try { localStorage.removeItem("novena_54day"); } catch (e) { /* ignore */ }
+  }
+  const novenaStatus = getNovenaStatus(novenaStartDate);
 
   useEffect(() => {
     const timer = setTimeout(() => setShowSplash(false), 2000);
@@ -2642,6 +2722,17 @@ export default function RosaryApp() {
             }}>
               Pieta<br/>Prayers
             </button>
+            <button onClick={() => novenaStatus && !novenaStatus.completed ? null : setShowNovenaConfirm(true)} style={{
+              background: novenaStatus && !novenaStatus.completed ? "rgba(100,200,140,0.18)" : "rgba(255,255,255,0.12)",
+              border: `1px solid ${novenaStatus && !novenaStatus.completed ? "rgba(100,200,140,0.55)" : "rgba(200,160,232,0.4)"}`,
+              borderRadius: 10, padding: "8px 10px",
+              color: novenaStatus && !novenaStatus.completed ? "#7de8a8" : "white",
+              fontFamily: "'Lora',serif",
+              fontSize: 12, fontWeight: 700, cursor: "pointer",
+              letterSpacing: 0.5, lineHeight: 1.4, textAlign: "center",
+            }}>
+              {novenaStatus && !novenaStatus.completed ? <>Day {novenaStatus.currentDay}<br/>of 54</> : <>54-Day<br/>Novena</>}
+            </button>
           </div>
         </div>
         <div style={{ padding: "18px", overflowY: "auto" }}>
@@ -2719,18 +2810,122 @@ export default function RosaryApp() {
               Begin the Rosary
             </button>
           )}
+          {/* 54-Day Novena Status Card */}
+          {novenaStatus && !novenaStatus.completed && (
+            <div style={{ marginTop: 16, background: "linear-gradient(135deg,#1a3d2a,#0f2b1e)", borderRadius: 16, border: "1.5px solid rgba(100,200,140,0.4)", padding: "16px 18px" }}>
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
+                <div>
+                  <div style={{ fontSize: 10, color: "rgba(100,200,140,0.7)", fontFamily: "'Lora',serif", letterSpacing: 2, textTransform: "uppercase", marginBottom: 4 }}>
+                    54-Day Rosary Novena
+                  </div>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: "#7de8a8", fontFamily: "'Lora',serif" }}>
+                    Day {novenaStatus.currentDay} of 54
+                  </div>
+                  <div style={{ fontSize: 12, color: "rgba(100,200,140,0.8)", fontFamily: "'Lora',serif", marginTop: 2 }}>
+                    {novenaStatus.daysRemaining} day{novenaStatus.daysRemaining !== 1 ? "s" : ""} remaining
+                  </div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontSize: 11, fontWeight: 700, color: novenaStatus.phase === "Petition" ? "#ffd764" : "#a8d8ff", fontFamily: "'Lora',serif", marginBottom: 2 }}>
+                    {novenaStatus.phase}
+                  </div>
+                  <div style={{ fontSize: 10, color: "rgba(200,200,200,0.6)", fontFamily: "'Lora',serif" }}>
+                    Day {novenaStatus.phaseDay} of 27
+                  </div>
+                </div>
+              </div>
+              {/* Progress bar */}
+              <div style={{ marginTop: 12, height: 5, background: "rgba(100,200,140,0.15)", borderRadius: 3 }}>
+                <div style={{ height: 5, background: "linear-gradient(90deg,#4db87a,#7de8a8)", borderRadius: 3, width: `${(novenaStatus.currentDay / 54) * 100}%`, transition: "width 0.5s" }} />
+              </div>
+              {/* Petition / Thanksgiving split marker */}
+              <div style={{ position: "relative", height: 14 }}>
+                <div style={{ position: "absolute", left: "50%", top: 0, transform: "translateX(-50%)", fontSize: 9, color: "rgba(200,200,200,0.4)", fontFamily: "'Lora',serif" }}>
+                  ↑ Petition · Thanksgiving ↑
+                </div>
+              </div>
+              <div style={{ display: "flex", justifyContent: "space-between", marginTop: 4 }}>
+                <div style={{ fontSize: 10, color: "rgba(200,200,200,0.5)", fontFamily: "'Lora',serif" }}>
+                  Started {novenaStatus.startLabel}
+                </div>
+                <div style={{ fontSize: 10, color: "rgba(200,200,200,0.5)", fontFamily: "'Lora',serif" }}>
+                  Ends {novenaStatus.endLabel}
+                </div>
+              </div>
+              <button onClick={cancelNovena} style={{
+                marginTop: 12, width: "100%", background: "transparent",
+                border: "1px solid rgba(100,200,140,0.25)", borderRadius: 8,
+                padding: "8px", color: "rgba(100,200,140,0.5)", fontSize: 11,
+                fontFamily: "'Lora',serif", cursor: "pointer",
+              }}>
+                Cancel Novena
+              </button>
+            </div>
+          )}
+
+          {novenaStatus?.completed && (
+            <div style={{ marginTop: 16, background: "linear-gradient(135deg,#1a2e3d,#0f1f2b)", borderRadius: 16, border: "1.5px solid rgba(168,216,255,0.4)", padding: "16px 18px", textAlign: "center" }}>
+              <div style={{ fontSize: 20 }}>🙏</div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: "#a8d8ff", fontFamily: "'Lora',serif", marginTop: 6 }}>54-Day Novena Complete!</div>
+              <div style={{ fontSize: 12, color: "rgba(168,216,255,0.6)", fontFamily: "'Lora',serif", marginTop: 4 }}>May Our Lady intercede for your intentions.</div>
+              <button onClick={() => { cancelNovena(); setShowNovenaConfirm(true); }} style={{
+                marginTop: 12, background: "rgba(168,216,255,0.12)", border: "1px solid rgba(168,216,255,0.3)",
+                borderRadius: 8, padding: "8px 16px", color: "#a8d8ff", fontSize: 12,
+                fontFamily: "'Lora',serif", cursor: "pointer",
+              }}>Begin Another Novena</button>
+            </div>
+          )}
+
+          {/* Start Novena Confirmation Modal */}
+          {showNovenaConfirm && (
+            <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+              <div style={{ background: "linear-gradient(180deg,#1a3d2a,#0f2b1e)", borderRadius: 20, border: "1.5px solid rgba(100,200,140,0.5)", padding: "28px 24px", maxWidth: 340, width: "100%", fontFamily: "'Lora',serif" }}>
+                <div style={{ fontSize: 28, textAlign: "center", marginBottom: 8 }}>🌹</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: "#7de8a8", textAlign: "center", marginBottom: 8 }}>Begin 54-Day Rosary Novena</div>
+                <div style={{ fontSize: 13, color: "rgba(200,240,220,0.75)", lineHeight: 1.7, marginBottom: 20, textAlign: "center" }}>
+                  Pray five decades of the Rosary each day for 54 consecutive days.<br/><br/>
+                  Days 1–27: <span style={{ color: "#ffd764" }}>Petition</span><br/>
+                  Days 28–54: <span style={{ color: "#a8d8ff" }}>Thanksgiving</span>
+                </div>
+                <div style={{ fontSize: 12, color: "rgba(200,240,220,0.5)", textAlign: "center", marginBottom: 20 }}>
+                  Today's date will be recorded as Day 1.
+                </div>
+                <button onClick={startNovena} style={{
+                  width: "100%", background: "linear-gradient(135deg,#2d7a4f,#4db87a)",
+                  border: "none", borderRadius: 12, padding: "14px",
+                  color: "white", fontSize: 15, fontWeight: 700, cursor: "pointer",
+                  fontFamily: "'Lora',serif", marginBottom: 10,
+                }}>Begin Today</button>
+                <button onClick={() => setShowNovenaConfirm(false)} style={{
+                  width: "100%", background: "transparent",
+                  border: "1px solid rgba(100,200,140,0.25)", borderRadius: 12, padding: "12px",
+                  color: "rgba(100,200,140,0.6)", fontSize: 14, cursor: "pointer",
+                  fontFamily: "'Lora',serif",
+                }}>Cancel</button>
+              </div>
+            </div>
+          )}
+
           <div style={{ height: 20 }} />
           <div style={{ background: "white", borderRadius: 14, padding: "12px 14px" }}>
             <div style={{ fontSize: 12, color: "#7a6680", marginBottom: 8 }}>{mysterySet} Mysteries</div>
-            {MYSTERIES[mysterySet].map((m, i) => (
-              <div key={i} style={{ padding: "7px 0", borderBottom: i < 4 ? "1px solid #f0eaf5" : "none", display: "flex", gap: 10, alignItems: "flex-start" }}>
-                <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#f0eaf5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#6b3fa0", flexShrink: 0, fontWeight: 700 }}>{i + 1}</div>
-                <div>
-                  <div style={{ fontSize: 13, color: "#2d1b3d", fontWeight: 600 }}>{m.title}</div>
-                  <div style={{ fontSize: 11, color: "#9b8ea0", fontStyle: "italic" }}>{m.scripture}</div>
+            {MYSTERIES[mysterySet].map((m, i) => {
+              const fruit = MYSTERY_CONTENT[mysterySet]?.mysteries[i]?.fruit;
+              return (
+                <div key={i} style={{ padding: "8px 0", borderBottom: i < 4 ? "1px solid #f0eaf5" : "none", display: "flex", gap: 10, alignItems: "flex-start" }}>
+                  <div style={{ width: 20, height: 20, borderRadius: "50%", background: "#f0eaf5", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 10, color: "#6b3fa0", flexShrink: 0, fontWeight: 700, marginTop: 2 }}>{i + 1}</div>
+                  <div>
+                    <div style={{ fontSize: 13, color: "#2d1b3d", fontWeight: 600 }}>{m.title}</div>
+                    <div style={{ fontSize: 11, color: "#9b8ea0", fontStyle: "italic" }}>{m.scripture}</div>
+                    {fruit && (
+                      <div style={{ fontSize: 11, color: "#7a4fa6", marginTop: 2 }}>
+                        🌿 {fruit}
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* Learn More about the Mysteries */}
@@ -3033,6 +3228,66 @@ export default function RosaryApp() {
                 fontSize: 16, color: "#d4b8f0", fontFamily: "'Lora',serif",
                 lineHeight: 1.95, whiteSpace: "pre-wrap",
               }}>{pietaSelectedPrayer.text}</div>
+
+              {/* Start Novena button — only on the 54-Day Rosary Novena prayer */}
+              {pietaSelectedPrayer.name === "54-Day Rosary Novena" && (
+                <div style={{ marginTop: 32, borderTop: "1px solid rgba(200,160,232,0.15)", paddingTop: 24 }}>
+                  {novenaStatus && !novenaStatus.completed ? (
+                    <div style={{ background: "linear-gradient(135deg,rgba(26,61,42,0.6),rgba(15,43,30,0.6))", borderRadius: 14, border: "1px solid rgba(100,200,140,0.35)", padding: "16px" }}>
+                      <div style={{ fontSize: 12, color: "rgba(100,200,140,0.7)", fontFamily: "'Lora',serif", textAlign: "center", marginBottom: 4 }}>Novena in Progress</div>
+                      <div style={{ fontSize: 20, fontWeight: 700, color: "#7de8a8", fontFamily: "'Lora',serif", textAlign: "center" }}>Day {novenaStatus.currentDay} of 54</div>
+                      <div style={{ fontSize: 11, color: novenaStatus.phase === "Petition" ? "#ffd764" : "#a8d8ff", fontFamily: "'Lora',serif", textAlign: "center", marginTop: 4 }}>
+                        {novenaStatus.phase} · Day {novenaStatus.phaseDay} of 27
+                      </div>
+                      <div style={{ fontSize: 10, color: "rgba(200,200,200,0.5)", fontFamily: "'Lora',serif", textAlign: "center", marginTop: 6 }}>
+                        {novenaStatus.startLabel} → {novenaStatus.endLabel}
+                      </div>
+                      <div style={{ height: 6, background: "rgba(100,200,140,0.15)", borderRadius: 3, marginTop: 12 }}>
+                        <div style={{ height: 6, background: "linear-gradient(90deg,#4db87a,#7de8a8)", borderRadius: 3, width: `${(novenaStatus.currentDay / 54) * 100}%` }} />
+                      </div>
+                    </div>
+                  ) : (
+                    <button onClick={() => setShowNovenaConfirm(true)} style={{
+                      width: "100%", background: "linear-gradient(135deg,#2d7a4f,#4db87a)",
+                      border: "none", borderRadius: 14, padding: "16px",
+                      color: "white", fontSize: 16, fontWeight: 700, cursor: "pointer",
+                      fontFamily: "'Lora',serif",
+                    }}>
+                      🌹 Begin 54-Day Novena
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Novena Confirmation Modal (accessible from Pieta) */}
+        {showNovenaConfirm && (
+          <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+            <div style={{ background: "linear-gradient(180deg,#1a3d2a,#0f2b1e)", borderRadius: 20, border: "1.5px solid rgba(100,200,140,0.5)", padding: "28px 24px", maxWidth: 340, width: "100%", fontFamily: "'Lora',serif" }}>
+              <div style={{ fontSize: 28, textAlign: "center", marginBottom: 8 }}>🌹</div>
+              <div style={{ fontSize: 18, fontWeight: 700, color: "#7de8a8", textAlign: "center", marginBottom: 8 }}>Begin 54-Day Rosary Novena</div>
+              <div style={{ fontSize: 13, color: "rgba(200,240,220,0.75)", lineHeight: 1.7, marginBottom: 20, textAlign: "center" }}>
+                Pray five decades of the Rosary each day for 54 consecutive days.<br/><br/>
+                Days 1–27: <span style={{ color: "#ffd764" }}>Petition</span><br/>
+                Days 28–54: <span style={{ color: "#a8d8ff" }}>Thanksgiving</span>
+              </div>
+              <div style={{ fontSize: 12, color: "rgba(200,240,220,0.5)", textAlign: "center", marginBottom: 20 }}>
+                Today's date will be recorded as Day 1.
+              </div>
+              <button onClick={startNovena} style={{
+                width: "100%", background: "linear-gradient(135deg,#2d7a4f,#4db87a)",
+                border: "none", borderRadius: 12, padding: "14px",
+                color: "white", fontSize: 15, fontWeight: 700, cursor: "pointer",
+                fontFamily: "'Lora',serif", marginBottom: 10,
+              }}>Begin Today</button>
+              <button onClick={() => setShowNovenaConfirm(false)} style={{
+                width: "100%", background: "transparent",
+                border: "1px solid rgba(100,200,140,0.25)", borderRadius: 12, padding: "12px",
+                color: "rgba(100,200,140,0.6)", fontSize: 14, cursor: "pointer",
+                fontFamily: "'Lora',serif",
+              }}>Cancel</button>
             </div>
           </div>
         )}
@@ -3080,7 +3335,16 @@ export default function RosaryApp() {
       {/* Top bar */}
       <div style={{ padding: "max(16px, env(safe-area-inset-top)) 18px 6px", position: "relative", zIndex: 2 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-          <button onClick={() => setScreen("home")} style={{ background: "none", border: "none", color: "#c9a0e8", cursor: "pointer", fontSize: 13, fontFamily: "'Lora',serif" }}>
+          <button onClick={() => {
+            // Explicitly save current step before leaving so resume card is always up-to-date
+            if (currentStep > 0) {
+              const progress = { mysterySet, currentStep, totalSteps: sequence.length };
+              try { localStorage.setItem("rosary_progress", JSON.stringify(progress)); } catch (e) { /* ignore */ }
+              setSavedProgress(progress);
+              setShowResumePrompt(true);
+            }
+            setScreen("home");
+          }} style={{ background: "none", border: "none", color: "#c9a0e8", cursor: "pointer", fontSize: 13, fontFamily: "'Lora',serif" }}>
             ← Home
           </button>
           <div style={{ fontSize: 12, color: "white", fontFamily: "'Lora',serif", fontWeight: 700 }}>{mysterySet} Mysteries</div>
@@ -3124,6 +3388,30 @@ export default function RosaryApp() {
           </button>
         </div>
       </div>
+
+      {/* 54-Day Novena Banner */}
+      {novenaStatus && !novenaStatus.completed && (
+        <div style={{
+          position: "relative", zIndex: 2, margin: "0 16px 4px",
+          background: "linear-gradient(135deg,rgba(26,61,42,0.9),rgba(15,43,30,0.9))",
+          border: "1px solid rgba(100,200,140,0.35)", borderRadius: 12,
+          padding: "10px 14px", display: "flex", alignItems: "center", justifyContent: "space-between",
+          backdropFilter: "blur(6px)",
+        }}>
+          <div>
+            <div style={{ fontSize: 9, color: "rgba(100,200,140,0.6)", fontFamily: "'Lora',serif", letterSpacing: 2, textTransform: "uppercase" }}>54-Day Novena</div>
+            <div style={{ fontSize: 15, fontWeight: 700, color: "#7de8a8", fontFamily: "'Lora',serif" }}>Day {novenaStatus.currentDay} of 54</div>
+          </div>
+          <div style={{ textAlign: "center" }}>
+            <div style={{ fontSize: 10, fontWeight: 700, color: novenaStatus.phase === "Petition" ? "#ffd764" : "#a8d8ff", fontFamily: "'Lora',serif" }}>{novenaStatus.phase}</div>
+            <div style={{ fontSize: 9, color: "rgba(200,200,200,0.5)", fontFamily: "'Lora',serif" }}>Day {novenaStatus.phaseDay} of 27</div>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <div style={{ fontSize: 9, color: "rgba(200,200,200,0.5)", fontFamily: "'Lora',serif" }}>{novenaStatus.daysRemaining} days left</div>
+            <div style={{ fontSize: 9, color: "rgba(200,200,200,0.4)", fontFamily: "'Lora',serif", marginTop: 2 }}>Ends {novenaStatus.endLabel}</div>
+          </div>
+        </div>
+      )}
 
       {/* SVG Rosary with Back/Next buttons overlaid on either side of the pendant */}
       <div style={{ position: "relative", zIndex: 2, flexShrink: 0 }}>
