@@ -2712,16 +2712,6 @@ export default function RosaryApp() {
             }}>
               MJK<br/>Novena
             </button>
-            <button onClick={() => setPietaScreen("splash")} style={{
-              background: "rgba(255,215,100,0.15)",
-              border: "1px solid rgba(255,215,100,0.45)",
-              borderRadius: 10, padding: "8px 10px",
-              color: "#ffd764", fontFamily: "'Lora',serif",
-              fontSize: 12, fontWeight: 700, cursor: "pointer",
-              letterSpacing: 0.5, lineHeight: 1.4, textAlign: "center",
-            }}>
-              Pieta<br/>Prayers
-            </button>
             <button onClick={() => novenaStatus && !novenaStatus.completed ? null : setShowNovenaConfirm(true)} style={{
               background: novenaStatus && !novenaStatus.completed ? "rgba(100,200,140,0.18)" : "rgba(255,255,255,0.12)",
               border: `1px solid ${novenaStatus && !novenaStatus.completed ? "rgba(100,200,140,0.55)" : "rgba(200,160,232,0.4)"}`,
@@ -2732,6 +2722,16 @@ export default function RosaryApp() {
               letterSpacing: 0.5, lineHeight: 1.4, textAlign: "center",
             }}>
               {novenaStatus && !novenaStatus.completed ? <>Day {novenaStatus.currentDay}<br/>of 54</> : <>54-Day<br/>Novena</>}
+            </button>
+            <button onClick={() => setPietaScreen("splash")} style={{
+              background: "rgba(255,215,100,0.15)",
+              border: "1px solid rgba(255,215,100,0.45)",
+              borderRadius: 10, padding: "8px 10px",
+              color: "#ffd764", fontFamily: "'Lora',serif",
+              fontSize: 12, fontWeight: 700, cursor: "pointer",
+              letterSpacing: 0.5, lineHeight: 1.4, textAlign: "center",
+            }}>
+              Pieta<br/>Prayers
             </button>
           </div>
         </div>
@@ -3232,30 +3232,14 @@ export default function RosaryApp() {
               {/* Start Novena button — only on the 54-Day Rosary Novena prayer */}
               {pietaSelectedPrayer.name === "54-Day Rosary Novena" && (
                 <div style={{ marginTop: 32, borderTop: "1px solid rgba(200,160,232,0.15)", paddingTop: 24 }}>
-                  {novenaStatus && !novenaStatus.completed ? (
-                    <div style={{ background: "linear-gradient(135deg,rgba(26,61,42,0.6),rgba(15,43,30,0.6))", borderRadius: 14, border: "1px solid rgba(100,200,140,0.35)", padding: "16px" }}>
-                      <div style={{ fontSize: 12, color: "rgba(100,200,140,0.7)", fontFamily: "'Lora',serif", textAlign: "center", marginBottom: 4 }}>Novena in Progress</div>
-                      <div style={{ fontSize: 20, fontWeight: 700, color: "#7de8a8", fontFamily: "'Lora',serif", textAlign: "center" }}>Day {novenaStatus.currentDay} of 54</div>
-                      <div style={{ fontSize: 11, color: novenaStatus.phase === "Petition" ? "#ffd764" : "#a8d8ff", fontFamily: "'Lora',serif", textAlign: "center", marginTop: 4 }}>
-                        {novenaStatus.phase} · Day {novenaStatus.phaseDay} of 27
-                      </div>
-                      <div style={{ fontSize: 10, color: "rgba(200,200,200,0.5)", fontFamily: "'Lora',serif", textAlign: "center", marginTop: 6 }}>
-                        {novenaStatus.startLabel} → {novenaStatus.endLabel}
-                      </div>
-                      <div style={{ height: 6, background: "rgba(100,200,140,0.15)", borderRadius: 3, marginTop: 12 }}>
-                        <div style={{ height: 6, background: "linear-gradient(90deg,#4db87a,#7de8a8)", borderRadius: 3, width: `${(novenaStatus.currentDay / 54) * 100}%` }} />
-                      </div>
-                    </div>
-                  ) : (
-                    <button onClick={() => setShowNovenaConfirm(true)} style={{
-                      width: "100%", background: "linear-gradient(135deg,#2d7a4f,#4db87a)",
-                      border: "none", borderRadius: 14, padding: "16px",
-                      color: "white", fontSize: 16, fontWeight: 700, cursor: "pointer",
-                      fontFamily: "'Lora',serif",
-                    }}>
-                      🌹 Begin 54-Day Novena
-                    </button>
-                  )}
+                  <button onClick={() => setShowNovenaConfirm(true)} style={{
+                    width: "100%", background: "linear-gradient(135deg,#2d7a4f,#4db87a)",
+                    border: "none", borderRadius: 14, padding: "16px",
+                    color: "white", fontSize: 16, fontWeight: 700, cursor: "pointer",
+                    fontFamily: "'Lora',serif",
+                  }}>
+                    🌹 Begin 54-Day Novena
+                  </button>
                 </div>
               )}
             </div>
