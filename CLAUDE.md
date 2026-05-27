@@ -39,12 +39,13 @@ cd /Users/markalberto/Downloads/holy-rosary-app/holy-rosary-app && npm start
 
 - **Mystery selection** — 4 buttons (Joyful, Sorrowful, Glorious, Luminous); auto-suggests by day of week with ✦ Suggested label
 - **Progress resume card** — appears if localStorage has an in-progress rosary; shows mystery set + % complete; Resume or Start Fresh
-- **Mystery list** — shows all 5 mysteries for selected set with expandable meditations (title, scripture, fruit, short intention, full meditation)
-- **4 top action buttons:** Guide · FAQ · MJK Novena · Pieta Prayers
-- **Guide** — 8-section user guide modal
+- **Mystery list** — shows all 5 mysteries for selected set with title, scripture, fruit of the mystery, and expandable meditations (short intention, full meditation). 5th Joyful mystery: "Finding Jesus in the Temple".
+- **4 top action buttons:** Guide · FAQ · MJK Novena · 54-Day Novena · Pieta Prayers (button order on home screen)
+- **Guide** — 9-section user guide modal (includes 54-Day Novena section)
 - **FAQ** — tabbed modal: "About the Rosary" (6 accordion sections) and "History" (9 accordion sections)
 - **MJK Novena** — full-screen overlay showing `/mjk-novena.jpg`
-- **Pieta Prayers** — "Judith's Pieta Prayer Book": splash screen (pieta-sky.png background), prayer list (7 categories, 28 public domain prayers), individual prayer view. Copyrighted prayers not yet added.
+- **54-Day Novena** — button on home screen; confirm modal to begin (Begin Today / Cancel); tracks start date in localStorage (`novena_54day`); shows status card on home screen (day, phase, progress bar, dates) while in progress; status card includes **Level Up** button (visible from Day 1 onward) — user self-identifies as behind, taps to reset rosary progress and begin fresh for the current day; start date is preserved
+- **Pieta Prayers** — "Judith's Pieta Prayer Book": splash screen (pieta-sky.png background), prayer list (7 categories, 28 public domain prayers), individual prayer view. Copyrighted prayers not yet added. The 54-Day Rosary Novena prayer card includes a "🌹 Begin 54-Day Novena" button.
 
 ---
 
@@ -53,6 +54,7 @@ cd /Users/markalberto/Downloads/holy-rosary-app/holy-rosary-app && npm start
 - **SVG rosary visualization** — 55 interactive beads; tap any bead to jump to that step
   - Bead states: idle (purple), done (blue), active (gold with glow)
   - Large Our Father beads, small Hail Mary beads (numbered in active decade), crucifix at pendant base
+  - Pendant intro Hail Marys: virtue label ("for Faith/Hope/Charity") appears in gold to the right of the active bead only
   - Decade Arc at top shows active decade's mysteries
 - **262-step prayer sequence** — full Rosary from Sign of the Cross → Apostles' Creed → 5 decades → Hail Holy Queen → Final Prayer → Closing Sign of the Cross
 - **Expandable prayer cards** — tap to expand/collapse; sticky state persists across navigation; "Expand All" button
@@ -91,6 +93,7 @@ cd /Users/markalberto/Downloads/holy-rosary-app/holy-rosary-app && npm start
 | Data | Storage | Key |
 |---|---|---|
 | Rosary progress | `localStorage` | `rosary_progress` |
+| 54-Day Novena start date | `localStorage` | `novena_54day` |
 | Feedback | `window.storage` | — |
 | Prayer requests | `window.storage` | `rosary_prayers` |
 
@@ -120,7 +123,7 @@ cd /Users/markalberto/Downloads/holy-rosary-app/holy-rosary-app && npm start
 
 | File | Purpose |
 |---|---|
-| `src/App.jsx` | Entire app (~2450 lines, single file) |
+| `src/App.jsx` | Entire app (~3500 lines, single file) |
 | `public/audio/` | 28 ElevenLabs MP3 files |
 | `public/mjk-novena.jpg` | MJK Novena image |
 | `public/index.html` | PWA meta tags, Google Fonts import |

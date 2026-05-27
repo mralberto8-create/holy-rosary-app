@@ -558,7 +558,7 @@ function getNovenaStatus(startDateStr) {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const diffDays = Math.floor((today - start) / (1000 * 60 * 60 * 24));
-  const currentDay = diffDays + 1;
+  const currentDay = Math.max(1, diffDays + 1);
   if (currentDay > 54) return { completed: true };
   const endDate = new Date(start);
   endDate.setDate(endDate.getDate() + 53);
@@ -1250,6 +1250,7 @@ export default function RosaryApp() {
   // 54-Day Novena
   const [novenaStartDate, setNovenaStartDate] = useState(null);
   const [showNovenaConfirm, setShowNovenaConfirm] = useState(false);
+  const [showLevelUpConfirm, setShowLevelUpConfirm] = useState(false);
 
   // Pieta Prayer Book
   const [pietaScreen, setPietaScreen] = useState(null); // null | "splash" | "list" | "prayer"
@@ -1387,7 +1388,8 @@ export default function RosaryApp() {
 
   // 54-Day Novena
   function startNovena() {
-    const today = new Date().toISOString().split("T")[0];
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
     setNovenaStartDate(today);
     try { localStorage.setItem("novena_54day", today); } catch (e) { /* ignore */ }
     setShowNovenaConfirm(false);
@@ -1395,6 +1397,12 @@ export default function RosaryApp() {
   function cancelNovena() {
     setNovenaStartDate(null);
     try { localStorage.removeItem("novena_54day"); } catch (e) { /* ignore */ }
+  }
+  function levelUpNovena() {
+    try { localStorage.removeItem("rosary_progress"); } catch (e) { /* ignore */ }
+    setSavedProgress(null);
+    setShowResumePrompt(false);
+    setShowLevelUpConfirm(false);
   }
   const novenaStatus = getNovenaStatus(novenaStartDate);
 
@@ -2025,6 +2033,19 @@ export default function RosaryApp() {
               icon: null,
               lines: [
                 "Tap the MJK Novena button in the top right of the home screen to open a special novena prayer.",
+              ],
+            },
+            {
+              heading: "54-Day Rosary Novena",
+              icon: "🌹",
+              lines: [
+                "The 54-Day Rosary Novena is one of the most powerful Marian devotions in the Catholic tradition — pray five decades of the Rosary each day for 54 consecutive days.",
+                "Days 1–27 are prayed in Petition, asking Our Lady for your intention. Days 28–54 are prayed in Thanksgiving, trusting that she has interceded for you.",
+                "To begin, tap the 54-Day Novena button on the home screen and confirm. Today's date is recorded as Day 1.",
+                "While your novena is active, a status card appears on the home screen showing your current day, phase (Petition or Thanksgiving), progress bar, and start and end dates.",
+                "A smaller novena banner also appears at the top of the prayer screen so you're reminded of your intention while praying.",
+                "Level Up — If you've fallen behind and missed some days, tap the Level Up button on the status card. This advances your tracker to the correct day (based on your start date) and resets your rosary so you can begin fresh for today.",
+                "To stop the novena entirely, tap Cancel Novena on the status card.",
               ],
             },
             {
@@ -2852,8 +2873,24 @@ export default function RosaryApp() {
                   Ends {novenaStatus.endLabel}
                 </div>
               </div>
+              {novenaStatus.currentDay >= 1 && (
+                <>
+                  <div style={{ fontSize: 11, color: "rgba(100,200,140,0.6)", fontFamily: "'Lora',serif", marginTop: 14, lineHeight: 1.65, textAlign: "center", fontStyle: "italic" }}>
+                    Fell behind? Tap Level Up to advance to today's day and reset the rosary so you can begin fresh.
+                  </div>
+                  <button onClick={() => setShowLevelUpConfirm(true)} style={{
+                    marginTop: 8, width: "100%",
+                    background: "linear-gradient(135deg, rgba(100,200,140,0.2), rgba(100,200,140,0.08))",
+                    border: "1px solid rgba(100,200,140,0.45)", borderRadius: 8,
+                    padding: "9px", color: "#7de8a8", fontSize: 13,
+                    fontFamily: "'Lora',serif", cursor: "pointer", fontWeight: 600, letterSpacing: 0.3,
+                  }}>
+                    ⬆ Level Up
+                  </button>
+                </>
+              )}
               <button onClick={cancelNovena} style={{
-                marginTop: 12, width: "100%", background: "transparent",
+                marginTop: 8, width: "100%", background: "transparent",
                 border: "1px solid rgba(100,200,140,0.25)", borderRadius: 8,
                 padding: "8px", color: "rgba(100,200,140,0.5)", fontSize: 11,
                 fontFamily: "'Lora',serif", cursor: "pointer",
@@ -2897,6 +2934,37 @@ export default function RosaryApp() {
                   fontFamily: "'Lora',serif", marginBottom: 10,
                 }}>Begin Today</button>
                 <button onClick={() => setShowNovenaConfirm(false)} style={{
+                  width: "100%", background: "transparent",
+                  border: "1px solid rgba(100,200,140,0.25)", borderRadius: 12, padding: "12px",
+                  color: "rgba(100,200,140,0.6)", fontSize: 14, cursor: "pointer",
+                  fontFamily: "'Lora',serif",
+                }}>Cancel</button>
+              </div>
+            </div>
+          )}
+
+          {/* Level Up Confirmation Modal */}
+          {showLevelUpConfirm && (
+            <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+              <div style={{ background: "linear-gradient(180deg,#1a3d2a,#0f2b1e)", borderRadius: 20, border: "1.5px solid rgba(100,200,140,0.5)", padding: "28px 24px", maxWidth: 340, width: "100%", fontFamily: "'Lora',serif" }}>
+                <div style={{ fontSize: 28, textAlign: "center", marginBottom: 8 }}>⬆</div>
+                <div style={{ fontSize: 18, fontWeight: 700, color: "#7de8a8", textAlign: "center", marginBottom: 12 }}>Level Up</div>
+                <div style={{ fontSize: 13, color: "rgba(200,240,220,0.8)", lineHeight: 1.75, marginBottom: 8, textAlign: "center" }}>
+                  If you've fallen behind on the novena, Level Up advances your progress to Day {novenaStatus?.currentDay} — exactly where you should be based on when you started.
+                </div>
+                <div style={{ fontSize: 13, color: "rgba(200,240,220,0.8)", lineHeight: 1.75, marginBottom: 20, textAlign: "center" }}>
+                  Your saved rosary will be reset so you can begin today's prayer fresh, with the correct mysteries for today.
+                </div>
+                <div style={{ fontSize: 11, color: "rgba(200,240,220,0.45)", textAlign: "center", marginBottom: 20, fontStyle: "italic" }}>
+                  Your novena start date stays the same — only the rosary session resets.
+                </div>
+                <button onClick={levelUpNovena} style={{
+                  width: "100%", background: "linear-gradient(135deg,#2d7a4f,#4db87a)",
+                  border: "none", borderRadius: 12, padding: "14px",
+                  color: "white", fontSize: 15, fontWeight: 700, cursor: "pointer",
+                  fontFamily: "'Lora',serif", marginBottom: 10,
+                }}>Level Up to Day {novenaStatus?.currentDay}</button>
+                <button onClick={() => setShowLevelUpConfirm(false)} style={{
                   width: "100%", background: "transparent",
                   border: "1px solid rgba(100,200,140,0.25)", borderRadius: 12, padding: "12px",
                   color: "rgba(100,200,140,0.6)", fontSize: 14, cursor: "pointer",
