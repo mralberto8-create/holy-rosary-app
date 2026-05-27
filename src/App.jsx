@@ -2982,8 +2982,9 @@ export default function RosaryApp() {
 
           {/* 54-Day Novena Info Modal — full content before starting */}
           {showNovenaInfo && (
-            <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.85)", display: "flex", flexDirection: "column" }}>
-              <div style={{ flex: 1, overflowY: "auto", padding: "max(48px,env(safe-area-inset-top)) 24px 24px", background: "linear-gradient(180deg,#0f2b1e,#1a3d2a)" }}>
+            <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.85)", display: "flex", justifyContent: "center" }}>
+              <div style={{ width: "100%", maxWidth: 390, display: "flex", flexDirection: "column", overflowY: "auto", background: "linear-gradient(180deg,#0f2b1e,#1a3d2a)" }}>
+              <div style={{ flex: 1, padding: "max(48px,env(safe-area-inset-top)) 24px 24px" }}>
                 {/* Header */}
                 <div style={{ textAlign: "center", marginBottom: 28 }}>
                   <div style={{ fontSize: 36, marginBottom: 12 }}>🌹</div>
@@ -3057,6 +3058,7 @@ export default function RosaryApp() {
                   color: "rgba(100,200,140,0.55)", fontSize: 14, cursor: "pointer",
                   fontFamily: "'Lora',serif", marginBottom: "max(24px,env(safe-area-inset-bottom))",
                 }}>Not Yet</button>
+              </div>
               </div>
             </div>
           )}
