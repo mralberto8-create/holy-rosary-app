@@ -1239,6 +1239,7 @@ export default function RosaryApp() {
   const autoPlayRef = useRef(false);
   const seqLenRef = useRef(sequence.length);
   const audioRef = useRef(null);
+  const novenaStartDateRef = useRef(null);
 
   // Feedback state
   const [showFeedback, setShowFeedback] = useState(false);
@@ -1272,6 +1273,8 @@ export default function RosaryApp() {
   // 54-Day Novena
   const [novenaStartDate, setNovenaStartDate] = useState(null);
   const [showNovenaConfirm, setShowNovenaConfirm] = useState(false);
+  const [showNovenaInfo, setShowNovenaInfo] = useState(false);
+  const [novenaPrayerPending, setNovenaPrayerPending] = useState(false);
   const [showLevelUpConfirm, setShowLevelUpConfirm] = useState(false);
 
   // Pieta Prayer Book
@@ -1454,6 +1457,7 @@ export default function RosaryApp() {
 
   // Keep sequence length ref current for use inside speech callbacks
   useEffect(() => { seqLenRef.current = sequence.length; }, [sequence]);
+  useEffect(() => { novenaStartDateRef.current = novenaStartDate; }, [novenaStartDate]);
 
   // Cancel speech and reset autoplay when leaving the praying screen
   useEffect(() => {
@@ -1505,6 +1509,13 @@ export default function RosaryApp() {
       if (autoPlayRef.current) {
         setTimeout(() => {
           if (autoPlayRef.current) {
+            if (s?.prayer === 'fatimaPrayer') {
+              const nStatus = getNovenaStatus(novenaStartDateRef.current);
+              if (nStatus && !nStatus.completed) {
+                setNovenaPrayerPending(true);
+                return;
+              }
+            }
             setCurrentStep(c => Math.min(c + 1, seqLenRef.current - 1));
             setExpandedPrayer(null);
           }
@@ -1622,6 +1633,11 @@ export default function RosaryApp() {
 
   const advance = () => {
     if (currentStep < sequence.length - 1) {
+      const s = sequence[currentStep];
+      if (s?.prayer === 'fatimaPrayer' && novenaStatus && !novenaStatus.completed) {
+        setNovenaPrayerPending(true);
+        return;
+      }
       setCurrentStep(c => c + 1);
       setExpandedPrayer(null);
     }
@@ -2784,7 +2800,7 @@ export default function RosaryApp() {
             }}>
               MJK<br/>Novena
             </button>
-            <button onClick={() => novenaStatus && !novenaStatus.completed ? null : setShowNovenaConfirm(true)} style={{
+            <button onClick={() => novenaStatus && !novenaStatus.completed ? null : setShowNovenaInfo(true)} style={{
               background: novenaStatus && !novenaStatus.completed ? "rgba(100,200,140,0.18)" : "rgba(255,255,255,0.12)",
               border: `1px solid ${novenaStatus && !novenaStatus.completed ? "rgba(100,200,140,0.55)" : "rgba(200,160,232,0.4)"}`,
               borderRadius: 10, padding: "8px 10px",
@@ -2956,7 +2972,7 @@ export default function RosaryApp() {
               <div style={{ fontSize: 20 }}>🙏</div>
               <div style={{ fontSize: 15, fontWeight: 700, color: "#a8d8ff", fontFamily: "'Lora',serif", marginTop: 6 }}>54-Day Novena Complete!</div>
               <div style={{ fontSize: 12, color: "rgba(168,216,255,0.6)", fontFamily: "'Lora',serif", marginTop: 4 }}>May Our Lady intercede for your intentions.</div>
-              <button onClick={() => { cancelNovena(); setShowNovenaConfirm(true); }} style={{
+              <button onClick={() => { cancelNovena(); setShowNovenaInfo(true); }} style={{
                 marginTop: 12, background: "rgba(168,216,255,0.12)", border: "1px solid rgba(168,216,255,0.3)",
                 borderRadius: 8, padding: "8px 16px", color: "#a8d8ff", fontSize: 12,
                 fontFamily: "'Lora',serif", cursor: "pointer",
@@ -2964,32 +2980,83 @@ export default function RosaryApp() {
             </div>
           )}
 
-          {/* Start Novena Confirmation Modal */}
-          {showNovenaConfirm && (
-            <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-              <div style={{ background: "linear-gradient(180deg,#1a3d2a,#0f2b1e)", borderRadius: 20, border: "1.5px solid rgba(100,200,140,0.5)", padding: "28px 24px", maxWidth: 340, width: "100%", fontFamily: "'Lora',serif" }}>
-                <div style={{ fontSize: 28, textAlign: "center", marginBottom: 8 }}>🌹</div>
-                <div style={{ fontSize: 18, fontWeight: 700, color: "#7de8a8", textAlign: "center", marginBottom: 8 }}>Begin 54-Day Rosary Novena</div>
-                <div style={{ fontSize: 13, color: "rgba(200,240,220,0.75)", lineHeight: 1.7, marginBottom: 20, textAlign: "center" }}>
-                  Pray five decades of the Rosary each day for 54 consecutive days.<br/><br/>
-                  Days 1–27: <span style={{ color: "#ffd764" }}>Petition</span><br/>
-                  Days 28–54: <span style={{ color: "#a8d8ff" }}>Thanksgiving</span>
+          {/* 54-Day Novena Info Modal — full content before starting */}
+          {showNovenaInfo && (
+            <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.85)", display: "flex", flexDirection: "column" }}>
+              <div style={{ flex: 1, overflowY: "auto", padding: "max(48px,env(safe-area-inset-top)) 24px 24px", background: "linear-gradient(180deg,#0f2b1e,#1a3d2a)" }}>
+                {/* Header */}
+                <div style={{ textAlign: "center", marginBottom: 28 }}>
+                  <div style={{ fontSize: 36, marginBottom: 12 }}>🌹</div>
+                  <div style={{ fontSize: 10, letterSpacing: 3, textTransform: "uppercase", color: "rgba(100,200,140,0.6)", fontFamily: "'Lora',serif", marginBottom: 6 }}>Marian Devotion</div>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: "#7de8a8", fontFamily: "'Lora',serif", lineHeight: 1.3 }}>54-Day Rosary Novena</div>
+                  <div style={{ marginTop: 12, height: 1, background: "rgba(100,200,140,0.25)" }} />
                 </div>
-                <div style={{ fontSize: 12, color: "rgba(200,240,220,0.5)", textAlign: "center", marginBottom: 20 }}>
-                  Today's date will be recorded as Day 1.
+
+                {/* Intro */}
+                <div style={{ fontSize: 13, color: "rgba(200,240,220,0.85)", fontFamily: "'Lora',serif", lineHeight: 1.8, marginBottom: 24, fontStyle: "italic", textAlign: "center" }}>
+                  Pray five decades of the Rosary each day for 54 consecutive days. The first 27 days are in petition; the final 27 days are in thanksgiving — prayed as if the grace has already been granted.
                 </div>
-                <button onClick={startNovena} style={{
+
+                {/* History */}
+                <div style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: "rgba(100,200,140,0.5)", fontFamily: "'Lora',serif", marginBottom: 10 }}>Origin</div>
+                <div style={{ fontSize: 13, color: "rgba(200,240,220,0.75)", fontFamily: "'Lora',serif", lineHeight: 1.85, marginBottom: 8 }}>
+                  This novena was first prayed in Naples, Italy in 1884. A young woman named Fortuna Agrelli, gravely ill and given up by doctors, was cured after praying this novena. Our Lady appeared to her on the last day and said:
+                </div>
+                <div style={{ fontSize: 13, color: "#a8e8c0", fontFamily: "'Lora',serif", lineHeight: 1.85, marginBottom: 24, fontStyle: "italic", paddingLeft: 16, borderLeft: "2px solid rgba(100,200,140,0.35)" }}>
+                  "Whoever desires to obtain favors from me should make three novenas of the prayers of the Rosary in petition, and three novenas in thanksgiving."
+                </div>
+
+                {/* Phase breakdown */}
+                <div style={{ display: "flex", gap: 10, marginBottom: 28 }}>
+                  <div style={{ flex: 1, background: "rgba(255,215,100,0.08)", border: "1px solid rgba(255,215,100,0.25)", borderRadius: 10, padding: "12px 14px", textAlign: "center" }}>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: "#ffd764", fontFamily: "'Lora',serif" }}>Days 1–27</div>
+                    <div style={{ fontSize: 11, color: "rgba(255,215,100,0.7)", fontFamily: "'Lora',serif", marginTop: 4 }}>Petition</div>
+                    <div style={{ fontSize: 11, color: "rgba(200,240,220,0.5)", fontFamily: "'Lora',serif", marginTop: 6, lineHeight: 1.5 }}>Ask Our Lady for your intention with trust and confidence.</div>
+                  </div>
+                  <div style={{ flex: 1, background: "rgba(168,216,255,0.08)", border: "1px solid rgba(168,216,255,0.25)", borderRadius: 10, padding: "12px 14px", textAlign: "center" }}>
+                    <div style={{ fontSize: 18, fontWeight: 700, color: "#a8d8ff", fontFamily: "'Lora',serif" }}>Days 28–54</div>
+                    <div style={{ fontSize: 11, color: "rgba(168,216,255,0.7)", fontFamily: "'Lora',serif", marginTop: 4 }}>Thanksgiving</div>
+                    <div style={{ fontSize: 11, color: "rgba(200,240,220,0.5)", fontFamily: "'Lora',serif", marginTop: 6, lineHeight: 1.5 }}>Give thanks as if the grace has already been granted.</div>
+                  </div>
+                </div>
+
+                {/* Days 1-27 Prayer */}
+                <div style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: "#ffd764", fontFamily: "'Lora',serif", marginBottom: 10, opacity: 0.7 }}>Days 1–27 · After Each Decade</div>
+                <div style={{ background: "rgba(255,215,100,0.06)", border: "1px solid rgba(255,215,100,0.2)", borderRadius: 12, padding: "16px 18px", marginBottom: 28 }}>
+                  <div style={{ fontSize: 13, color: "rgba(200,240,220,0.85)", fontFamily: "'Lora',serif", lineHeight: 1.95, fontStyle: "italic" }}>
+                    "O my Queen, my Mother, I give myself entirely to you, and to show my devotion to you, I consecrate to you this day my eyes, my ears, my mouth, my heart, my whole being without reserve. Wherefore, good Mother, as I am your own, keep me, guard me as your property and possession. Amen."
+                  </div>
+                </div>
+
+                {/* Days 28-54 Prayer */}
+                <div style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: "#a8d8ff", fontFamily: "'Lora',serif", marginBottom: 10, opacity: 0.7 }}>Days 28–54 · After Each Decade</div>
+                <div style={{ background: "rgba(168,216,255,0.06)", border: "1px solid rgba(168,216,255,0.2)", borderRadius: 12, padding: "16px 18px", marginBottom: 32 }}>
+                  <div style={{ fontSize: 13, color: "rgba(200,240,220,0.85)", fontFamily: "'Lora',serif", lineHeight: 1.95, fontStyle: "italic" }}>
+                    "Most Holy Virgin, Mother of God, I thank you for the graces you have granted me through this novena. I offer you my love and gratitude, and I renew my consecration to you. Keep me always close to your Immaculate Heart, and guide me to your Son, Jesus. Amen."
+                  </div>
+                </div>
+
+                {/* How it works */}
+                <div style={{ background: "rgba(100,200,140,0.07)", border: "1px solid rgba(100,200,140,0.2)", borderRadius: 12, padding: "14px 16px", marginBottom: 32 }}>
+                  <div style={{ fontSize: 11, letterSpacing: 2, textTransform: "uppercase", color: "rgba(100,200,140,0.6)", fontFamily: "'Lora',serif", marginBottom: 8 }}>How it works in this app</div>
+                  <div style={{ fontSize: 12, color: "rgba(200,240,220,0.7)", fontFamily: "'Lora',serif", lineHeight: 1.8 }}>
+                    After each decade, the novena prayer for your current phase will appear so you can recite it before continuing. Pray five decades each day. Come back tomorrow to continue — your progress is saved automatically.
+                  </div>
+                </div>
+
+                {/* CTA */}
+                <button onClick={() => { setShowNovenaInfo(false); startNovena(); }} style={{
                   width: "100%", background: "linear-gradient(135deg,#2d7a4f,#4db87a)",
-                  border: "none", borderRadius: 12, padding: "14px",
-                  color: "white", fontSize: 15, fontWeight: 700, cursor: "pointer",
-                  fontFamily: "'Lora',serif", marginBottom: 10,
-                }}>Begin Today</button>
-                <button onClick={() => setShowNovenaConfirm(false)} style={{
+                  border: "none", borderRadius: 14, padding: "16px",
+                  color: "white", fontSize: 16, fontWeight: 700, cursor: "pointer",
+                  fontFamily: "'Lora',serif", marginBottom: 12,
+                }}>🌹 I'm Ready — Begin Today</button>
+                <button onClick={() => setShowNovenaInfo(false)} style={{
                   width: "100%", background: "transparent",
-                  border: "1px solid rgba(100,200,140,0.25)", borderRadius: 12, padding: "12px",
-                  color: "rgba(100,200,140,0.6)", fontSize: 14, cursor: "pointer",
-                  fontFamily: "'Lora',serif",
-                }}>Cancel</button>
+                  border: "1px solid rgba(100,200,140,0.2)", borderRadius: 14, padding: "14px",
+                  color: "rgba(100,200,140,0.55)", fontSize: 14, cursor: "pointer",
+                  fontFamily: "'Lora',serif", marginBottom: "max(24px,env(safe-area-inset-bottom))",
+                }}>Not Yet</button>
               </div>
             </div>
           )}
@@ -3704,6 +3771,36 @@ export default function RosaryApp() {
           })()}
         </div>
       </div>
+
+      {/* 54-Day Novena Prayer Popup — appears after each decade when novena is active */}
+      {novenaPrayerPending && novenaStatus && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 9998, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
+          <div style={{ background: "linear-gradient(180deg,#0f2b1e,#1a3d2a)", borderRadius: 20, border: `1.5px solid ${novenaStatus.phase === "Petition" ? "rgba(255,215,100,0.45)" : "rgba(168,216,255,0.45)"}`, padding: "28px 22px", maxWidth: 340, width: "100%", fontFamily: "'Lora',serif" }}>
+            <div style={{ textAlign: "center", marginBottom: 16 }}>
+              <div style={{ fontSize: 22, marginBottom: 6 }}>🌹</div>
+              <div style={{ fontSize: 9, letterSpacing: 3, textTransform: "uppercase", color: novenaStatus.phase === "Petition" ? "rgba(255,215,100,0.6)" : "rgba(168,216,255,0.6)", marginBottom: 4 }}>
+                54-Day Novena · Day {novenaStatus.currentDay}
+              </div>
+              <div style={{ fontSize: 15, fontWeight: 700, color: novenaStatus.phase === "Petition" ? "#ffd764" : "#a8d8ff" }}>
+                {novenaStatus.phase} Prayer
+              </div>
+              <div style={{ fontSize: 11, color: "rgba(200,240,220,0.45)", marginTop: 4 }}>After each decade</div>
+            </div>
+            <div style={{ height: 1, background: novenaStatus.phase === "Petition" ? "rgba(255,215,100,0.2)" : "rgba(168,216,255,0.2)", marginBottom: 20 }} />
+            <div style={{ fontSize: 14, color: "rgba(200,240,220,0.9)", lineHeight: 2.0, fontStyle: "italic", textAlign: "center", marginBottom: 24 }}>
+              {novenaStatus.phase === "Petition"
+                ? "\"O my Queen, my Mother, I give myself entirely to you, and to show my devotion to you, I consecrate to you this day my eyes, my ears, my mouth, my heart, my whole being without reserve. Wherefore, good Mother, as I am your own, keep me, guard me as your property and possession. Amen.\""
+                : "\"Most Holy Virgin, Mother of God, I thank you for the graces you have granted me through this novena. I offer you my love and gratitude, and I renew my consecration to you. Keep me always close to your Immaculate Heart, and guide me to your Son, Jesus. Amen.\""}
+            </div>
+            <button onClick={() => { setNovenaPrayerPending(false); setCurrentStep(c => c + 1); setExpandedPrayer(null); }} style={{
+              width: "100%", background: "linear-gradient(135deg,#2d7a4f,#4db87a)",
+              border: "none", borderRadius: 12, padding: "14px",
+              color: "white", fontSize: 15, fontWeight: 700, cursor: "pointer",
+              fontFamily: "'Lora',serif",
+            }}>Continue →</button>
+          </div>
+        </div>
+      )}
 
       {/* Learn More bottom sheet */}
       {learnMore && (() => {
