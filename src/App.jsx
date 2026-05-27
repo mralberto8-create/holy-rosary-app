@@ -1286,6 +1286,7 @@ export default function RosaryApp() {
   const [pietaSelectedPrayer, setPietaSelectedPrayer] = useState(null);
   const [pietaExpandedGroups, setPietaExpandedGroups] = useState(new Set());
   const [pietaSearch, setPietaSearch] = useState("");
+  const [pietaFavorites, setPietaFavorites] = useState([]);
   const pietaListScrollRef = useRef(null);
   const pietaListScrollPos = useRef(0);
   const [prayerIntention, setPrayerIntention] = useState("");
@@ -1337,6 +1338,12 @@ export default function RosaryApp() {
       if (saved) setNovenaStartDate(saved);
     } catch (e) { /* ignore */ }
 
+    // Pieta favorites
+    try {
+      const fav = localStorage.getItem("pieta_favorites");
+      if (fav) setPietaFavorites(JSON.parse(fav));
+    } catch (e) { /* ignore */ }
+
     return () => { unsubPrayers(); unsubFeedback(); };
   }, []);
 
@@ -1364,6 +1371,17 @@ export default function RosaryApp() {
       } catch (e) { /* ignore */ }
     }
   }, [screen]);
+
+  // Save Pieta favorites whenever they change
+  useEffect(() => {
+    try { localStorage.setItem("pieta_favorites", JSON.stringify(pietaFavorites)); } catch (e) { /* ignore */ }
+  }, [pietaFavorites]);
+
+  function togglePietaFavorite(name) {
+    setPietaFavorites(prev =>
+      prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
+    );
+  }
 
   // Save feedback to Firestore
   async function submitFeedback() {
@@ -3115,6 +3133,11 @@ export default function RosaryApp() {
                 textShadow: "0 1px 4px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.9)",
               }}>Judith's</div>
               <div style={{
+                fontSize: 13, fontWeight: 700, color: "#ffe033", fontFamily: "'Lora',serif",
+                letterSpacing: 3, textTransform: "uppercase", marginBottom: 14,
+                textShadow: "0 1px 4px rgba(0,0,0,1), 0 0 20px rgba(0,0,0,0.9)",
+              }}>Do we believe what we profess?</div>
+              <div style={{
                 fontSize: 30, fontWeight: 700, color: "#fff",
                 fontFamily: "'Lora',serif", lineHeight: 1.25, marginBottom: 6,
                 textShadow: "0 1px 4px rgba(0,0,0,1), 0 0 24px rgba(0,0,0,1)",
@@ -3201,21 +3224,72 @@ export default function RosaryApp() {
                     No prayers found for "{pietaSearch}"
                   </div>
                 ) : results.map((p, i) => (
-                  <button key={i} onClick={() => { pietaListScrollPos.current = pietaListScrollRef.current?.scrollTop || 0; setPietaSelectedPrayer(p); setPietaScreen("prayer"); setPietaSearch(""); }} style={{
+                  <div key={i} onClick={() => { pietaListScrollPos.current = pietaListScrollRef.current?.scrollTop || 0; setPietaSelectedPrayer(p); setPietaScreen("prayer"); setPietaSearch(""); }} style={{
                     width: "100%", background: "rgba(255,255,255,0.05)",
                     border: "1px solid rgba(200,160,232,0.15)",
                     borderRadius: 12, padding: "14px 16px", marginBottom: 8,
                     cursor: "pointer", display: "flex", alignItems: "center",
-                    justifyContent: "space-between", textAlign: "left",
+                    justifyContent: "space-between", textAlign: "left", boxSizing: "border-box",
                   }}>
-                    <div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: 15, fontWeight: 600, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>{p.name}</div>
                       <div style={{ fontSize: 10, color: "rgba(255,215,100,0.65)", fontFamily: "'Lora',serif", marginTop: 3, letterSpacing: 1.5, textTransform: "uppercase" }}>{p.category}</div>
                       {p.subtitle && <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif", marginTop: 2, fontStyle: "italic" }}>{p.subtitle}</div>}
                     </div>
-                    <div style={{ color: "rgba(200,160,232,0.5)", fontSize: 18, marginLeft: 8 }}>›</div>
-                  </button>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+                      <button onClick={e => { e.stopPropagation(); togglePietaFavorite(p.name); }} style={{
+                        background: "none", border: "none", cursor: "pointer", padding: "4px 2px",
+                        fontSize: 18, lineHeight: 1, color: pietaFavorites.includes(p.name) ? "#ff6b8a" : "rgba(200,160,232,0.35)",
+                      }}>{pietaFavorites.includes(p.name) ? "♥" : "♡"}</button>
+                      <div style={{ color: "rgba(200,160,232,0.5)", fontSize: 18 }}>›</div>
+                    </div>
+                  </div>
                 ));
+              })()}
+
+              {/* ── MY FAVORITES (shown when not searching and favorites exist) ── */}
+              {pietaSearch.trim().length === 0 && pietaFavorites.length > 0 && (() => {
+                const favPrayers = PIETA_PRAYERS.flatMap(g => g.prayers).filter(p => pietaFavorites.includes(p.name));
+                return (
+                  <div style={{ marginBottom: 8 }}>
+                    <div style={{
+                      width: "100%", background: "rgba(255,80,120,0.12)",
+                      border: "1px solid rgba(255,100,140,0.35)",
+                      borderRadius: "12px 12px 0 0", padding: "12px 16px",
+                      display: "flex", alignItems: "center", justifyContent: "space-between",
+                      boxSizing: "border-box",
+                    }}>
+                      <div style={{ fontSize: 10, color: "rgba(255,150,175,0.9)", fontFamily: "'Lora',serif", letterSpacing: 2, textTransform: "uppercase" }}>♥ My Favorites</div>
+                    </div>
+                    <div style={{
+                      border: "1px solid rgba(255,100,140,0.35)", borderTop: "none",
+                      borderRadius: "0 0 12px 12px", padding: "8px 8px 4px", marginBottom: 12,
+                    }}>
+                      {favPrayers.map((p, pi) => (
+                        <div key={pi} onClick={() => { pietaListScrollPos.current = pietaListScrollRef.current?.scrollTop || 0; setPietaSelectedPrayer(p); setPietaScreen("prayer"); }} style={{
+                          width: "100%", background: "rgba(255,255,255,0.05)",
+                          border: "1px solid rgba(255,100,140,0.12)",
+                          borderRadius: 10, padding: "13px 14px",
+                          marginBottom: 6, cursor: "pointer",
+                          display: "flex", alignItems: "center", justifyContent: "space-between",
+                          textAlign: "left", boxSizing: "border-box",
+                        }}>
+                          <div style={{ flex: 1, minWidth: 0 }}>
+                            <div style={{ fontSize: 15, fontWeight: 600, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>{p.name}</div>
+                            {p.subtitle && <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif", marginTop: 2, fontStyle: "italic" }}>{p.subtitle}</div>}
+                          </div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+                            <button onClick={e => { e.stopPropagation(); togglePietaFavorite(p.name); }} style={{
+                              background: "none", border: "none", cursor: "pointer", padding: "4px 2px",
+                              fontSize: 18, lineHeight: 1, color: "#ff6b8a",
+                            }}>♥</button>
+                            <div style={{ color: "rgba(200,160,232,0.5)", fontSize: 18 }}>›</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
               })()}
 
               {/* ── GROUPED LIST (shown when not searching) ── */}
@@ -3251,20 +3325,26 @@ export default function RosaryApp() {
                         borderRadius: "0 0 12px 12px", padding: "8px 8px 4px", marginBottom: 12,
                       }}>
                         {group.prayers.map((p, pi) => (
-                          <button key={pi} onClick={() => { pietaListScrollPos.current = pietaListScrollRef.current?.scrollTop || 0; setPietaSelectedPrayer(p); setPietaScreen("prayer"); }} style={{
+                          <div key={pi} onClick={() => { pietaListScrollPos.current = pietaListScrollRef.current?.scrollTop || 0; setPietaSelectedPrayer(p); setPietaScreen("prayer"); }} style={{
                             width: "100%", background: "rgba(255,255,255,0.05)",
                             border: "1px solid rgba(200,160,232,0.1)",
                             borderRadius: 10, padding: "13px 14px",
                             marginBottom: 6, cursor: "pointer",
                             display: "flex", alignItems: "center", justifyContent: "space-between",
-                            textAlign: "left",
+                            textAlign: "left", boxSizing: "border-box",
                           }}>
-                            <div>
+                            <div style={{ flex: 1, minWidth: 0 }}>
                               <div style={{ fontSize: 15, fontWeight: 600, color: "#f0e6ff", fontFamily: "'Lora',serif" }}>{p.name}</div>
                               {p.subtitle && <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif", marginTop: 2, fontStyle: "italic" }}>{p.subtitle}</div>}
                             </div>
-                            <div style={{ color: "rgba(200,160,232,0.5)", fontSize: 18, marginLeft: 8 }}>›</div>
-                          </button>
+                            <div style={{ display: "flex", alignItems: "center", gap: 8, flexShrink: 0 }}>
+                              <button onClick={e => { e.stopPropagation(); togglePietaFavorite(p.name); }} style={{
+                                background: "none", border: "none", cursor: "pointer", padding: "4px 2px",
+                                fontSize: 18, lineHeight: 1, color: pietaFavorites.includes(p.name) ? "#ff6b8a" : "rgba(200,160,232,0.35)",
+                              }}>{pietaFavorites.includes(p.name) ? "♥" : "♡"}</button>
+                              <div style={{ color: "rgba(200,160,232,0.5)", fontSize: 18 }}>›</div>
+                            </div>
+                          </div>
                         ))}
                       </div>
                     )}
@@ -3288,11 +3368,17 @@ export default function RosaryApp() {
               background: "linear-gradient(180deg,rgba(107,63,160,0.35),transparent)",
               borderBottom: "1px solid rgba(200,160,232,0.15)", flexShrink: 0,
             }}>
-              <button onClick={() => { setPietaScreen("list"); setTimeout(() => { if (pietaListScrollRef.current) pietaListScrollRef.current.scrollTop = pietaListScrollPos.current; }, 0); }} style={{
-                background: "none", border: "none", color: "rgba(200,160,232,0.7)",
-                fontFamily: "'Lora',serif", fontSize: 13, cursor: "pointer",
-                marginBottom: 8, padding: 0,
-              }}>← Prayer List</button>
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                <button onClick={() => { setPietaScreen("list"); setTimeout(() => { if (pietaListScrollRef.current) pietaListScrollRef.current.scrollTop = pietaListScrollPos.current; }, 0); }} style={{
+                  background: "none", border: "none", color: "rgba(200,160,232,0.7)",
+                  fontFamily: "'Lora',serif", fontSize: 13, cursor: "pointer", padding: 0,
+                }}>← Prayer List</button>
+                <button onClick={() => togglePietaFavorite(pietaSelectedPrayer.name)} style={{
+                  background: "none", border: "none", cursor: "pointer", padding: "4px 6px",
+                  fontSize: 24, lineHeight: 1,
+                  color: pietaFavorites.includes(pietaSelectedPrayer.name) ? "#ff6b8a" : "rgba(200,160,232,0.35)",
+                }}>{pietaFavorites.includes(pietaSelectedPrayer.name) ? "♥" : "♡"}</button>
+              </div>
               <div style={{ fontSize: 22, fontWeight: 700, color: "#f0e6ff", fontFamily: "'Lora',serif", lineHeight: 1.3 }}>
                 {pietaSelectedPrayer.name}
               </div>

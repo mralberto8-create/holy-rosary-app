@@ -45,7 +45,8 @@ cd /Users/markalberto/Downloads/holy-rosary-app/holy-rosary-app && npm start
 - **FAQ** — tabbed modal: "About the Rosary" (6 accordion sections) and "History" (9 accordion sections)
 - **MJK Novena** — full-screen overlay showing `/mjk-novena.jpg`
 - **54-Day Novena** — button on home screen; confirm modal to begin (Begin Today / Cancel); tracks start date in localStorage (`novena_54day`); shows status card on home screen (day, phase, progress bar, dates) while in progress; status card includes **Level Up** button (visible from Day 1 onward) — user self-identifies as behind, taps to reset rosary progress and begin fresh for the current day; start date is preserved
-- **Pieta Prayers** — "Judith's Pieta Prayer Book": splash screen (pieta-sky.png background), prayer list (7 categories, 28 public domain prayers), individual prayer view. Copyrighted prayers not yet added. The 54-Day Rosary Novena prayer card includes a "🌹 Begin 54-Day Novena" button.
+- **Pieta Prayers** — "Judith's Pieta Prayer Book": splash screen (pieta-sky.png background, shows "Do we believe what we profess?" in gold), prayer list (7 categories, 28 public domain prayers), individual prayer view. Copyrighted prayers not yet added. The 54-Day Rosary Novena prayer card includes a "🌹 Begin 54-Day Novena" button.
+- **My Favorites** — Heart icon (♡/♥) on every prayer row and in prayer view header. Tap to toggle; favorites stored in `localStorage` (`pieta_favorites`). A "♥ My Favorites" section card appears at the top of the prayer list (above all categories) whenever at least one prayer is favorited.
 
 ---
 
@@ -94,6 +95,7 @@ cd /Users/markalberto/Downloads/holy-rosary-app/holy-rosary-app && npm start
 |---|---|---|
 | Rosary progress | `localStorage` | `rosary_progress` |
 | 54-Day Novena start date | `localStorage` | `novena_54day` |
+| Pieta favorites | `localStorage` | `pieta_favorites` |
 | Feedback | `window.storage` | — |
 | Prayer requests | `window.storage` | `rosary_prayers` |
 
