@@ -1287,6 +1287,7 @@ export default function RosaryApp() {
   const [pietaExpandedGroups, setPietaExpandedGroups] = useState(new Set());
   const [pietaSearch, setPietaSearch] = useState("");
   const [pietaFavorites, setPietaFavorites] = useState([]);
+  const [pietaFavoritesExpanded, setPietaFavoritesExpanded] = useState(true);
   const pietaListScrollRef = useRef(null);
   const pietaListScrollPos = useRef(0);
   const [prayerIntention, setPrayerIntention] = useState("");
@@ -3311,15 +3312,18 @@ export default function RosaryApp() {
                       const favPrayers = PIETA_PRAYERS.flatMap(g => g.prayers).filter(p => pietaFavorites.includes(p.name));
                       return (
                         <div style={{ marginBottom: 8 }}>
-                          <div style={{
-                            width: "100%", background: "rgba(255,80,120,0.12)",
+                          <button onClick={() => setPietaFavoritesExpanded(v => !v)} style={{
+                            width: "100%", background: pietaFavoritesExpanded ? "rgba(255,80,120,0.15)" : "rgba(255,80,120,0.08)",
                             border: "1px solid rgba(255,100,140,0.35)",
-                            borderRadius: "12px 12px 0 0", padding: "12px 16px",
-                            display: "flex", alignItems: "center", boxSizing: "border-box",
+                            borderRadius: pietaFavoritesExpanded ? "12px 12px 0 0" : 12,
+                            padding: "12px 16px", cursor: "pointer",
+                            display: "flex", alignItems: "center", justifyContent: "space-between",
+                            boxSizing: "border-box",
                           }}>
                             <div style={{ fontSize: 10, color: "rgba(255,150,175,0.9)", fontFamily: "'Lora',serif", letterSpacing: 2, textTransform: "uppercase" }}>♥ My Favorites</div>
-                          </div>
-                          <div style={{
+                            <div style={{ color: "rgba(255,150,175,0.7)", fontSize: 10, letterSpacing: 1 }}>{pietaFavoritesExpanded ? "▲" : "▼"}</div>
+                          </button>
+                          {pietaFavoritesExpanded && <div style={{
                             border: "1px solid rgba(255,100,140,0.35)", borderTop: "none",
                             borderRadius: "0 0 12px 12px", padding: "8px 8px 4px", marginBottom: 12,
                           }}>
@@ -3345,7 +3349,7 @@ export default function RosaryApp() {
                                 </div>
                               </div>
                             ))}
-                          </div>
+                          </div>}
                         </div>
                       );
                     })()}
