@@ -3241,8 +3241,8 @@ export default function RosaryApp() {
                 ));
               })()}
 
-              {/* ── MY FAVORITES (shown when not searching and favorites exist) ── */}
-              {pietaSearch.trim().length === 0 && pietaFavorites.length > 0 && (() => {
+              {/* ── MY FAVORITES (always shown when not searching) ── */}
+              {pietaSearch.trim().length === 0 && (() => {
                 const favPrayers = PIETA_PRAYERS.flatMap(g => g.prayers).filter(p => pietaFavorites.includes(p.name));
                 return (
                   <div style={{ marginBottom: 8 }}>
@@ -3261,7 +3261,17 @@ export default function RosaryApp() {
                       border: "1px solid rgba(255,100,140,0.35)", borderTop: "none",
                       borderRadius: "0 0 12px 12px", padding: "8px 8px 4px", marginBottom: 12,
                     }}>
-                      {favPrayers.map((p, pi) => (
+                      {favPrayers.length === 0 ? (
+                        <div style={{ padding: "16px 12px 12px", textAlign: "center" }}>
+                          <div style={{ fontSize: 22, marginBottom: 10 }}>♡</div>
+                          <div style={{ fontSize: 13, fontWeight: 600, color: "rgba(255,150,175,0.85)", fontFamily: "'Lora',serif", marginBottom: 8 }}>
+                            This section is yours.
+                          </div>
+                          <div style={{ fontSize: 12, color: "rgba(200,160,232,0.65)", fontFamily: "'Lora',serif", lineHeight: 1.7, fontStyle: "italic" }}>
+                            Tap the ♡ heart on any prayer to add it here for quick access. Tap ♥ again inside this section to remove it.
+                          </div>
+                        </div>
+                      ) : favPrayers.map((p, pi) => (
                         <div key={pi} onClick={() => { pietaListScrollPos.current = pietaListScrollRef.current?.scrollTop || 0; setPietaSelectedPrayer(p); setPietaScreen("prayer"); }} style={{
                           width: "100%", background: "rgba(255,255,255,0.05)",
                           border: "1px solid rgba(255,100,140,0.12)",
