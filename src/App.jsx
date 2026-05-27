@@ -1649,7 +1649,7 @@ export default function RosaryApp() {
       <div data-sheet="true" onClick={e => e.stopPropagation()} style={{
         width: "100%", maxWidth: 390, margin: "0 auto",
         background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
-        borderRadius: "24px 24px 0 0", padding: "24px 22px 40px",
+        borderRadius: "24px 24px 0 0", padding: "24px 22px max(40px, env(safe-area-inset-bottom))",
         animation: "fadeIn 0.2s ease",
       }}>
         <div {...makeDragHandlers(() => setShowFeedback(false))} onClick={() => setShowFeedback(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center", margin: "-24px -22px 4px" }}>
@@ -1768,7 +1768,7 @@ export default function RosaryApp() {
       <div data-sheet="true" onClick={e => e.stopPropagation()} style={{
         width: "100%", maxWidth: 390, margin: "0 auto",
         background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
-        borderRadius: "24px 24px 0 0", padding: "24px 22px 40px",
+        borderRadius: "24px 24px 0 0", padding: "24px 22px max(40px, env(safe-area-inset-bottom))",
         maxHeight: "80vh", overflowY: "auto",
         animation: "fadeIn 0.2s ease",
       }}>
@@ -1935,7 +1935,7 @@ export default function RosaryApp() {
       <div data-sheet="true" onClick={e => e.stopPropagation()} style={{
         width: "100%", maxWidth: 390, margin: "0 auto",
         background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
-        borderRadius: "24px 24px 0 0", padding: "24px 22px 40px",
+        borderRadius: "24px 24px 0 0", padding: "24px 22px max(40px, env(safe-area-inset-bottom))",
         maxHeight: "80vh", overflowY: "auto",
         animation: "fadeIn 0.2s ease",
       }}>
@@ -1992,7 +1992,7 @@ export default function RosaryApp() {
         background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
         borderRadius: "24px 24px 0 0",
         maxHeight: "90vh", overflowY: "auto",
-        paddingBottom: 40,
+        paddingBottom: "max(40px, env(safe-area-inset-bottom))",
         animation: "fadeIn 0.25s ease",
       }}>
         {/* Handle */}
@@ -2386,7 +2386,7 @@ export default function RosaryApp() {
         display: "flex", flexDirection: "column", alignItems: "center",
         justifyContent: "flex-start",
         fontFamily: "Georgia, serif",
-        padding: "48px 32px 40px", textAlign: "center",
+        padding: "max(48px, env(safe-area-inset-top)) 32px max(40px, env(safe-area-inset-bottom))", textAlign: "center",
         overflowY: "auto", zIndex: 9999,
       }}>
         <style>{CSS}</style>
@@ -3108,7 +3108,7 @@ export default function RosaryApp() {
               position: "absolute", inset: 0, width: "100%", height: "100%",
               objectFit: "cover", objectPosition: "center 30%",
             }} />
-            <div style={{ position: "relative", textAlign: "center", padding: "0 32px" }}>
+            <div style={{ position: "relative", textAlign: "center", padding: "env(safe-area-inset-top) 32px env(safe-area-inset-bottom)" }}>
               <div style={{
                 fontSize: 13, fontWeight: 700, color: "#ffe033", fontFamily: "'Lora',serif",
                 letterSpacing: 3, textTransform: "uppercase", marginBottom: 14,
@@ -3626,7 +3626,7 @@ export default function RosaryApp() {
               width: "100%", maxWidth: 390, margin: "0 auto",
               background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
               borderRadius: "24px 24px 0 0",
-              padding: "24px 22px 40px",
+              padding: "24px 22px max(40px, env(safe-area-inset-bottom))",
               maxHeight: "80vh", overflowY: "auto",
               animation: "fadeIn 0.25s ease",
             }}>
