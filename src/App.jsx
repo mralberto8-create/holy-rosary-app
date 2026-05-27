@@ -2646,7 +2646,7 @@ export default function RosaryApp() {
                 {/* Header */}
                 <div style={{
                   display: "flex", alignItems: "center",
-                  padding: "14px 16px", flexShrink: 0,
+                  padding: "max(14px, env(safe-area-inset-top)) 16px 14px", flexShrink: 0,
                   background: "linear-gradient(160deg,#2d1b3d,#6b3fa0)",
                   borderBottom: "1px solid rgba(255,255,255,0.1)",
                 }}>
