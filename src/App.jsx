@@ -551,6 +551,35 @@ const DAY_MYSTERIES = {
   4: "Luminous", 5: "Sorrowful", 6: "Joyful",
 };
 
+// ── SWIPE-TO-DISMISS HELPER ───────────────────────────────────────────────────
+// Apply the returned handlers to a drag-handle div. The sheet container must
+// have data-sheet="true" so closest() can find and translate it.
+function makeDragHandlers(closeFn) {
+  let startY = 0;
+  return {
+    onTouchStart(e) { startY = e.touches[0].clientY; },
+    onTouchMove(e) {
+      const dy = e.touches[0].clientY - startY;
+      if (dy <= 0) return;
+      const sheet = e.currentTarget.closest("[data-sheet]");
+      if (sheet) { sheet.style.transform = `translateY(${dy}px)`; sheet.style.transition = "none"; }
+    },
+    onTouchEnd(e) {
+      const dy = e.changedTouches[0].clientY - startY;
+      const sheet = e.currentTarget.closest("[data-sheet]");
+      if (!sheet) return;
+      if (dy > 80) {
+        sheet.style.transform = "translateY(100%)";
+        sheet.style.transition = "transform 0.25s ease";
+        setTimeout(closeFn, 240);
+      } else {
+        sheet.style.transform = "";
+        sheet.style.transition = "transform 0.2s ease";
+      }
+    },
+  };
+}
+
 // ── 54-DAY NOVENA HELPERS ─────────────────────────────────────────────────────
 function getNovenaStatus(startDateStr) {
   if (!startDateStr) return null;
@@ -1617,13 +1646,15 @@ export default function RosaryApp() {
       background: "rgba(10,5,20,0.75)",
       display: "flex", alignItems: "flex-end",
     }} onClick={() => setShowFeedback(false)}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div data-sheet="true" onClick={e => e.stopPropagation()} style={{
         width: "100%", maxWidth: 390, margin: "0 auto",
         background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
         borderRadius: "24px 24px 0 0", padding: "24px 22px 40px",
         animation: "fadeIn 0.2s ease",
       }}>
-        <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99, margin: "0 auto 20px" }} />
+        <div {...makeDragHandlers(() => setShowFeedback(false))} onClick={() => setShowFeedback(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center", margin: "-24px -22px 4px" }}>
+          <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.4)", borderRadius: 99 }} />
+        </div>
 
         {feedbackSubmitted ? (
           <div style={{ textAlign: "center", padding: "20px 0" }}>
@@ -1734,14 +1765,16 @@ export default function RosaryApp() {
       background: "rgba(10,5,20,0.75)",
       display: "flex", alignItems: "flex-end",
     }} onClick={() => { setShowFeedbackViewer(false); setFeedbackPinInput(""); setFeedbackPinError(false); setFeedbackPinUnlocked(false); }}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div data-sheet="true" onClick={e => e.stopPropagation()} style={{
         width: "100%", maxWidth: 390, margin: "0 auto",
         background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
         borderRadius: "24px 24px 0 0", padding: "24px 22px 40px",
         maxHeight: "80vh", overflowY: "auto",
         animation: "fadeIn 0.2s ease",
       }}>
-        <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99, margin: "0 auto 20px" }} />
+        <div {...makeDragHandlers(() => { setShowFeedbackViewer(false); setFeedbackPinInput(""); setFeedbackPinError(false); setFeedbackPinUnlocked(false); })} onClick={() => { setShowFeedbackViewer(false); setFeedbackPinInput(""); setFeedbackPinError(false); setFeedbackPinUnlocked(false); }} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center", margin: "-24px -22px 4px" }}>
+          <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.4)", borderRadius: 99 }} />
+        </div>
 
         <>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
@@ -1802,7 +1835,7 @@ export default function RosaryApp() {
       background: "rgba(10,5,20,0.75)",
       display: "flex", alignItems: "flex-end",
     }} onClick={() => setShowPrayerWarrior(false)}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div data-sheet="true" onClick={e => e.stopPropagation()} style={{
         width: "100%", maxWidth: 390, margin: "0 auto",
         background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
         borderRadius: "24px 24px 0 0",
@@ -1810,8 +1843,8 @@ export default function RosaryApp() {
         animation: "fadeIn 0.2s ease",
       }}>
         <div style={{ padding: "24px 22px max(40px, env(safe-area-inset-bottom))" }}>
-        <div onClick={() => setShowPrayerWarrior(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center" }}>
-          <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.3)", borderRadius: 99 }} />
+        <div {...makeDragHandlers(() => setShowPrayerWarrior(false))} onClick={() => setShowPrayerWarrior(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center", margin: "-24px -22px 4px" }}>
+          <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.4)", borderRadius: 99 }} />
         </div>
 
         {prayerSubmitted ? (
@@ -1899,13 +1932,16 @@ export default function RosaryApp() {
       background: "rgba(10,5,20,0.75)",
       display: "flex", alignItems: "flex-end",
     }} onClick={() => setShowPrayerWall(false)}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div data-sheet="true" onClick={e => e.stopPropagation()} style={{
         width: "100%", maxWidth: 390, margin: "0 auto",
         background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
         borderRadius: "24px 24px 0 0", padding: "24px 22px 40px",
         maxHeight: "80vh", overflowY: "auto",
         animation: "fadeIn 0.2s ease",
       }}>
+        <div {...makeDragHandlers(() => setShowPrayerWall(false))} onClick={() => setShowPrayerWall(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center", margin: "-24px -22px 4px" }}>
+          <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.4)", borderRadius: 99 }} />
+        </div>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
           <div style={{ fontSize: 16, fontWeight: 700, color: "white", fontFamily: "'Lora',serif" }}>🙏 Prayer Wall
             <div style={{ fontSize: 12, color: "#9b7aba", fontFamily: "'Lora',serif", fontWeight: 400, marginTop: 2 }}>{prayerList.length} intention{prayerList.length !== 1 ? "s" : ""}</div>
@@ -1951,7 +1987,7 @@ export default function RosaryApp() {
       background: "rgba(10,5,20,0.85)",
       display: "flex", alignItems: "flex-end",
     }} onClick={() => setShowUserGuide(false)}>
-      <div onClick={e => e.stopPropagation()} style={{
+      <div data-sheet="true" onClick={e => e.stopPropagation()} style={{
         width: "100%", maxWidth: 390, margin: "0 auto",
         background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
         borderRadius: "24px 24px 0 0",
@@ -1960,7 +1996,7 @@ export default function RosaryApp() {
         animation: "fadeIn 0.25s ease",
       }}>
         {/* Handle */}
-        <div onClick={() => setShowUserGuide(false)} style={{ padding: "12px 0 4px", cursor: "pointer", display: "flex", justifyContent: "center" }}>
+        <div {...makeDragHandlers(() => setShowUserGuide(false))} onClick={() => setShowUserGuide(false)} style={{ padding: "12px 0 4px", cursor: "pointer", display: "flex", justifyContent: "center" }}>
           <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.4)", borderRadius: 99 }} />
         </div>
         <div style={{ padding: "16px 22px 0" }}>
@@ -3586,7 +3622,7 @@ export default function RosaryApp() {
             background: "rgba(10,5,20,0.7)",
             display: "flex", alignItems: "flex-end",
           }} onClick={() => setLearnMore(false)}>
-            <div onClick={e => e.stopPropagation()} style={{
+            <div data-sheet="true" onClick={e => e.stopPropagation()} style={{
               width: "100%", maxWidth: 390, margin: "0 auto",
               background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
               borderRadius: "24px 24px 0 0",
@@ -3594,8 +3630,8 @@ export default function RosaryApp() {
               maxHeight: "80vh", overflowY: "auto",
               animation: "fadeIn 0.25s ease",
             }}>
-              {/* Handle — tap to dismiss */}
-              <div onClick={() => setLearnMore(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center" }}>
+              {/* Handle — tap or swipe down to dismiss */}
+              <div {...makeDragHandlers(() => setLearnMore(false))} onClick={() => setLearnMore(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center", margin: "-24px -22px 4px" }}>
                 <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.4)", borderRadius: 99 }} />
               </div>
               {/* Mystery title */}
