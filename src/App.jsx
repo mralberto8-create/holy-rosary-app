@@ -596,6 +596,12 @@ function getNovenaStatus(startDateStr) {
   };
 }
 
+// Local YYYY-MM-DD in the device's timezone — avoids UTC midnight rollover issues
+function localDateStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+}
+
 // ── SVG ROSARY ────────────────────────────────────────────────────────────────
 //
 // A classic rosary shape:
@@ -1240,6 +1246,7 @@ export default function RosaryApp() {
   const seqLenRef = useRef(sequence.length);
   const audioRef = useRef(null);
   const novenaStartDateRef = useRef(null);
+  const lastKnownDateRef = useRef(localDateStr());
 
   // Feedback state
   const [showFeedback, setShowFeedback] = useState(false);
@@ -1322,7 +1329,7 @@ export default function RosaryApp() {
       const raw = localStorage.getItem("rosary_progress");
       if (raw) {
         const parsed = JSON.parse(raw);
-        const today = new Date().toISOString().slice(0, 10);
+        const today = localDateStr();
         if (parsed && parsed.currentStep > 0 && parsed.date === today) {
           setSavedProgress(parsed);
           setShowResumePrompt(true);
@@ -1350,7 +1357,7 @@ export default function RosaryApp() {
   // Save progress to localStorage while praying (date-stamped so stale progress is discarded next day)
   useEffect(() => {
     if (screen === "praying" && currentStep > 0) {
-      const today = new Date().toISOString().slice(0, 10);
+      const today = localDateStr();
       const progress = { mysterySet, currentStep, totalSteps: sequence.length, date: today };
       try { localStorage.setItem("rosary_progress", JSON.stringify(progress)); } catch (e) { /* ignore */ }
     }
@@ -1364,7 +1371,7 @@ export default function RosaryApp() {
         const raw = localStorage.getItem("rosary_progress");
         if (raw) {
           const parsed = JSON.parse(raw);
-          const today = new Date().toISOString().slice(0, 10);
+          const today = localDateStr();
           if (parsed && parsed.currentStep > 0 && parsed.date === today) {
             setSavedProgress(parsed);
             setShowResumePrompt(true);
@@ -1461,6 +1468,31 @@ export default function RosaryApp() {
   // Keep sequence length ref current for use inside speech callbacks
   useEffect(() => { seqLenRef.current = sequence.length; }, [sequence]);
   useEffect(() => { novenaStartDateRef.current = novenaStartDate; }, [novenaStartDate]);
+
+  // Reset rosary + mystery state when the app is foregrounded on a new calendar day.
+  // Handles the iOS PWA case where the app is suspended rather than fully reloaded.
+  useEffect(() => {
+    function handleVisibilityChange() {
+      if (document.visibilityState !== 'visible') return;
+      const currentDate = localDateStr();
+      if (currentDate === lastKnownDateRef.current) return;
+      lastKnownDateRef.current = currentDate;
+      const newDay = new Date().getDay();
+      const newMystery = DAY_MYSTERIES[newDay];
+      setMysterySet(newMystery);
+      setSequence(buildSequence(newMystery));
+      setCurrentStep(0);
+      setExpandedPrayer(null);
+      setStickyExpanded(new Set());
+      setSavedProgress(null);
+      setShowResumePrompt(false);
+      setNovenaPrayerPending(false);
+      try { localStorage.removeItem("rosary_progress"); } catch (e) { /* ignore */ }
+      setScreen("home");
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
 
   // Cancel speech and reset autoplay when leaving the praying screen
   useEffect(() => {
@@ -3549,7 +3581,7 @@ export default function RosaryApp() {
           <button onClick={() => {
             // Explicitly save current step before leaving so resume card is always up-to-date
             if (currentStep > 0) {
-              const today = new Date().toISOString().slice(0, 10);
+              const today = localDateStr();
               const progress = { mysterySet, currentStep, totalSteps: sequence.length, date: today };
               try { localStorage.setItem("rosary_progress", JSON.stringify(progress)); } catch (e) { /* ignore */ }
               setSavedProgress(progress);
