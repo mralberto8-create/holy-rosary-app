@@ -2106,6 +2106,9 @@ export default function RosaryApp() {
                 "Scroll through the list and tap any prayer to open the full text.",
                 "Tap ← Prayer List to go back. The app will return you to exactly where you were in the list.",
                 "Prayers marked Coming Soon will be added in a future update.",
+                "♥ My Favorites — At the top of the prayer list you'll see your personal My Favorites section. It's yours to build. Tap the ♡ heart on any prayer row or inside the prayer itself to add it to your favorites for quick access.",
+                "To remove a prayer from My Favorites, tap the ♥ filled heart next to it — either inside the My Favorites section or within the prayer itself.",
+                "Your favorites are saved on your device and will be there every time you return.",
               ],
             },
             {
