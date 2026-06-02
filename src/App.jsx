@@ -2817,7 +2817,7 @@ export default function RosaryApp() {
               color: "white", fontFamily: "'Lora',serif",
               fontSize: 12, fontWeight: 700, cursor: "pointer",
               letterSpacing: 0.5,
-            }}>Guide</button>
+            }}>App Guide</button>
             <button onClick={() => { setShowFAQ(true); setFaqTab("about"); setFaqOpenSection(null); }} style={{
               background: "rgba(255,255,255,0.12)",
               border: "1px solid rgba(200,160,232,0.4)",
@@ -2825,7 +2825,7 @@ export default function RosaryApp() {
               color: "white", fontFamily: "'Lora',serif",
               fontSize: 12, fontWeight: 700, cursor: "pointer",
               letterSpacing: 0.5,
-            }}>FAQ</button>
+            }}>Rosary FAQ</button>
             <button onClick={() => setShowMJK(true)} style={{
               background: "rgba(255,255,255,0.12)",
               border: "1px solid rgba(200,160,232,0.4)",
