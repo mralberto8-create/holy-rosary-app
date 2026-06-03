@@ -3926,12 +3926,12 @@ export default function RosaryApp() {
           background: "rgba(10,5,20,0.75)",
           display: "flex", alignItems: "flex-end",
         }} onClick={() => setShowVirtueModal(false)}>
-          <div onClick={e => e.stopPropagation()} style={{
+          <div data-sheet="true" onClick={e => e.stopPropagation()} style={{
             width: "100%", maxWidth: 390, margin: "0 auto",
             background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
             borderRadius: "24px 24px 0 0",
-            padding: "24px 22px max(40px, env(safe-area-inset-bottom))",
-            maxHeight: "82vh", overflowY: "auto",
+            padding: "24px 22px max(80px, env(safe-area-inset-bottom))",
+            maxHeight: "90vh", overflowY: "auto",
             animation: "fadeIn 0.25s ease",
           }}>
             {/* Drag handle — tap or swipe down to dismiss */}
