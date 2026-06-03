@@ -1153,6 +1153,7 @@ function RosaryShape({ sequence, currentStep, onBeadTap, mini = false, activeMys
               "strengthen my trust,",
               "even when I do not fully understand,",
               "and help me enter these mysteries",
+              "as real and life‑giving.",
             ],
           },
           4: {
