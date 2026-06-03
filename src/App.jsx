@@ -1134,6 +1134,99 @@ function RosaryShape({ sequence, currentStep, onBeadTap, mini = false, activeMys
           </g>
         );
       })()}
+
+      {/* ── Pendant intro virtue text — shown in ring center during first 3 Hail Marys ── */}
+      {!mini && [3, 4, 5].includes(currentStep) && (() => {
+        const virtueData = {
+          3: {
+            label: "First Hail Mary",
+            title: "Faith — I believe",
+            prayerOffset: 99,
+            subtitle: "Trust in God and what He has revealed",
+            bullets: [
+              { text: "Believing even when you don't fully understand", cont: false },
+              { text: "Entering the mysteries as real and meaningful", cont: false },
+            ],
+            prayer: [
+              "Lord, I believe in You",
+              "and in all You have revealed;",
+              "strengthen my trust,",
+              "even when I do not fully understand,",
+              "and help me enter these mysteries",
+            ],
+          },
+          4: {
+            label: "Second Hail Mary",
+            title: "Hope — Trust",
+            prayerOffset: 114,
+            bullets: [
+              { text: "Trusting that God is working—", cont: false },
+              { text: "even when you don't see it", cont: true },
+              { text: "Trusting in His plan, His timing,", cont: false },
+              { text: "and eternal life", cont: true },
+            ],
+            prayer: [
+              "Lord, I place my hope in You;",
+              "anchor my heart in Your promises",
+              "and give me confidence in Your plan,",
+              "even when the future",
+              "is uncertain.",
+            ],
+          },
+          5: {
+            label: "Third Hail Mary",
+            title: "Charity — Love",
+            prayerOffset: 144,
+            bullets: [
+              { text: "Love God above all things", cont: false },
+              { text: "Love others for God's sake", cont: false },
+              { text: "Not just a feeling—", cont: true },
+              { text: "it's a choice to love selflessly,", cont: true },
+              { text: "even when it costs you", cont: true },
+            ],
+            prayer: [
+              "Lord, fill my heart with Your love—",
+              "so I can love You above all",
+              "and others as You love them.",
+            ],
+          },
+        };
+        const v = virtueData[currentStep];
+        if (!v) return null;
+        const startY = cy - 68;
+        return (
+          <g pointerEvents="none">
+            {/* Label — matches "MYSTERY 1" style */}
+            <text x={cx} y={startY} textAnchor="middle"
+              fontSize="12" fill="rgba(200,160,232,0.6)"
+              fontFamily="'Lora',serif" fontStyle="italic" letterSpacing="2">
+              {v.label}
+            </text>
+            {/* Title — matches mystery title style */}
+            <text x={cx} y={startY + 22} textAnchor="middle"
+              fontSize="20" fontWeight="700" fill="rgba(240,230,255,0.95)"
+              fontFamily="'Lora',serif">
+              {v.title}
+            </text>
+            {/* Bullets — matches fruit-of-mystery style */}
+            {v.bullets.map((b, i) => (
+              <text key={i} x={cx} y={startY + 46 + i * 16} textAnchor="middle"
+                fontSize="12" fontWeight="600" fill="rgba(255,215,150,0.85)"
+                fontFamily="'Lora',serif" fontStyle="italic">
+                {b.cont ? `    ${b.text}` : `• ${b.text}`}
+              </text>
+            ))}
+            {/* Prayer — matches short-intention style */}
+            {v.prayer.map((line, i) => (
+              <text key={i} x={cx} y={startY + (v.prayerOffset ?? 114) + i * 15} textAnchor="middle"
+                fontSize="11" fontWeight="600" fill="rgba(255,215,150,0.9)"
+                fontFamily="'Lora',serif">
+                {line}
+              </text>
+            ))}
+          </g>
+        );
+      })()}
     </svg>
   );
 }
