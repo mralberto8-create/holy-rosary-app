@@ -3934,17 +3934,15 @@ export default function RosaryApp() {
             maxHeight: "82vh", overflowY: "auto",
             animation: "fadeIn 0.25s ease",
           }}>
-            {/* Handle + Back button row */}
-            <div {...makeDragHandlers(() => setShowVirtueModal(false))} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "-24px -22px 16px", padding: "12px 16px 8px" }}>
-              <button onClick={() => setShowVirtueModal(false)} style={{
-                background: "none", border: "none", cursor: "pointer",
-                color: "#c9a0e8", fontFamily: "'Lora',serif", fontSize: 14, padding: "4px 0",
-              }}>← Back</button>
-              <div onClick={() => setShowVirtueModal(false)} style={{ cursor: "pointer", display: "flex", justifyContent: "center", flex: 1 }}>
-                <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.4)", borderRadius: 99 }} />
-              </div>
-              <div style={{ width: 48 }} />
+            {/* Drag handle — tap or swipe down to dismiss */}
+            <div {...makeDragHandlers(() => setShowVirtueModal(false))} onClick={() => setShowVirtueModal(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center", margin: "-24px -22px 4px" }}>
+              <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.4)", borderRadius: 99, marginTop: 12 }} />
             </div>
+            {/* Back button */}
+            <button onClick={() => setShowVirtueModal(false)} style={{
+              background: "none", border: "none", cursor: "pointer",
+              color: "#c9a0e8", fontFamily: "'Lora',serif", fontSize: 14, padding: "0 0 12px 0",
+            }}>← Back</button>
             <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif", letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>The Pendant</div>
             <div style={{ fontSize: 20, fontFamily: "'Lora',serif", fontWeight: 700, color: "#f0e6ff", marginBottom: 16 }}>The 3 Theological Virtues</div>
             <div style={{ fontSize: 14, lineHeight: 1.75, color: "#d4b8f0", fontFamily: "'Lora',serif", marginBottom: 14 }}>
