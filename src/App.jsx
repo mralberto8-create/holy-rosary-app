@@ -836,7 +836,7 @@ function DecadeArc({ sequence, currentStep, onBeadTap }) {
   );
 }
 
-function RosaryShape({ sequence, currentStep, onBeadTap, mini = false, activeMystery = null, mysterySet = "Sorrowful" }) {
+function RosaryShape({ sequence, currentStep, onBeadTap, mini = false, activeMystery = null, mysterySet = "Sorrowful", onVirtueInfo }) {
   const W = 380;
   const H = mini ? 260 : 500;
   const cx = W / 2;
@@ -1069,6 +1069,32 @@ function RosaryShape({ sequence, currentStep, onBeadTap, mini = false, activeMys
           </g>
         );
       })}
+      {/* Theological Virtues info button — fixed at 2nd HM bead (Hope), always visible in pendant phase */}
+      {inPendant && !mini && onVirtueInfo && (() => {
+        const midHM = pendantPositions.find(b => b.stepIndex === 4);
+        if (!midHM) return null;
+        const btnW = 100;
+        const btnH = 36;
+        const btnX = midHM.x + beadR + 52;
+        const btnY = midHM.y - btnH / 2;
+        return (
+          <g onClick={onVirtueInfo} style={{ cursor: "pointer" }}>
+            <rect x={btnX} y={btnY} width={btnW} height={btnH} rx={14}
+              fill="rgba(26,13,46,0.88)" stroke="rgba(200,160,232,0.35)" strokeWidth="1" />
+            <text x={btnX + btnW / 2} y={btnY + btnH / 2 - 6} textAnchor="middle"
+              dominantBaseline="middle"
+              fontSize="9.5" fontFamily="'Lora',serif" fill="#c9a0e8" fontWeight="600">
+              Why these 3
+            </text>
+            <text x={btnX + btnW / 2} y={btnY + btnH / 2 + 8} textAnchor="middle"
+              dominantBaseline="middle"
+              fontSize="9.5" fontFamily="'Lora',serif" fill="#c9a0e8" fontWeight="600">
+              Hail Marys?
+            </text>
+          </g>
+        );
+      })()}
+
       {/* Mystery text inside the circle */}
       {activeMystery && !mini && (() => {
         const title = activeMystery.mystery?.title ?? "";
@@ -1325,6 +1351,7 @@ export default function RosaryApp() {
   const [expandedPrayer, setExpandedPrayer] = useState(null);
   const [stickyExpanded, setStickyExpanded] = useState(new Set());
   const [learnMore, setLearnMore] = useState(false);
+  const [showVirtueModal, setShowVirtueModal] = useState(false);
   const [expandAll, setExpandAll] = useState(false);
   const [homeLearnMore, setHomeLearnMore] = useState(false);
   const [screen, setScreen] = useState("home");
@@ -3760,6 +3787,7 @@ export default function RosaryApp() {
           mysterySet={mysterySet}
           activeMystery={sequence.slice(0, currentStep + 1).reverse().find(s => s.type === "mystery") ?? null}
           onBeadTap={(i) => { setCurrentStep(i); setExpandedPrayer(null); }}
+          onVirtueInfo={() => setShowVirtueModal(true)}
         />
         {/* Expand All Prayers button — above the Back button */}
         <button onClick={() => setExpandAll(e => !e)} style={{
@@ -3891,6 +3919,48 @@ export default function RosaryApp() {
       )}
 
       {/* Learn More bottom sheet */}
+      {/* ── Theological Virtues info modal ── */}
+      {showVirtueModal && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 100,
+          background: "rgba(10,5,20,0.75)",
+          display: "flex", alignItems: "flex-end",
+        }} onClick={() => setShowVirtueModal(false)}>
+          <div onClick={e => e.stopPropagation()} style={{
+            width: "100%", maxWidth: 390, margin: "0 auto",
+            background: "linear-gradient(180deg,#2d1b3d,#1a0d2e)",
+            borderRadius: "24px 24px 0 0",
+            padding: "24px 22px max(40px, env(safe-area-inset-bottom))",
+            maxHeight: "82vh", overflowY: "auto",
+            animation: "fadeIn 0.25s ease",
+          }}>
+            {/* Handle */}
+            <div onClick={() => setShowVirtueModal(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center", margin: "-24px -22px 4px" }}>
+              <div style={{ width: 36, height: 4, borderRadius: 2, background: "rgba(200,160,232,0.3)", marginTop: 12 }} />
+            </div>
+            <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif", letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>The Pendant</div>
+            <div style={{ fontSize: 20, fontFamily: "'Lora',serif", fontWeight: 700, color: "#f0e6ff", marginBottom: 16 }}>The 3 Theological Virtues</div>
+            <div style={{ fontSize: 14, lineHeight: 1.75, color: "#d4b8f0", fontFamily: "'Lora',serif", marginBottom: 14 }}>
+              The first three Hail Marys prepare you spiritually before entering into the mysteries. In them, you are asking the Lord for the right interior disposition—to pray the Rosary well. They help you set aside the distractions and demands of the day, quiet your heart, and refocus your attention on your relationship with Jesus, while lifting your intentions to Him.
+            </div>
+            <div style={{ fontSize: 14, lineHeight: 1.75, color: "#d4b8f0", fontFamily: "'Lora',serif", marginBottom: 14 }}>
+              Each Hail Mary gently orders your soul toward one of the theological virtues:
+            </div>
+            <div style={{ fontSize: 14, lineHeight: 1.85, color: "#d4b8f0", fontFamily: "'Lora',serif", marginBottom: 14, paddingLeft: 8 }}>
+              <div style={{ marginBottom: 6 }}>• <span style={{ color: "#ffd700", fontWeight: 600 }}>Faith</span> aligns your mind—strengthening your belief and trust in God's truth.</div>
+              <div style={{ marginBottom: 6 }}>• <span style={{ color: "#ffd700", fontWeight: 600 }}>Hope</span> aligns your outlook—anchoring your confidence in God's promises.</div>
+              <div style={{ marginBottom: 6 }}>• <span style={{ color: "#ffd700", fontWeight: 600 }}>Charity</span> aligns your heart and will—deepening your love for God and for others.</div>
+              <div style={{ marginTop: 10, fontStyle: "italic", color: "#c9a0e8" }}>Together, they prepare your whole being—mind, future, and heart—to encounter Christ more fully in the mysteries.</div>
+            </div>
+            <button onClick={() => setShowVirtueModal(false)} style={{
+              marginTop: 8, width: "100%", padding: "12px", borderRadius: 12,
+              background: "rgba(107,63,160,0.4)", border: "1px solid rgba(200,160,232,0.3)",
+              color: "#f0e6ff", fontFamily: "'Lora',serif", fontSize: 15, cursor: "pointer",
+            }}>Close</button>
+          </div>
+        </div>
+      )}
+
       {learnMore && (() => {
         const activeMystery = sequence.slice(0, currentStep + 1).reverse().find(s => s.type === "mystery");
         const decadeIdx = activeMystery?.decadeIndex ?? 0;
