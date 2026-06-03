@@ -3934,9 +3934,16 @@ export default function RosaryApp() {
             maxHeight: "82vh", overflowY: "auto",
             animation: "fadeIn 0.25s ease",
           }}>
-            {/* Handle */}
-            <div onClick={() => setShowVirtueModal(false)} style={{ padding: "4px 0 16px", cursor: "pointer", display: "flex", justifyContent: "center", margin: "-24px -22px 4px" }}>
-              <div style={{ width: 36, height: 4, borderRadius: 2, background: "rgba(200,160,232,0.3)", marginTop: 12 }} />
+            {/* Handle + Back button row */}
+            <div {...makeDragHandlers(() => setShowVirtueModal(false))} style={{ display: "flex", alignItems: "center", justifyContent: "space-between", margin: "-24px -22px 16px", padding: "12px 16px 8px" }}>
+              <button onClick={() => setShowVirtueModal(false)} style={{
+                background: "none", border: "none", cursor: "pointer",
+                color: "#c9a0e8", fontFamily: "'Lora',serif", fontSize: 14, padding: "4px 0",
+              }}>← Back</button>
+              <div onClick={() => setShowVirtueModal(false)} style={{ cursor: "pointer", display: "flex", justifyContent: "center", flex: 1 }}>
+                <div style={{ width: 40, height: 4, background: "rgba(200,160,232,0.4)", borderRadius: 99 }} />
+              </div>
+              <div style={{ width: 48 }} />
             </div>
             <div style={{ fontSize: 11, color: "#9b7aba", fontFamily: "'Lora',serif", letterSpacing: 1, textTransform: "uppercase", marginBottom: 6 }}>The Pendant</div>
             <div style={{ fontSize: 20, fontFamily: "'Lora',serif", fontWeight: 700, color: "#f0e6ff", marginBottom: 16 }}>The 3 Theological Virtues</div>
@@ -3952,11 +3959,6 @@ export default function RosaryApp() {
               <div style={{ marginBottom: 6 }}>• <span style={{ color: "#ffd700", fontWeight: 600 }}>Charity</span> aligns your heart and will—deepening your love for God and for others.</div>
               <div style={{ marginTop: 10, fontStyle: "italic", color: "#c9a0e8" }}>Together, they prepare your whole being—mind, future, and heart—to encounter Christ more fully in the mysteries.</div>
             </div>
-            <button onClick={() => setShowVirtueModal(false)} style={{
-              marginTop: 8, width: "100%", padding: "12px", borderRadius: 12,
-              background: "rgba(107,63,160,0.4)", border: "1px solid rgba(200,160,232,0.3)",
-              color: "#f0e6ff", fontFamily: "'Lora',serif", fontSize: 15, cursor: "pointer",
-            }}>Close</button>
           </div>
         </div>
       )}
