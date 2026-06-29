@@ -1,0 +1,12 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "holy-rosary",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["start"],
+      "cwd": "/Volumes/T9/Projects/holy-rosary-app/holy-rosary-app",
+      "port": 3000
+    }
+  ]
+}
