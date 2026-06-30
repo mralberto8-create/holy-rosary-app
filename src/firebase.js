@@ -1,9 +1,7 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
+import { initializeFirestore, persistentLocalCache } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
-// ── FIREBASE CONFIG ────────────────────────────────────────────────────────
-// Paste your Firebase project config values below.
-// Get these from: Firebase Console → Project Settings → Your Apps → Web App
 const firebaseConfig = {
   apiKey:            "AIzaSyDCFvy4XlqQ0Bdy9o8GbCreNwCeWZMVf98",
   authDomain:        "holy-rosary-app.firebaseapp.com",
@@ -15,4 +13,7 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
+
+// persistentLocalCache queues writes offline and replays on reconnect
+export const db = initializeFirestore(app, { cache: persistentLocalCache() });
+export const auth = getAuth(app);

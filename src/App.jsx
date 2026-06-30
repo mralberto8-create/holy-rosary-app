@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { db } from "./firebase";
 import { collection, addDoc, onSnapshot, query, orderBy, serverTimestamp, deleteDoc, doc } from "firebase/firestore";
+import { useUserSync } from "./useUserSync";
+import SignInModal from "./SignInModal";
 
 // ── DATA ────────────────────────────────────────────────────────────────────
 
@@ -1343,6 +1345,16 @@ function CompletionScreen({ onRestart }) {
 const ICON_DATA_URI = "data:image/png;base64,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";
 
 export default function RosaryApp() {
+  const {
+    user, authLoading,
+    showSignIn, setShowSignIn,
+    authError, setAuthError,
+    novenaStartDate, saveNovena,
+    rosaryProgress,  saveRosaryProgress,
+    pietaFavorites,  savePietaFavorites,
+    signInGoogle, signInEmail, signOut,
+  } = useUserSync();
+
   const today = new Date().getDay();
   const defaultMystery = DAY_MYSTERIES[today];
   const [mysterySet, setMysterySet] = useState(defaultMystery);
@@ -1399,7 +1411,6 @@ export default function RosaryApp() {
   const [showMJK, setShowMJK] = useState(false);
 
   // 54-Day Novena
-  const [novenaStartDate, setNovenaStartDate] = useState(null);
   const [showNovenaConfirm, setShowNovenaConfirm] = useState(false);
   const [showNovenaInfo, setShowNovenaInfo] = useState(false);
   const [novenaPrayerPending, setNovenaPrayerPending] = useState(false);
@@ -1409,7 +1420,6 @@ export default function RosaryApp() {
   const [pietaSelectedPrayer, setPietaSelectedPrayer] = useState(null);
   const [pietaExpandedGroups, setPietaExpandedGroups] = useState(new Set());
   const [pietaSearch, setPietaSearch] = useState("");
-  const [pietaFavorites, setPietaFavorites] = useState([]);
   const [pietaFavoritesExpanded, setPietaFavoritesExpanded] = useState(true);
   const pietaListScrollRef = useRef(null);
   const pietaListScrollPos = useRef(0);
@@ -1444,77 +1454,45 @@ export default function RosaryApp() {
       () => setFeedbackList([])
     );
 
-    // Rosary progress lives in localStorage (device-only, intentional)
-    // Discard any progress saved on a previous day — each day starts fresh
-    try {
-      const raw = localStorage.getItem("rosary_progress");
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        const today = localDateStr();
-        if (parsed && parsed.currentStep > 0 && parsed.date === today) {
-          setSavedProgress(parsed);
-          setShowResumePrompt(true);
-        } else if (parsed && parsed.date !== today) {
-          localStorage.removeItem("rosary_progress");
-        }
-      }
-    } catch (e) { /* ignore */ }
-
-    // 54-Day Novena
-    try {
-      const saved = localStorage.getItem("novena_54day");
-      if (saved) setNovenaStartDate(saved);
-    } catch (e) { /* ignore */ }
-
-    // Pieta favorites
-    try {
-      const fav = localStorage.getItem("pieta_favorites");
-      if (fav) setPietaFavorites(JSON.parse(fav));
-    } catch (e) { /* ignore */ }
+    // Rosary progress — initialized from sync hook (localStorage + Firestore)
+    const today = localDateStr();
+    if (rosaryProgress && rosaryProgress.currentStep > 0 && rosaryProgress.date === today) {
+      setSavedProgress(rosaryProgress);
+      setShowResumePrompt(true);
+    } else if (rosaryProgress && rosaryProgress.date !== today) {
+      saveRosaryProgress(null);
+    }
 
     return () => { unsubPrayers(); unsubFeedback(); };
   }, []);
 
-  // Save progress to localStorage while praying (date-stamped so stale progress is discarded next day)
+  // Save rosary progress while praying (syncs to cloud if signed in)
   useEffect(() => {
     if (screen === "praying" && currentStep > 0) {
       const today = localDateStr();
       const progress = { mysterySet, currentStep, totalSteps: sequence.length, date: today };
-      try { localStorage.setItem("rosary_progress", JSON.stringify(progress)); } catch (e) { /* ignore */ }
+      saveRosaryProgress(progress);
     }
   }, [screen, currentStep, mysterySet, sequence.length]);
-
-  // Re-check saved progress whenever the home screen is shown
-  // (handles navigating back mid-session, opening modals, etc.)
+  // Re-check saved progress whenever the home screen is shown or rosaryProgress syncs from cloud
   useEffect(() => {
     if (screen === "home") {
-      try {
-        const raw = localStorage.getItem("rosary_progress");
-        if (raw) {
-          const parsed = JSON.parse(raw);
-          const today = localDateStr();
-          if (parsed && parsed.currentStep > 0 && parsed.date === today) {
-            setSavedProgress(parsed);
-            setShowResumePrompt(true);
-          } else if (parsed && parsed.date !== today) {
-            localStorage.removeItem("rosary_progress");
-            setSavedProgress(null);
-            setShowResumePrompt(false);
-          }
-        }
-      } catch (e) { /* ignore */ }
+      const today = localDateStr();
+      if (rosaryProgress && rosaryProgress.currentStep > 0 && rosaryProgress.date === today) {
+        setSavedProgress(rosaryProgress);
+        setShowResumePrompt(true);
+      } else if (rosaryProgress && rosaryProgress.date !== today) {
+        saveRosaryProgress(null);
+        setSavedProgress(null);
+        setShowResumePrompt(false);
+      }
     }
-  }, [screen]);
-
-  // Save Pieta favorites whenever they change
-  useEffect(() => {
-    try { localStorage.setItem("pieta_favorites", JSON.stringify(pietaFavorites)); } catch (e) { /* ignore */ }
-  }, [pietaFavorites]);
-
+  }, [screen, rosaryProgress]);
   function togglePietaFavorite(name) {
-    setPietaFavorites(prev =>
-      prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
-    );
+    const next = pietaFavorites.includes(name)
+      ? pietaFavorites.filter(n => n !== name)
+      : [...pietaFavorites, name];
+    savePietaFavorites(next);
   }
 
   // Save feedback to Firestore
@@ -1571,13 +1549,11 @@ export default function RosaryApp() {
   function startNovena() {
     const d = new Date();
     const today = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
-    setNovenaStartDate(today);
-    try { localStorage.setItem("novena_54day", today); } catch (e) { /* ignore */ }
+    saveNovena(today);
     setShowNovenaConfirm(false);
   }
   function cancelNovena() {
-    setNovenaStartDate(null);
-    try { localStorage.removeItem("novena_54day"); } catch (e) { /* ignore */ }
+    saveNovena(null);
   }
   const novenaStatus = getNovenaStatus(novenaStartDate);
 
@@ -1608,7 +1584,7 @@ export default function RosaryApp() {
       setSavedProgress(null);
       setShowResumePrompt(false);
       setNovenaPrayerPending(false);
-      try { localStorage.removeItem("rosary_progress"); } catch (e) { /* ignore */ }
+      saveRosaryProgress(null);
       setScreen("home");
     }
     document.addEventListener('visibilitychange', handleVisibilityChange);
@@ -1775,11 +1751,10 @@ export default function RosaryApp() {
     setCurrentStep(0);
     setExpandedPrayer(null);
     setStickyExpanded(new Set());
-    setScreen("home");
-    try { localStorage.removeItem("rosary_progress"); } catch (e) { /* ignore */ }
+    saveRosaryProgress(null);
     setSavedProgress(null);
+    setScreen("home");
   }, [mysterySet]);
-
   const toggleAutoPlay = () => {
     const next = !autoPlay;
     setAutoPlay(next);
@@ -1805,11 +1780,10 @@ export default function RosaryApp() {
   useEffect(() => {
     if (step?.type === "complete") {
       setScreen("complete");
-      try { localStorage.removeItem("rosary_progress"); } catch (e) { /* ignore */ }
+      saveRosaryProgress(null);
       setSavedProgress(null);
     }
   }, [step]);
-
   const progress = Math.round((currentStep / (sequence.length - 2)) * 100);
 
   const CSS = `
@@ -2707,6 +2681,15 @@ export default function RosaryApp() {
         {AdminPinModal}
         {AdminPanel}
         {FeedbackButton}
+        {showSignIn && (
+          <SignInModal
+            onGoogle={signInGoogle}
+            onEmail={signInEmail}
+            onSkip={() => { setShowSignIn(false); setAuthError(null); }}
+            error={authError}
+            onClearError={() => setAuthError(null)}
+          />
+        )}
         {showMJK && (
           <div style={{
             position: "fixed", inset: 0, zIndex: 9990,
@@ -2978,6 +2961,21 @@ export default function RosaryApp() {
             }}>
               Pieta<br/>Prayers
             </button>
+            {/* Account / Sign-in button */}
+            <button onClick={() => user ? null : setShowSignIn(true)} style={{
+              background: user ? "rgba(100,200,140,0.18)" : "rgba(255,255,255,0.10)",
+              border: `1px solid ${user ? "rgba(100,200,140,0.55)" : "rgba(200,160,232,0.3)"}`,
+              borderRadius: 10, padding: "8px 10px",
+              color: user ? "#7de8a8" : "rgba(200,160,232,0.7)",
+              fontFamily: "'Lora',serif", fontSize: 12, fontWeight: 700,
+              cursor: user ? "default" : "pointer",
+              letterSpacing: 0.5, lineHeight: 1.4, textAlign: "center", minWidth: 48,
+            }}>
+              {user
+                ? <>{(user.displayName || user.email || "").split(" ")[0].slice(0,8)}<br/>✓ Synced</>
+                : <>Sign<br/>In</>
+              }
+            </button>
           </div>
         </div>
         <div style={{ padding: "18px", overflowY: "auto" }}>
@@ -3036,7 +3034,7 @@ export default function RosaryApp() {
                 <button onClick={() => {
                   setShowResumePrompt(false);
                   setSavedProgress(null);
-                  try { localStorage.removeItem("rosary_progress"); } catch (e) { /* ignore */ }
+                  saveRosaryProgress(null);
                 }} style={{
                   flex: 1, background: "white", color: "#6b3fa0", border: "2px solid #6b3fa0",
                   borderRadius: 10, padding: "12px 8px", fontSize: 14, fontFamily: "'Lora',serif",
@@ -3704,7 +3702,7 @@ export default function RosaryApp() {
             if (currentStep > 0) {
               const today = localDateStr();
               const progress = { mysterySet, currentStep, totalSteps: sequence.length, date: today };
-              try { localStorage.setItem("rosary_progress", JSON.stringify(progress)); } catch (e) { /* ignore */ }
+              saveRosaryProgress(progress);
               setSavedProgress(progress);
               setShowResumePrompt(true);
             }
