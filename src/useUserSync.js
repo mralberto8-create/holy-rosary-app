@@ -92,7 +92,24 @@ export function useUserSync() {
       const ref = doc(db, "users", fbUser.uid, "state", "v1");
       const snap = await getDoc(ref).catch(() => null);
       if (snap && snap.exists()) {
-        applyCloud(snap.data());
+        const cloud = snap.data();
+        const local = {
+          novenaStartDate: novenaRef.current,
+          rosaryProgress:  progressRef.current,
+          pietaFavorites:  favsRef.current,
+        };
+        // Merge: prefer whichever side has actual data (avoids wiping local on first sign-in from empty-cloud device)
+        const merged = {
+          novenaStartDate: cloud.novenaStartDate ?? local.novenaStartDate,
+          rosaryProgress:  cloud.rosaryProgress  ?? local.rosaryProgress,
+          pietaFavorites:  (cloud.pietaFavorites && cloud.pietaFavorites.length)
+                             ? cloud.pietaFavorites
+                             : (local.pietaFavorites && local.pietaFavorites.length)
+                               ? local.pietaFavorites
+                               : [],
+        };
+        applyCloud(merged);
+        await pushToCloud(fbUser.uid, merged);
       } else {
         await pushToCloud(fbUser.uid, {
           novenaStartDate: novenaRef.current,
