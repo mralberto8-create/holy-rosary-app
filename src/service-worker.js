@@ -12,6 +12,35 @@ self.skipWaiting();
 // Precache all build assets (CRA injects the manifest here at build time)
 precacheAndRoute(self.__WB_MANIFEST);
 
+// Pre-fetch and cache all MP3s during SW install so they work offline immediately
+const AUDIO_FILES = [
+  "mystery_glorious_1.mp3","mystery_glorious_2.mp3","mystery_glorious_3.mp3",
+  "mystery_glorious_4.mp3","mystery_glorious_5.mp3",
+  "mystery_joyful_1.mp3","mystery_joyful_2.mp3","mystery_joyful_3.mp3",
+  "mystery_joyful_4.mp3","mystery_joyful_5.mp3",
+  "mystery_luminous_1.mp3","mystery_luminous_2.mp3","mystery_luminous_3.mp3",
+  "mystery_luminous_4.mp3","mystery_luminous_5.mp3",
+  "mystery_sorrowful_1.mp3","mystery_sorrowful_2.mp3","mystery_sorrowful_3.mp3",
+  "mystery_sorrowful_4.mp3","mystery_sorrowful_5.mp3",
+  "prayer_apostles_creed.mp3","prayer_fatima.mp3","prayer_final.mp3",
+  "prayer_glory_be.mp3","prayer_hail_holy_queen.mp3","prayer_hail_mary.mp3",
+  "prayer_our_father.mp3","prayer_sign_of_cross.mp3",
+];
+
+self.addEventListener("install", (event) => {
+  event.waitUntil(
+    caches.open("rosary-audio-v1").then((cache) =>
+      Promise.allSettled(
+        AUDIO_FILES.map((file) =>
+          fetch(`/audio/${file}`).then((res) => {
+            if (res.ok) cache.put(`/audio/${file}`, res);
+          })
+        )
+      )
+    )
+  );
+});
+
 // Single-page app fallback — serve index.html for all navigation requests
 const fileExtensionRegexp = new RegExp("/[^/?]+\\.[^/]+$");
 registerRoute(({ request, url }) => {
