@@ -4,6 +4,7 @@ import { ExpirationPlugin } from "workbox-expiration";
 import { precacheAndRoute, createHandlerBoundToURL } from "workbox-precaching";
 import { registerRoute } from "workbox-routing";
 import { StaleWhileRevalidate, CacheFirst } from "workbox-strategies";
+import { RangeRequestsPlugin } from "workbox-range-requests";
 
 clientsClaim();
 self.skipWaiting();
@@ -20,12 +21,15 @@ registerRoute(({ request, url }) => {
   return true;
 }, createHandlerBoundToURL(process.env.PUBLIC_URL + "/index.html"));
 
-// Cache MP3s on first play, serve from cache thereafter (CacheFirst)
+// Cache MP3s on first play, serve from cache thereafter.
+// RangeRequestsPlugin handles the 206 Partial Content responses browsers
+// use when streaming audio — without it, offline playback silently fails.
 registerRoute(
   ({ url }) => url.pathname.startsWith("/audio/") && url.pathname.endsWith(".mp3"),
   new CacheFirst({
     cacheName: "rosary-audio-v1",
     plugins: [
+      new RangeRequestsPlugin(),
       new ExpirationPlugin({
         maxEntries: 50,
         maxAgeSeconds: 365 * 24 * 60 * 60, // 1 year
