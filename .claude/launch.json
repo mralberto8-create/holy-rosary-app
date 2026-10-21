@@ -7,6 +7,13 @@
       "runtimeArgs": ["start"],
       "cwd": "/Volumes/T9/Projects/holy-rosary-app/holy-rosary-app",
       "port": 3000
+    },
+    {
+      "name": "holy-rosary-prod",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", "-s", "build", "-l", "3001"],
+      "cwd": "/Volumes/T9/Projects/holy-rosary-app/holy-rosary-app",
+      "port": 3001
     }
   ]
 }
